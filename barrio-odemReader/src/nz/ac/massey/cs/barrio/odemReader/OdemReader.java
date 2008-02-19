@@ -159,6 +159,10 @@ public class OdemReader implements InputReader{
 					buffer.append(te.getSource());
 					buffer.append("\" target=\"");
 					buffer.append(j);
+					buffer.append("\" sourceId=\"");
+					buffer.append(te.getSource());
+					buffer.append("\" targetId=\"");
+					buffer.append(j);
 					buffer.append("\" relationship.type=\"");
 					buffer.append(te.getType());
 					buffer.append("\" relationship.betweenness=\"null\" />");
