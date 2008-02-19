@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         id="barrio.interfaceFilter"
+         name="Barrio Interface Filter"
+         point="nz.ac.massey.cs.barrio.nodeFilter">
+         <implementations
+               nodeFilterClass="nz.ac.nassey.cs.barrio.interfaceFilter.InterfaceFilter"/>
+   </extension>
+
+</plugin>
