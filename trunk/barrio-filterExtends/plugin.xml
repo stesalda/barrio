@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         id="barrio.extendsFilter"
+         name="Extends Edge Filter"
+         point="nz.ac.massey.cs.barrio.edgeFilter">
+         <implementations
+               edgeFilterClass="nz.ac.massey.cs.barrio.extendsFilter.ExtendsFilter"/>
+   </extension>
+
+</plugin>
