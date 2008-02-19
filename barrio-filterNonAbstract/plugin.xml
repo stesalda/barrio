@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         id="barrio.nonAbstractFilter"
+         name="Barrio Non Abstract Filter"
+         point="nz.ac.massey.cs.barrio.nodeFilter">
+         <implementations
+               nodeFilterClass="nz.ac.massey.cs.barrio.nonAbstractFilter.NonAbstractFilter"/>
+   </extension>
+
+</plugin>
