@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/barrio.feature_1.0.0.jar" id="barrio.feature" version="1.0.0">
+      <category name="barrio.update"/>
+   </feature>
+   <category-def name="barrio.update" label="Barrio Update">
+      <description>
+         update
+      </description>
+   </category-def>
+</site>
