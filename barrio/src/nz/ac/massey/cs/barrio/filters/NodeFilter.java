@@ -14,7 +14,6 @@ public class NodeFilter implements Filter{
 	public UnassembledGraph filter(Graph g) 
 	{
 		Set<Vertex> vertices = chooseGoodVertices(g.getVertices());
-		
 		return new UnassembledGraph(this, vertices, g.getEdges(), g);
 	}
 	

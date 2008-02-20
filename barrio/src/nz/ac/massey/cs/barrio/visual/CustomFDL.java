@@ -42,8 +42,5 @@ public class CustomFDL extends ForceDirectedLayout{
 	protected float getSpringCoefficient(EdgeItem arg0) {
 		// TODO Auto-generated method stub
 		return super.getSpringCoefficient(arg0)/10;
-	}
-
-	
-	
+	}	
 }
