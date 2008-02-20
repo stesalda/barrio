@@ -11,6 +11,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import nz.ac.massey.cs.barrio.constants.BarrioConstants;
 import nz.ac.massey.cs.barrio.inputReader.InputReader;
 
 import org.w3c.dom.Document;
@@ -30,7 +31,7 @@ public class OdemReader implements InputReader{
 	{	
 		if(filename==null || filename.length()<1) return;
 		try {
-			File folder = new File("c:/dcaPlugin");
+			File folder = new File(BarrioConstants.GRAPHML_FOLDER);
 			folder.mkdir();
 			
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -38,7 +39,7 @@ public class OdemReader implements InputReader{
 			docBuilder = docBuilderFactory.newDocumentBuilder();
 			Document doc = docBuilder.parse(new File(filename));
 			
-			PrintStream out = new PrintStream("c:/dcaPlugin/jGraph.xml");
+			PrintStream out = new PrintStream(BarrioConstants.JUNG_GRAPH_FILE);
 	
 			out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			out.print("<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns/graphml\"");
@@ -114,7 +115,7 @@ public class OdemReader implements InputReader{
 							out.print(typeStr.contains("Exception"));
 							out.print("\" class.access=\"");
 							out.print(typeAttr.getNamedItem("visibility").getNodeValue());
-							out.println("\" />");
+							out.println("\" node.isSelected=\"false\" />");
 							nodes.add(nodeId, typeStr);
 							
 							if(type.getNodeType()==Node.ELEMENT_NODE)
@@ -165,6 +166,7 @@ public class OdemReader implements InputReader{
 					buffer.append(j);
 					buffer.append("\" relationship.type=\"");
 					buffer.append(te.getType());
+					buffer.append("\" edge.isSelected=\"false\" relationship.state=\"");
 					buffer.append("\" relationship.betweenness=\"null\" />");
 					edges.add(buffer.toString());
 					break;
