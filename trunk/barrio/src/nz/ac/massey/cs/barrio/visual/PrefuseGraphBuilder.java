@@ -59,7 +59,7 @@ public class PrefuseGraphBuilder {
 		prefuseGraph.addColumn("class.isException", String.class);
 		prefuseGraph.addColumn("class.expression", new LabelExpression("class.jar","class.packageName","class.name"));
 		prefuseGraph.addColumn("class.icon", new ImageExpression("class.isInterface", "class.isException", "class.isAbstract", "class.access"));
-		prefuseGraph.addColumn("node.isSelected", boolean.class);
+		prefuseGraph.addColumn("node.isSelected", String.class);
 		prefuseGraph.addColumn("class.cluster", String.class);
 
 		prefuseGraph.addColumn("relationship.type", String.class);
@@ -157,7 +157,7 @@ public class PrefuseGraphBuilder {
 		}
 	}
 	
-	public Display getDisplay()
+	public Display getDisplay()//(prefuse.data.Graph prefuseGraph)
 	{
 		final Visualization vis = new Visualization();
 		AggregateTable at = vis.addAggregates("aggregates");
@@ -271,7 +271,7 @@ public class PrefuseGraphBuilder {
 		aStroke.setDefaultColor(ColorLib.rgb(0,0,0));
 		
 		int[] palette = new int[] {ColorLib.rgba(0,0,200,125),ColorLib.rgba(0,200,0,125),ColorLib.rgba(200,0,0,125)};
-        ColorAction aFill3 = new DataColorAction("aggregates", "type", Constants.NOMINAL, VisualItem.FILLCOLOR, palette);
+        ColorAction aFill = new DataColorAction("aggregates", "type", Constants.NOMINAL, VisualItem.FILLCOLOR, palette);
 		
 		color.add(a1);
 		color.add(a2);
@@ -280,9 +280,7 @@ public class PrefuseGraphBuilder {
 		color.add(a5);
 		color.add(a6);
 		color.add(aStroke);
-		//color.add(aFill);
-		//color.add(aFill2);
-		color.add(aFill3);
+		color.add(aFill);
 		vis.putAction("color", color);
 		
 		
@@ -323,8 +321,9 @@ public class PrefuseGraphBuilder {
         vis.run("layout2");
         
         
-        
+
         LabelRenderer lr = new LabelRenderer("class.expression", "class.icon");
+//        LabelRenderer lr = new LabelRenderer("class.name");
         lr.setImagePosition(Constants.LEFT);
         lr.setImageTextPadding(5);
         lr.setRoundedCorner(8,8);

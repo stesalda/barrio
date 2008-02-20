@@ -18,6 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import nz.ac.massey.cs.barrio.clusterer.Clusterer;
 import nz.ac.massey.cs.barrio.clusterer.KnownClusterer;
+import nz.ac.massey.cs.barrio.constants.BarrioConstants;
 import nz.ac.massey.cs.barrio.exporter.Exporter;
 import nz.ac.massey.cs.barrio.exporter.KnownExporter;
 import nz.ac.massey.cs.barrio.filters.EdgeFilter;
@@ -27,6 +28,7 @@ import nz.ac.massey.cs.barrio.filters.NodeFilter;
 import nz.ac.massey.cs.barrio.inputReader.InputReader;
 import nz.ac.massey.cs.barrio.inputReader.KnownInputReader;
 import nz.ac.massey.cs.barrio.outputs.OutputGenrator;
+import nz.ac.massey.cs.barrio.visual.JungPrefuseBridge;
 import nz.ac.massey.cs.barrio.visual.PrefuseGraphBuilder;
 
 import org.eclipse.swt.SWT;
@@ -257,24 +259,29 @@ public class InputUI extends Composite{
 	
 	private void btnBrowseClick()
 	{
+		new File(BarrioConstants.JUNG_GRAPH_FILE).delete();
+		new File(BarrioConstants.PREFUSE_GRAPH_FILE).delete();
+		
 		Shell shell = new Shell();
 		FileDialog dlg = new FileDialog(shell, SWT.OPEN);
-		dlg.setFilterNames(new String[] { "XML Files", "All Files" });
-		dlg.setFilterExtensions(new String[] { "*.xml", "*.*" });
+		dlg.setFilterNames(new String[] { "ODEM Files","XML Files", "All Files" });
+		dlg.setFilterExtensions(new String[] { "*.odem", "*.xml", "*.*" });
 		dlg.setFilterPath(" ");
 	    String filename = dlg.open();
 	    shell.close();
+	    
 	    List<InputReader> readers = KnownInputReader.all();
 		InputReader reader = readers.get(0);
 		reader.read(filename);
   	  	
-  	  	graph = new GraphMLFile().load("c:/dcaPlugin/jGraph.xml");
+  	  	graph = new GraphMLFile().load(BarrioConstants.JUNG_GRAPH_FILE);
   	  	
   	  	OutputGenrator.initGraph = graph;
 		OutputGenrator.generateProjectDescription(OutputUI.treeProject);
 		OutputUI.treeProject.update();
 		
 		filteredGraph = (Graph) graph.copy();
+		
     }
 	
 	private void sliderMove(Label label, int value)
@@ -301,6 +308,9 @@ public class InputUI extends Composite{
 		
 		PrefuseGraphBuilder pgb = new PrefuseGraphBuilder(filteredGraph, removedEdges);
 		pgb.buildPrefuseGraph();
+		//JungPrefuseBridge bridge = new JungPrefuseBridge();
+		//prefuse.data.Graph pGraph = bridge.convert(filteredGraph);
+		//System.out.println("[InputUI]: convert done "+pGraph.getNodeCount()+" "+pGraph.getEdgeCount());
 		Display dis = pgb.getDisplay();
 		dis.setLayout(new BorderLayout());
 		
