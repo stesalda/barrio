@@ -33,131 +33,23 @@ import prefuse.visual.AggregateTable;
 import prefuse.visual.VisualGraph;
 import prefuse.visual.VisualItem;
 
-public class PrefuseGraphBuilder {
+public class DisplayBuilder {
 	
-	private prefuse.data.Graph prefuseGraph;  
-	private edu.uci.ics.jung.graph.Graph jungGraph;
-	private List removedEdges;
 	private List<String> packages;
 	private List<String> jars;
 	private List<String> clusters;
 	
-	public PrefuseGraphBuilder(edu.uci.ics.jung.graph.Graph jGraph, List list) 
+	public DisplayBuilder() 
 	{
 		packages = new ArrayList<String>();
 		jars = new ArrayList<String>();
 		clusters = new ArrayList<String>();
-		
-		prefuseGraph = new prefuse.data.Graph(true);
-		prefuseGraph.addColumn("class.id", String.class);
-		prefuseGraph.addColumn("class.name", String.class);
-		prefuseGraph.addColumn("class.jar", String.class);
-		prefuseGraph.addColumn("class.packageName", String.class);
-		prefuseGraph.addColumn("class.isInterface", String.class);
-		prefuseGraph.addColumn("class.isAbstract", String.class);
-		prefuseGraph.addColumn("class.access", String.class);
-		prefuseGraph.addColumn("class.isException", String.class);
-		prefuseGraph.addColumn("class.expression", new LabelExpression("class.jar","class.packageName","class.name"));
-		prefuseGraph.addColumn("class.icon", new ImageExpression("class.isInterface", "class.isException", "class.isAbstract", "class.access"));
-		prefuseGraph.addColumn("node.isSelected", String.class);
-		prefuseGraph.addColumn("class.cluster", String.class);
-
-		prefuseGraph.addColumn("relationship.type", String.class);
-		prefuseGraph.addColumn("relationship.state", String.class);
-		prefuseGraph.addColumn("edge.isSelected", String.class);
-		
-		jungGraph = jGraph;
-		removedEdges = list;
 	}
 	
-	public void setJungGraph(edu.uci.ics.jung.graph.Graph jungGraph) {
-		this.jungGraph = jungGraph;
-	}
-
-	public void buildPrefuseGraph()
-	{
-		addNodes();
-		addEdges();
-	}
-		
-	private void addNodes() 
-	{
-		//Create prefuse node for every jung graph vertex
-		Iterator iter = jungGraph.getVertices().iterator();
-		while(iter.hasNext())
-		{
-			edu.uci.ics.jung.graph.Vertex v = (edu.uci.ics.jung.graph.Vertex) iter.next();
-			String classID = v.getUserDatum("class.id").toString();
-			String className = v.getUserDatum("class.name").toString();
-			String jar = v.getUserDatum("class.jar").toString();
-			String classPackageName = v.getUserDatum("class.packageName").toString();
-			String isInterface = v.getUserDatum("class.isInterface").toString();
-			String isAbstract = v.getUserDatum("class.isAbstract").toString();
-			String access = v.getUserDatum("class.access").toString();
-			String isException = v.getUserDatum("class.isException").toString();
-			String clusterName = v.getUserDatum("class.cluster").toString();
-			
-					
-			prefuse.data.Node node = prefuseGraph.addNode();
-			node.set("class.id", classID);
-			node.set("class.name", className);
-			node.set("class.jar", jar);
-			node.set("class.packageName", classPackageName);
-			node.set("class.isInterface", isInterface);
-			node.set("class.isAbstract", isAbstract);
-			node.set("class.access", access);
-			node.set("class.isException", isException);
-			node.set("node.isSelected", "false");
-			node.set("class.cluster", clusterName);
-			
-			addPackageJarCluster(classPackageName, jar, clusterName);
-		}
-	}
 	
-	private void addPackageJarCluster(String packageName, String jarName, String clusterName)
-	{
-		if(!packages.contains(packageName)) packages.add(packageName);
-		if(!jars.contains(jarName)) jars.add(jarName);
-		if(!clusters.contains(clusterName)) clusters.add(clusterName);
-	}
 	
-	private void addEdges() 
-	{
-		Iterator<?> iter = jungGraph.getEdges().iterator();
-		while(iter.hasNext())
-		{
-			edu.uci.ics.jung.graph.Edge jungEdge = (edu.uci.ics.jung.graph.Edge)iter.next();
-			String state = "";
-			if(removedEdges.contains(jungEdge)) state = "removed";
-			edu.uci.ics.jung.graph.Vertex jungVertex1 = (edu.uci.ics.jung.graph.Vertex) jungEdge.getEndpoints().getFirst();
-			edu.uci.ics.jung.graph.Vertex jungVertex2 = (edu.uci.ics.jung.graph.Vertex) jungEdge.getEndpoints().getSecond();
-			String jungSrcId = jungVertex1.getUserDatum("class.id").toString();
-			String jungDestId = jungVertex2.getUserDatum("class.id").toString();
-			String relationshipType = jungEdge.getUserDatum("relationship.type").toString();
-
-			prefuse.data.Node prefuseNodeSrc = null;
-			prefuse.data.Node prefuseNodeDest = null;
-			
-			int n = prefuseGraph.getNodeCount();
-			for(int j=0; j<n; j++)
-			{
-				prefuse.data.Node prefuseNode = prefuseGraph.getNode(j);
-				
-				if(jungSrcId.equals(prefuseNode.get("class.id"))) prefuseNodeSrc = prefuseNode;
-				if(jungDestId.equals(prefuseNode.get("class.id"))) prefuseNodeDest = prefuseNode;
-				if(prefuseNodeSrc!=null && prefuseNodeDest!=null)
-				{
-					prefuse.data.Edge edge = prefuseGraph.addEdge(prefuseNodeSrc, prefuseNodeDest);
-					edge.set("relationship.type", relationshipType);
-					edge.set("relationship.state", state);
-					edge.set("edge.isSelected", "false");
-					break;
-				}
-			}
-		}
-	}
-	
-	public Display getDisplay()//(prefuse.data.Graph prefuseGraph)
+	@SuppressWarnings("unchecked")
+	public Display getDisplay(prefuse.data.Graph prefuseGraph)
 	{
 		final Visualization vis = new Visualization();
 		AggregateTable at = vis.addAggregates("aggregates");

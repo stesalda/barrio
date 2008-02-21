@@ -1,5 +1,10 @@
 package nz.ac.massey.cs.barrio.visual;
 
+import java.awt.Insets;
+import java.awt.Rectangle;
+import java.awt.geom.Rectangle2D;
+
+import prefuse.Display;
 import prefuse.action.layout.graph.ForceDirectedLayout;
 import prefuse.util.force.ForceSimulator;
 import prefuse.visual.EdgeItem;
@@ -29,6 +34,7 @@ public class CustomFDL extends ForceDirectedLayout{
 
 	public CustomFDL(String arg0) {
 		super(arg0);
+		
 		// TODO Auto-generated constructor stub
 	}
 
@@ -43,4 +49,6 @@ public class CustomFDL extends ForceDirectedLayout{
 		// TODO Auto-generated method stub
 		return super.getSpringCoefficient(arg0)/10;
 	}	
+	
+
 }

@@ -1,20 +1,10 @@
 package nz.ac.massey.cs.barrio.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Frame;
-import java.awt.Panel;
-import java.awt.event.MouseWheelListener;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.swing.JFrame;
-import javax.swing.JPanel;
-import javax.xml.parsers.ParserConfigurationException;
 
 import nz.ac.massey.cs.barrio.clusterer.Clusterer;
 import nz.ac.massey.cs.barrio.clusterer.KnownClusterer;
@@ -28,11 +18,11 @@ import nz.ac.massey.cs.barrio.filters.NodeFilter;
 import nz.ac.massey.cs.barrio.inputReader.InputReader;
 import nz.ac.massey.cs.barrio.inputReader.KnownInputReader;
 import nz.ac.massey.cs.barrio.outputs.OutputGenrator;
+import nz.ac.massey.cs.barrio.visual.DisplayBuilder;
+import nz.ac.massey.cs.barrio.visual.DisplayUpdater;
 import nz.ac.massey.cs.barrio.visual.JungPrefuseBridge;
-import nz.ac.massey.cs.barrio.visual.PrefuseGraphBuilder;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
@@ -43,7 +33,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
-import org.xml.sax.SAXException;
 
 import prefuse.Display;
 import edu.uci.ics.jung.graph.Edge;
@@ -64,6 +53,7 @@ public class InputUI extends Composite{
 	
 	private List<String> activeFilters = new ArrayList<String>();
 	private List<Filter> knownFilters = new ArrayList<Filter>();
+	private DisplayUpdater updater = new DisplayUpdater();
 	
 	public InputUI(Composite parent, int style) {
 		   super(parent, style);
@@ -225,6 +215,8 @@ public class InputUI extends Composite{
 		super.dispose();
 	}
 	
+	
+	
 	private void checkboxClick(Button check)
 	{
 		if(check.getSelection())
@@ -232,6 +224,18 @@ public class InputUI extends Composite{
 			if(!activeFilters.contains(check.getText()))
 			{
 				activeFilters.add(check.getText());
+				
+				Iterator<Filter> filterIterator = knownFilters.iterator();
+				while (filterIterator.hasNext())
+				{
+					Filter knownFilter = filterIterator.next();
+					if(knownFilter.getName().equals(check.getText()))
+					{
+						filteredGraph = knownFilter.filter(filteredGraph).assemble();
+						updater.update(filteredGraph);
+					}
+				}
+				
 			}
 		}
 		else
@@ -239,24 +243,27 @@ public class InputUI extends Composite{
 			if(activeFilters.contains(check.getText()))
 			{
 				activeFilters.remove(check.getText());
+				filteredGraph = (Graph) graph.copy();
+				Iterator<Filter> filterIterator = knownFilters.iterator();
+				while (filterIterator.hasNext())
+				{
+					Filter knownFilter = filterIterator.next();
+					if(activeFilters.contains(knownFilter.getName()))
+					{
+						filteredGraph = knownFilter.filter(filteredGraph).assemble();
+					}
+				}
+				
+
+				updater.update(filteredGraph);
 			}
 		}
 		
-		Iterator<Filter> filterIterator = knownFilters.iterator();
-		while (filterIterator.hasNext())
-		{
-			Filter filter = filterIterator.next();
-			if(activeFilters.contains(filter.getName()))
-				filteredGraph = filter.filter(filteredGraph).assemble();
-		}
-	
-		btnRefreshClick(null, null);
-
-
 		
-//		System.out.println("[InputUI]: filters = "+activeFilters);
 	}
 	
+	
+		
 	private void btnBrowseClick()
 	{
 		new File(BarrioConstants.JUNG_GRAPH_FILE).delete();
@@ -282,7 +289,19 @@ public class InputUI extends Composite{
 		
 		filteredGraph = (Graph) graph.copy();
 		
+		JungPrefuseBridge bridge = new JungPrefuseBridge();
+		DisplayBuilder disBuilder = new DisplayBuilder();
+		Display dis = disBuilder.getDisplay(bridge.convert(filteredGraph));
+		dis.setLayout(new BorderLayout());
+		
+		
+		OutputUI.panelGraph.removeAll();
+		OutputUI.panelGraph.add(dis, 0);
+		OutputUI.panelGraph.doLayout();
+		OutputUI.panelGraph.repaint();
     }
+	
+	
 	
 	private void sliderMove(Label label, int value)
 	{
@@ -290,34 +309,26 @@ public class InputUI extends Composite{
 		separationLevel = value;
 	}
 	
-	private void btnRefreshClick(List<NodeFilter> nodeFilters, List<EdgeFilter> edgeFilters) {
-		// TODO Auto-generated method stub
-		//filter(nodeFilters, edgeFilters);
-		cluster();
-		
-		if(filteredGraph!=null){
-		OutputGenrator.clusteredGraph = filteredGraph;
-		OutputGenrator.generatePackagesWithMultipleClusters(OutputUI.treePwMC);
-		OutputUI.treePwMC.update();
-		OutputGenrator.generateClustersWithMuiltiplePackages(OutputUI.treeCwMP);
-		OutputUI.treeCwMP.update();
-		
-		List<String[]> list = new ArrayList<String[]>();
-		OutputGenrator.generateListRemovedEdges(list, removedEdges);
-		OutputUI.updateTable(list);
-		
-		PrefuseGraphBuilder pgb = new PrefuseGraphBuilder(filteredGraph, removedEdges);
-		pgb.buildPrefuseGraph();
-		//JungPrefuseBridge bridge = new JungPrefuseBridge();
-		//prefuse.data.Graph pGraph = bridge.convert(filteredGraph);
-		//System.out.println("[InputUI]: convert done "+pGraph.getNodeCount()+" "+pGraph.getEdgeCount());
-		Display dis = pgb.getDisplay();
-		dis.setLayout(new BorderLayout());
-		
-		OutputUI.panelGraph.removeAll();
-		OutputUI.panelGraph.add(dis, 0);
-		OutputUI.panelGraph.doLayout();
-		OutputUI.panelGraph.repaint();
+	
+	
+	private void btnRefreshClick(List<NodeFilter> nodeFilters, List<EdgeFilter> edgeFilters) 
+	{
+		if(filteredGraph!=null)
+		{
+			Graph clusteredGraph = (Graph) filteredGraph.copy();
+			cluster(clusteredGraph);
+			System.out.println("[InputUI]: clustered edges = "+clusteredGraph.getEdges().size());
+			OutputGenrator.clusteredGraph = clusteredGraph;
+			OutputGenrator.generatePackagesWithMultipleClusters(OutputUI.treePwMC);
+			OutputUI.treePwMC.update();
+			OutputGenrator.generateClustersWithMuiltiplePackages(OutputUI.treeCwMP);
+			OutputUI.treeCwMP.update();
+			
+			List<String[]> list = new ArrayList<String[]>();
+			OutputGenrator.generateListRemovedEdges(list, removedEdges);
+			OutputUI.updateTable(list);
+			
+			updater.update(clusteredGraph);
 		}
 	}
 	
@@ -330,48 +341,25 @@ public class InputUI extends Composite{
 		e.export(graph, filteredGraph, separationLevel, activeFilters, removedEdges, OutputUI.treePwMC, OutputUI.treeCwMP);
 	}
 	
-	private void filter(List<NodeFilter> nodeFilters, List<EdgeFilter> edgeFilters)
-	{
-		filteredGraph = (Graph) graph.copy();
-		
-		Iterator<NodeFilter> nodeFilterIterator = nodeFilters.iterator();
-		while (nodeFilterIterator.hasNext())
-		{
-			Filter nodeFilter = nodeFilterIterator.next();
-			if(activeFilters.contains(nodeFilter.getName())) {
-				System.out.println("[inputUI]: filter = "+nodeFilter.getName());
-				filteredGraph = nodeFilter.filter(filteredGraph).assemble();
-			}
-		}
-		
-		Iterator<EdgeFilter> edgeFilterIterator = edgeFilters.iterator();
-		while (edgeFilterIterator.hasNext())
-		{
-			Filter edgeFilter = edgeFilterIterator.next();
-			if(activeFilters.contains(edgeFilter.getName())) {
-				System.out.println("[inputUI]: filter = "+edgeFilter.getName());
-				filteredGraph = edgeFilter.filter(filteredGraph).assemble();
-			}
-		}
-	}
+	
 	
 	@SuppressWarnings("deprecation")
-	private void cluster()
+	private void cluster(Graph g)
 	{
 		Clusterer c = KnownClusterer.all().get(0);
-		c.cluster(filteredGraph, separationLevel);
+		c.cluster(g, separationLevel);
 		removedEdges = c.getEdgesRemoved();
-		removeEdges();
+		removeEdges(g);
 	}
 
 
-	private void removeEdges() 
+	private void removeEdges(Graph g) 
 	{
 		Iterator<Edge> iter = removedEdges.iterator();
 		while(iter.hasNext())
 		{
 			Edge e = iter.next();
-			filteredGraph.removeEdge(e);
+			g.removeEdge(e);
 		}
 		
 	}
