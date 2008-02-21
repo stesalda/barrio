@@ -38,8 +38,7 @@ public class DisplayUpdater {
 		
 	}
 	
-	
-	
+		
 	
 	@SuppressWarnings("unchecked")
 	private boolean existsVertex(String id, edu.uci.ics.jung.graph.Graph jungGraph)

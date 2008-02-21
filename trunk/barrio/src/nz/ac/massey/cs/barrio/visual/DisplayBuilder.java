@@ -19,6 +19,7 @@ import prefuse.activity.Activity;
 import prefuse.controls.PanControl;
 import prefuse.controls.ZoomControl;
 import prefuse.controls.ZoomToFitControl;
+import prefuse.data.Graph;
 import prefuse.data.Node;
 import prefuse.data.Tuple;
 import prefuse.data.expression.AbstractPredicate;
@@ -49,8 +50,10 @@ public class DisplayBuilder {
 	
 	
 	@SuppressWarnings("unchecked")
-	public Display getDisplay(prefuse.data.Graph prefuseGraph)
+	public Display getDisplay(Graph prefuseGraph)
 	{
+		setPackagesJars(prefuseGraph);
+		
 		final Visualization vis = new Visualization();
 		AggregateTable at = vis.addAggregates("aggregates");
         at.addColumn(VisualItem.POLYGON, float[].class);
@@ -246,5 +249,22 @@ public class DisplayBuilder {
 		dis.addControlListener(new AggregateDragControl());
 		
 		return dis;
+	}
+
+
+
+	@SuppressWarnings("unchecked")
+	private void setPackagesJars(Graph prefuseGraph) 
+	{
+		Iterator<Node> nodeIter = prefuseGraph.nodes();
+		while(nodeIter.hasNext())
+		{
+			Node node = nodeIter.next();
+			String pack = node.getString("class.packageName");
+			String jar = node.getString("class.jar");
+			if(!packages.contains(pack)) packages.add(pack);
+			if(!jars.contains(jar)) jars.add(jar);
+		}
+		
 	}
 }
