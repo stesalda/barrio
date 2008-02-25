@@ -80,21 +80,21 @@ public class DisplayBuilder {
         	aitem.setVisible(false);
         }
         
-        Iterator<String> clusterIter = clusters.iterator();
-        while(clusterIter.hasNext())
-        {
-        	AggregateItem aitem = (AggregateItem)at.addItem();
-        	String aCluster =  clusterIter.next();
-        	aitem.setString("type", "cluster");
-        	Iterator<Node> nodes = vg.nodes();
-        	while(nodes.hasNext())
-        	{
-        		prefuse.data.Node node = nodes.next();
-        		String cluster = node.getString("class.cluster");
-        		if(cluster.equals(aCluster)) aitem.addItem((VisualItem)node);
-        	}
-        	aitem.setVisible(false);
-        }
+//        Iterator<String> clusterIter = clusters.iterator();
+//        while(clusterIter.hasNext())
+//        {
+//        	AggregateItem aitem = (AggregateItem)at.addItem();
+//        	String aCluster =  clusterIter.next();
+//        	aitem.setString("type", "cluster");
+//        	Iterator<Node> nodes = vg.nodes();
+//        	while(nodes.hasNext())
+//        	{
+//        		prefuse.data.Node node = nodes.next();
+//        		String cluster = node.getString("class.cluster");
+//        		if(cluster.equals(aCluster)) aitem.addItem((VisualItem)node);
+//        	}
+//        	aitem.setVisible(false);
+//        }
 		
         Iterator<String> packs = packages.iterator();
         while(packs.hasNext())
