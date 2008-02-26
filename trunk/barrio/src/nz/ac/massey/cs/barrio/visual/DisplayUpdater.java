@@ -4,9 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import nz.ac.massey.cs.barrio.constants.BarrioConstants;
 import nz.ac.massey.cs.barrio.gui.OutputUI;
 import prefuse.Display;
-import prefuse.data.Node;
+import prefuse.data.Graph;
 import prefuse.visual.AggregateItem;
 import prefuse.visual.AggregateTable;
 import prefuse.visual.VisualGraph;
@@ -15,50 +16,49 @@ import prefuse.visual.VisualItem;
 public class DisplayUpdater {
 	
 	@SuppressWarnings("unchecked")
-	public void update(edu.uci.ics.jung.graph.Graph jungGraph)
+	private void update2(edu.uci.ics.jung.graph.Graph jungGraph)
 	{
 		if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
-		{
+		{			
 			Display display = (Display) OutputUI.panelGraph.getComponent(0);
-			Iterator<VisualItem> nodeIterator = display.getVisualization().getVisualGroup("graph.nodes").tuples();
-			Iterator<VisualItem> edgeIterator = display.getVisualization().getVisualGroup("graph.edges").tuples();
-			
 			List<String> clusterNames = new ArrayList<String>();
 			
-			while(nodeIterator.hasNext())
-			{
-				VisualItem node = nodeIterator.next();
-				String id = node.getString("class.id");
-				if(existsVertex(id, jungGraph)) 
-					node.setVisible(true); 
-				else node.setVisible(false);
-				
-				Iterator<edu.uci.ics.jung.graph.Vertex> vertexIterator = jungGraph.getVertices().iterator();
-				while(vertexIterator.hasNext())
-				{
-					String clusterName = node.getString("class.cluster");
-					edu.uci.ics.jung.graph.Vertex v = vertexIterator.next();
-					
-					if(id.equals(v.getUserDatum("class.id")))
-					{
-						node.set("class.cluster", clusterName);
-						if(!clusterNames.contains(clusterName)) clusterNames.add(clusterName);
-					}
-				}
-			}
-			
-			while(edgeIterator.hasNext())
-			{
-				VisualItem edge = edgeIterator.next();
-				String id = edge.getString("id");
-				if(existsEdge(id, jungGraph))
-					edge.setVisible(true);
-				else edge.setVisible(false);
-			}
-			
-			
+			updateVisibility(display, jungGraph);
 			removeOldAggregates(display);
+			updateClusterNames(clusterNames, display, jungGraph);
+			
+			System.out.println("[DisplayUpdater]: clusters = "+clusterNames);
+			
 			setNewAggregates(clusterNames, display);
+		}
+	}
+	
+	
+	
+
+
+	@SuppressWarnings("unchecked")
+	private void updateVisibility(Display display, edu.uci.ics.jung.graph.Graph jungGraph)
+	{
+		Iterator<VisualItem> nodeIterator = display.getVisualization().getVisualGroup(BarrioConstants.VISUAL_NODES).tuples();
+		Iterator<VisualItem> edgeIterator = display.getVisualization().getVisualGroup(BarrioConstants.VISUAL_EDGES).tuples();
+					
+		while(nodeIterator.hasNext())
+		{
+			VisualItem node = nodeIterator.next();
+			String id = node.getString("class.id");
+			if(existsVertex(id, jungGraph)) 
+				node.setVisible(true); 
+			else node.setVisible(false);
+		}
+		
+		while(edgeIterator.hasNext())
+		{
+			VisualItem edge = edgeIterator.next();
+			String id = edge.getString("id");
+			if(existsEdge(id, jungGraph))
+				edge.setVisible(true);
+			else edge.setVisible(false);
 		}
 	}
 	
@@ -67,12 +67,52 @@ public class DisplayUpdater {
 	@SuppressWarnings("unchecked")
 	private void removeOldAggregates(Display display)
 	{		
+		List<AggregateItem> items = new ArrayList<AggregateItem>();
+		
 		AggregateTable at = (AggregateTable) display.getVisualization().getVisualGroup("aggregates");
 		Iterator aitemIterator = at.tuples();
 		while(aitemIterator.hasNext())
 		{
 			AggregateItem aitem = (AggregateItem) aitemIterator.next();
-			if(aitem.getString("type").equals("cluster")) at.removeTuple(aitem);
+			if(aitem.getString("type").equals("cluster"))
+			{
+				
+				items.add(aitem);
+//				aitemIterator.remove();
+				//System.out.println("[DisplayUpdater]: Aggregate removed = "+at.removeTuple(aitem));
+			}
+		}
+		
+		for(AggregateItem item:items) {
+			at.removeTuple(item);
+		}
+	}
+	
+	
+	
+	@SuppressWarnings("unchecked")
+	private void updateClusterNames(List clusterNames, Display display, edu.uci.ics.jung.graph.Graph jungGraph) 
+	{
+		Iterator<edu.uci.ics.jung.graph.Vertex> vertexIterator = jungGraph.getVertices().iterator();
+		
+		while(vertexIterator.hasNext())
+		{
+			edu.uci.ics.jung.graph.Vertex v = vertexIterator.next();
+			String vertexId = v.getUserDatum("class.id").toString();
+			String vertexCluster = v.getUserDatum("class.cluster").toString();
+			if(!clusterNames.contains(vertexCluster)) clusterNames.add(vertexCluster);
+			
+			Iterator<VisualItem> nodeIterator = display.getVisualization().getVisualGroup(BarrioConstants.VISUAL_NODES).tuples();
+			while(nodeIterator.hasNext())
+			{
+				VisualItem node = nodeIterator.next();
+				String nodeId = node.getString("class.id");
+				if(vertexId.equals(nodeId))
+				{
+					node.set("class.cluster", vertexCluster);
+					break;
+				}
+			}
 		}
 	}
 	
@@ -80,21 +120,23 @@ public class DisplayUpdater {
 	@SuppressWarnings("unchecked")
 	private void setNewAggregates(List<String> clusterNames, Display display)
 	{
-		AggregateTable at = (AggregateTable) display.getVisualization().getVisualGroup("aggregates");
-		VisualGraph vg = (VisualGraph) display.getVisualization().getVisualGroup("graph");
+		AggregateTable at = (AggregateTable) display.getVisualization().getVisualGroup(BarrioConstants.VISUAL_AGGREGATES);
+		VisualGraph vg = (VisualGraph) display.getVisualization().getVisualGroup(BarrioConstants.VISUAL_GRAPH);
 		
 		Iterator<String> clusterIter = clusterNames.iterator();
 		while(clusterIter.hasNext())
 		{
-			AggregateItem aitem = (AggregateItem)at.addItem();
 			String aCluster =  clusterIter.next();
+			
+			AggregateItem aitem = (AggregateItem)at.addItem();
 			aitem.setString("type", "cluster");
-			Iterator<Node> nodes = vg.nodes();
+			
+			Iterator<VisualItem> nodes = vg.nodes();
 			while(nodes.hasNext())
 			{
-				prefuse.data.Node node = nodes.next();
+				VisualItem node = nodes.next();
 				String cluster = node.getString("class.cluster");
-				if(cluster.equals(aCluster)) aitem.addItem((VisualItem)node);
+				if(cluster.equals(aCluster)) aitem.addItem(node);
 			}
 			aitem.setVisible(false);
 		}

@@ -232,7 +232,6 @@ public class InputUI extends Composite{
 					if(knownFilter.getName().equals(check.getText()))
 					{
 						filteredGraph = knownFilter.filter(filteredGraph).assemble();
-						updater.update(filteredGraph);
 					}
 				}
 				
@@ -253,13 +252,8 @@ public class InputUI extends Composite{
 						filteredGraph = knownFilter.filter(filteredGraph).assemble();
 					}
 				}
-				
-
-				updater.update(filteredGraph);
 			}
 		}
-		
-		
 	}
 	
 	
@@ -289,16 +283,7 @@ public class InputUI extends Composite{
 		
 		filteredGraph = (Graph) graph.copy();
 		
-		JungPrefuseBridge bridge = new JungPrefuseBridge();
-		DisplayBuilder disBuilder = new DisplayBuilder();
-		Display dis = disBuilder.getDisplay(bridge.convert(filteredGraph));
-		dis.setLayout(new BorderLayout());
-		
-		
-		OutputUI.panelGraph.removeAll();
-		OutputUI.panelGraph.add(dis, 0);
-		OutputUI.panelGraph.doLayout();
-		OutputUI.panelGraph.repaint();
+		updateDisplay(filteredGraph);
     }
 	
 	
@@ -328,7 +313,7 @@ public class InputUI extends Composite{
 			OutputGenrator.generateListRemovedEdges(list, removedEdges);
 			OutputUI.updateTable(list);
 			
-			updater.update(clusteredGraph);
+			updateDisplay(clusteredGraph);
 		}
 	}
 	
@@ -361,6 +346,21 @@ public class InputUI extends Composite{
 			Edge e = iter.next();
 			g.removeEdge(e);
 		}
+	}
+	
+	
+	private void updateDisplay(Graph jungGraph)
+	{
+		JungPrefuseBridge bridge = new JungPrefuseBridge();
+		DisplayBuilder disBuilder = new DisplayBuilder();
+		Display dis = disBuilder.getDisplay(bridge.convert(jungGraph));
+		dis.setLayout(new BorderLayout());
 		
+		
+		OutputUI.panelGraph.removeAll();
+		OutputUI.checkboxInit();
+		OutputUI.panelGraph.add(dis, 0);
+		OutputUI.panelGraph.doLayout();
+		OutputUI.panelGraph.repaint();
 	}
 }
