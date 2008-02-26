@@ -56,6 +56,8 @@ public class JungPrefuseBridge {
 				out.println("\" attr.type=\"string\" />");
 			}
 			
+			if(jungGraph.getEdges().size()>0)
+			{
 			Iterator iter2 = jungGraph.getEdges().iterator();
 			edu.uci.ics.jung.graph.Edge edge = (edu.uci.ics.jung.graph.Edge) iter2.next();
 			Iterator<String> keyIter2 = edge.getUserDatumKeyIterator();
@@ -68,7 +70,7 @@ public class JungPrefuseBridge {
 				out.print(key);
 				out.println("\" attr.type=\"string\" />");
 			}
-			
+			}
 
 			out.println();
 			out.println("<!-- nodes -->");

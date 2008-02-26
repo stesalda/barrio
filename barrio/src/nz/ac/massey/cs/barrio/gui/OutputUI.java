@@ -12,6 +12,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+import nz.ac.massey.cs.barrio.constants.BarrioConstants;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.layout.GridData;
@@ -23,6 +25,7 @@ import org.eclipse.swt.widgets.Tree;
 
 import prefuse.Display;
 import prefuse.visual.AggregateItem;
+import prefuse.visual.AggregateTable;
 
 public class OutputUI extends Composite{
 	
@@ -32,6 +35,10 @@ public class OutputUI extends Composite{
 	public static Panel panelGraph;
 	
 	private static JTable table;
+	
+	private final static JCheckBox checkJars = new JCheckBox("View Jars");
+	private final static JCheckBox checkPacks = new JCheckBox("View Packages");
+	private final static JCheckBox checkClusters = new JCheckBox("View Clusters");
 	
 	public OutputUI(Composite parent, int style) {
 		super(parent, style);
@@ -110,21 +117,20 @@ public class OutputUI extends Composite{
 		}; 
 		Panel controls = new Panel(null);
 		controls.setBounds(5, 25, 120,60);
-		final JCheckBox checkJars = new JCheckBox("View Jars");
 		checkJars.setBounds(0,0,120,20);
 		checkJars.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				checkJarActionPerformed(evt, checkJars.isSelected());
 			}
 		});
-		final JCheckBox checkPacks = new JCheckBox("View Packages");
+		
 		checkPacks.setBounds(0,20,120,20);
 		checkPacks.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				checkPacksActionPerformed(evt, checkPacks.isSelected());
 			}
 		});
-		final JCheckBox checkClusters = new JCheckBox("View Clusters");
+		
 		checkClusters.setBounds(0,40,120,20);
 		checkClusters.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
@@ -159,7 +165,8 @@ public class OutputUI extends Composite{
 		Display dis = (Display) panelGraph.getComponent(0);
 		if(dis!=null)
 		{
-			Iterator i = dis.getVisualization().getVisualGroup("aggregates").tuples();
+			AggregateTable at = (AggregateTable) dis.getVisualization().getVisualGroup(BarrioConstants.VISUAL_AGGREGATES);
+			Iterator i = at.tuples();
 			while(i.hasNext())
 			{
 				AggregateItem ai = ((AggregateItem)i.next());
@@ -186,8 +193,11 @@ public class OutputUI extends Composite{
 	}
 
 
-	protected void checkboxClick() {
-		// TODO Auto-generated method stub
+	public static void checkboxInit() 
+	{
+		checkClusters.setSelected(false);
+		checkJars.setSelected(false);
+		checkPacks.setSelected(false);
 		
 	}
 
