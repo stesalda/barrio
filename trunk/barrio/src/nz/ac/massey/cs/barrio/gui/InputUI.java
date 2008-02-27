@@ -69,7 +69,7 @@ public class InputUI extends Composite{
 	protected static Composite comp;
 	
 	public InputUI(Composite parent, int style) {
-		   super(parent, style);
+		   super(parent, SWT.BORDER);
 		   this.setLayout(new GridLayout());
 		   GridData separatorData = new GridData(GridData.FILL_HORIZONTAL);
 		   separatorData.widthHint = 200;
@@ -184,7 +184,8 @@ public class InputUI extends Composite{
 		   
 		   
 		   //visual display controls ----------------------------------------
-		   comp = new Composite(this, SWT.NONE);
+		   comp = new Composite(this, SWT.BORDER);
+		   comp.setBounds(15, 500, 150, 90);
 		   comp.setVisible(false);
 		   final Button btnUp = new Button(comp, SWT.ARROW|SWT.UP);
 		   btnUp.setBounds(50,0,20,20);
@@ -204,6 +205,7 @@ public class InputUI extends Composite{
 		   Button btnDown = new Button(comp, SWT.ARROW|SWT.DOWN);
 		   btnDown.setBounds(50,50,20,20);
 		   //----------------------------------------------------------------
+		   
 		   
 		   
 		   //Events
