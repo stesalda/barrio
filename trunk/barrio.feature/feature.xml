@@ -2,7 +2,7 @@
 <feature
       id="barrio.feature"
       label="Barrio Feature"
-      version="1.0.0"
+      version="1.0.1"
       plugin="barrio">
 
    <description url="http://code.google.com/p/barrio/">
@@ -78,76 +78,76 @@ You may add Your own copyright statement to Your modifications and may provide a
          id="barrio"
          download-size="0"
          install-size="0"
-         version="0.0.0"/>
+         version="1.0.1"/>
 
    <plugin
          id="barrio.betweennessClusterer"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.1"
          unpack="false"/>
 
    <plugin
          id="barrio.exceptionFilter"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.1"
          unpack="false"/>
 
    <plugin
          id="barrio.extendsFilter"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.1"
          unpack="false"/>
 
    <plugin
          id="barrio.filterAbstract"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.1"
          unpack="false"/>
 
    <plugin
          id="barrio.implementsFilter"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.1"
          unpack="false"/>
 
    <plugin
          id="barrio.interfaceFilter"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.1"
          unpack="false"/>
 
    <plugin
          id="barrio.nonAbstractFilter"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.1"
          unpack="false"/>
 
    <plugin
          id="barrio.nonPublicFilter"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.1"
          unpack="false"/>
 
    <plugin
          id="barrio.odemReader"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.1"
          unpack="false"/>
 
    <plugin
          id="barrio.xmlExporter"
          download-size="0"
          install-size="0"
-         version="0.0.0"
+         version="1.0.1"
          unpack="false"/>
 
 </feature>
