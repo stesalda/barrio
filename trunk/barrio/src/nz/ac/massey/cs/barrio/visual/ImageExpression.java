@@ -29,19 +29,19 @@ public class ImageExpression extends AbstractExpression{
 		boolean isClass = !isI && !isE;
 		
 		
-		if(isI && isP) return "images/ip.png";
-		if(isI) return "images/interface.png";
+		if(isI && isP) return getFilePath("images/ip.png");
+		if(isI) return getFilePath("images/interface.png");
 		
-		if(isE && isP && isA) return "images/epa.png";
-		if(isE && isP) return "images/ep.png";
-		if(isE && isA) return "images/ea.png";
-		if(isE) return "images/exception.png";
+		if(isE && isP && isA) return getFilePath("images/epa.png");
+		if(isE && isP) return getFilePath("images/ep.png");
+		if(isE && isA) return getFilePath("images/ea.png");
+		if(isE) return getFilePath("images/exception.png");
 		
-		if(isClass && isP && isA) return "images/cpa.png";
-		if(isClass && isP) return "images/cp.png";
-		if(isClass && isA) return "images/ca.png";
-		if(isClass) return ImageExpression.class.getResource("images/class.png").toString();
-		
+		if(isClass && isP && isA) return getFilePath("images/cpa.png");
+		if(isClass && isP) return getFilePath("images/cp.png");
+		if(isClass && isA) return getFilePath("images/ca.png");
+		if(isClass) return getFilePath("images/class.png");
+
 		return null;
 	}
 
@@ -50,4 +50,8 @@ public class ImageExpression extends AbstractExpression{
 		return String.class;
 	}
 
+	private String getFilePath(String path)
+	{
+		return ImageExpression.class.getResource(path).getFile();
+	}
 }
