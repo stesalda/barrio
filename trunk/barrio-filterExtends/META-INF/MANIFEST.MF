@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Barrio Extends Filter Plug-in
 Bundle-SymbolicName: barrio.extendsFilter;singleton:=true
-Bundle-Version: 1.0.0
+Bundle-Version: 1.0.1
 Bundle-Activator: nz.ac.massey.cs.barrio.extendsFilter.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
