@@ -394,7 +394,7 @@ public class InputUI extends Composite{
 		FileDialog dlg = new FileDialog(shell, SWT.OPEN);
 		dlg.setFilterNames(new String[] { "ODEM Files","XML Files", "All Files" });
 		dlg.setFilterExtensions(new String[] { "*.odem", "*.xml", "*.*" });
-		dlg.setFilterPath(" ");
+		dlg.setFilterPath(InputUI.class.getResource("").toString());
 	    String filename = dlg.open();
 	    shell.close();
 	    
