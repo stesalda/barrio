@@ -16,6 +16,8 @@ import nz.ac.massey.cs.barrio.constants.BarrioConstants;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -45,7 +47,7 @@ public class OutputUI extends Composite{
 		this.setLayout(new GridLayout());
 		GridData tabData = new GridData(GridData.FILL_BOTH);
 		
-		TabFolder tabFolder = new TabFolder(this, SWT.BORDER);
+		final TabFolder tabFolder = new TabFolder(this, SWT.BORDER);
 		TabItem itemProject = new TabItem(tabFolder, SWT.NONE);
 	    itemProject.setText("Project description");
 	    TabItem itemPwMC = new TabItem(tabFolder, SWT.NONE);
@@ -54,7 +56,7 @@ public class OutputUI extends Composite{
 	    itemCwMP.setText("Clusters with multiple packages");
 	    TabItem itemRE = new TabItem(tabFolder, SWT.NONE);
 	    itemRE.setText("Removed edges");
-	    TabItem itemGraph = new TabItem(tabFolder, SWT.NONE);
+	    final TabItem itemGraph = new TabItem(tabFolder, SWT.NONE);
 	    itemGraph.setText("Dependency graph");
 	    tabFolder.setLayoutData(tabData);
 	    
@@ -143,9 +145,31 @@ public class OutputUI extends Composite{
 		frame.add(controls);
 		frame.add(panelGraph);
 		itemGraph.setControl(graphVis);
+		tabFolder.addSelectionListener(new SelectionListener(){
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void widgetSelected(SelectionEvent e) {
+				graphFolderSelected(tabFolder, itemGraph);
+				
+			}
+			
+		});
 	}
 	
 	
+	protected void graphFolderSelected(TabFolder tabFolder, TabItem itemGraph) 
+	{
+		if(tabFolder.getSelectionIndex()==tabFolder.indexOf(itemGraph))
+			InputUI.comp.setVisible(true);
+		else InputUI.comp.setVisible(false);
+		
+	}
+
+
 	protected void checkPacksActionPerformed(ActionEvent evt, boolean b) {
 		Display dis = (Display) panelGraph.getComponent(0);
 		if(dis!=null)

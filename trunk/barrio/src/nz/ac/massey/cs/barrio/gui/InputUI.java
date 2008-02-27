@@ -1,6 +1,8 @@
 package nz.ac.massey.cs.barrio.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Point;
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -23,18 +25,27 @@ import nz.ac.massey.cs.barrio.visual.DisplayUpdater;
 import nz.ac.massey.cs.barrio.visual.JungPrefuseBridge;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
 
 import prefuse.Display;
+import prefuse.Visualization;
+import prefuse.util.GraphicsLib;
+import prefuse.util.display.DisplayLib;
 import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.filters.Filter;
@@ -54,6 +65,8 @@ public class InputUI extends Composite{
 	private List<String> activeFilters = new ArrayList<String>();
 	private List<Filter> knownFilters = new ArrayList<Filter>();
 	private DisplayUpdater updater = new DisplayUpdater();
+	private boolean pan = false;
+	protected static Composite comp;
 	
 	public InputUI(Composite parent, int style) {
 		   super(parent, style);
@@ -170,6 +183,29 @@ public class InputUI extends Composite{
 		   
 		   
 		   
+		   //visual display controls ----------------------------------------
+		   comp = new Composite(this, SWT.NONE);
+		   comp.setVisible(false);
+		   final Button btnUp = new Button(comp, SWT.ARROW|SWT.UP);
+		   btnUp.setBounds(50,0,20,20);
+		   Button btnLeft = new Button(comp, SWT.ARROW|SWT.LEFT);
+		   btnLeft.setBounds(0,25,20,20);
+		   Button btnZoomOut = new Button(comp, SWT.PUSH);
+		   btnZoomOut.setBounds(25,25,20,20);
+		   btnZoomOut.setText("-");
+		   Button btnZoomToFit = new Button(comp, SWT.PUSH);
+		   btnZoomToFit.setBounds(50,25,20,20);
+		   btnZoomToFit.setText("=");
+		   Button btnZoomIn = new Button(comp, SWT.PUSH);
+		   btnZoomIn.setBounds(75,25,20,20);
+		   btnZoomIn.setText("+");
+		   Button btnRight = new Button(comp, SWT.ARROW|SWT.RIGHT);
+		   btnRight.setBounds(100,25,20,20);
+		   Button btnDown = new Button(comp, SWT.ARROW|SWT.DOWN);
+		   btnDown.setBounds(50,50,20,20);
+		   //----------------------------------------------------------------
+		   
+		   
 		   //Events
 		   btnBrowse.addSelectionListener(new SelectionListener() {
 			      public void widgetDefaultSelected(SelectionEvent e) {
@@ -207,6 +243,95 @@ public class InputUI extends Composite{
 			    	  btnExportClick();
 			      }  
 		   });
+
+		   final double panValue = 100;
+		   final long duration = 1000;
+		   btnUp.addSelectionListener(new SelectionListener(){
+				public void widgetDefaultSelected(SelectionEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+	
+				public void widgetSelected(SelectionEvent e) {
+					((Display)OutputUI.panelGraph.getComponent(0)).animatePan(0, 0-panValue, duration);
+				}
+				   
+			   });
+		   
+		   btnDown.addSelectionListener(new SelectionListener(){
+				public void widgetDefaultSelected(SelectionEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				public void widgetSelected(SelectionEvent e) {
+					((Display)OutputUI.panelGraph.getComponent(0)).animatePan(0, panValue, duration);
+				}
+				   
+			   });
+		   
+		   btnLeft.addSelectionListener(new SelectionListener(){
+				public void widgetDefaultSelected(SelectionEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				public void widgetSelected(SelectionEvent e) {
+					((Display)OutputUI.panelGraph.getComponent(0)).animatePan(0-panValue, 0, duration);
+				}
+				   
+			   });
+		   
+		   btnRight.addSelectionListener(new SelectionListener(){
+				public void widgetDefaultSelected(SelectionEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				public void widgetSelected(SelectionEvent e) {
+					((Display)OutputUI.panelGraph.getComponent(0)).animatePan(panValue, 0, duration);
+				}
+				   
+			   });
+		   
+		   btnZoomIn.addSelectionListener(new SelectionListener(){
+				public void widgetDefaultSelected(SelectionEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				public void widgetSelected(SelectionEvent e) {
+					Display display = (Display)OutputUI.panelGraph.getComponent(0);
+					display.animateZoom(new Point(display.getWidth()/2, display.getHeight()/2), 1.2, duration);
+				}
+				   
+			   });
+		   
+		   btnZoomOut.addSelectionListener(new SelectionListener(){
+				public void widgetDefaultSelected(SelectionEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				public void widgetSelected(SelectionEvent e) {
+					Display display = (Display)OutputUI.panelGraph.getComponent(0);
+					display.animateZoom(new Point(display.getWidth()/2, display.getHeight()/2), 0.8, duration);
+				}
+				   
+			   });
+		   
+		   btnZoomToFit.addSelectionListener(new SelectionListener(){
+				public void widgetDefaultSelected(SelectionEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+
+				public void widgetSelected(SelectionEvent e) {
+					Display display = (Display)OutputUI.panelGraph.getComponent(0);
+					DisplayLib.fitViewToBounds(display,display.getVisualization().getBounds(Visualization.ALL_ITEMS), duration); 
+				}
+				   
+			   });
 		   
 	}
 	
@@ -355,7 +480,6 @@ public class InputUI extends Composite{
 		DisplayBuilder disBuilder = new DisplayBuilder();
 		Display dis = disBuilder.getDisplay(bridge.convert(jungGraph));
 		dis.setLayout(new BorderLayout());
-		
 		
 		OutputUI.panelGraph.removeAll();
 		OutputUI.checkboxInit();
