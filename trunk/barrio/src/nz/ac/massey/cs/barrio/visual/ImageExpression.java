@@ -40,7 +40,7 @@ public class ImageExpression extends AbstractExpression{
 		if(isClass && isP && isA) return "images/cpa.png";
 		if(isClass && isP) return "images/cp.png";
 		if(isClass && isA) return "images/ca.png";
-		if(isClass) return "images/class.png";
+		if(isClass) return ImageExpression.class.getResource("images/class.png").toString();
 		
 		return null;
 	}
