@@ -50,22 +50,23 @@ import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.filters.Filter;
 import edu.uci.ics.jung.io.GraphMLFile;
+import edu.uci.ics.jung.utils.UserData;
 
 public class InputUI extends Composite{
 	
-	private Graph graph = null;
-	private Graph filteredGraph = null;
-	private int separationLevel = 0;
+	private Graph initGraph = null;
+	private Graph finalGraph = null;
 	private List<Edge> removedEdges = null;
 	
 	private Button btnBrowse;
 	private Button btnRefresh;
 	private Button btnExport;
-	
+
 	private List<String> activeFilters = new ArrayList<String>();
+	private List<String> previousFilters = new ArrayList<String>();
 	private List<Filter> knownFilters = new ArrayList<Filter>();
-	private List<String> currentState = new ArrayList<String>();
-	private List<String> previousState = new ArrayList<String>();
+	private int separationLevel = 0;
+	private int lastSeparationLevel = 0;
 	protected static Composite comp;
 	
 	public InputUI(Composite parent, int style) {
@@ -347,7 +348,7 @@ public class InputUI extends Composite{
 				}
 				   
 			   });
-		   
+		   updateUI();
 	}
 	
 		
@@ -359,57 +360,22 @@ public class InputUI extends Composite{
 	
 	private void checkboxClick(Button check)
 	{
-//		if(check.getSelection())
-//		{
-//			if(!activeFilters.contains(check.getText()))
-//			{
-//				activeFilters.add(check.getText());
-//				
-//				Iterator<Filter> filterIterator = knownFilters.iterator();
-//				while (filterIterator.hasNext())
-//				{
-//					Filter knownFilter = filterIterator.next();
-//					if(knownFilter.getName().equals(check.getText()))
-//					{
-//						filteredGraph = knownFilter.filter(filteredGraph).assemble();
-//					}
-//				}
-//				
-//			}
-//		}
-//		else
-//		{
-//			if(activeFilters.contains(check.getText()))
-//			{
-//				activeFilters.remove(check.getText());
-//				filteredGraph = (Graph) graph.copy();
-//				Iterator<Filter> filterIterator = knownFilters.iterator();
-//				while (filterIterator.hasNext())
-//				{
-//					Filter knownFilter = filterIterator.next();
-//					if(activeFilters.contains(knownFilter.getName()))
-//					{
-//						filteredGraph = knownFilter.filter(filteredGraph).assemble();
-//					}
-//				}
-//			}
-//		}
+		if(check.getSelection()) activeFilters.add(check.getText());
+		else activeFilters.remove(check.getText());
 		
 		updateUI();
 	}
 	
-	
 	private void updateUI()
 	{
-		if(currentState.equals(previousState)) btnRefresh.setEnabled(false);
-		else btnRefresh.setEnabled(true);
+		if(initGraph!=null)
+		{
+			if(previousFilters.equals(activeFilters) && lastSeparationLevel==separationLevel) 
+				btnRefresh.setEnabled(false);
+			else btnRefresh.setEnabled(true);
+		}else btnRefresh.setEnabled(false);
 	}
 	
-	private boolean isTheSame(List<String> currentState, List<String> previousState)
-	{
-		if(currentState.size() != previousState.size()) return false;
-		else return true;
-	}
 		
 	private void btnBrowseClick()
 	{
@@ -420,7 +386,6 @@ public class InputUI extends Composite{
 		FileDialog dlg = new FileDialog(shell, SWT.OPEN);
 		dlg.setFilterNames(new String[] { "ODEM Files","XML Files", "All Files" });
 		dlg.setFilterExtensions(new String[] { "*.odem", "*.xml", "*.*" });
-		dlg.setFilterPath(InputUI.class.getResource("").toString());
 	    String filename = dlg.open();
 	    shell.close();
 	    
@@ -428,85 +393,108 @@ public class InputUI extends Composite{
 		InputReader reader = readers.get(0);
 		reader.read(filename);
   	  	
-  	  	graph = new GraphMLFile().load(BarrioConstants.JUNG_GRAPH_FILE);
-  	  	
-  	  	OutputGenrator.initGraph = graph;
-		OutputGenrator.generateProjectDescription(OutputUI.treeProject);
-		OutputUI.treeProject.update();
-		
-		filteredGraph = (Graph) graph.copy();
-		
-		updateDisplay(filteredGraph);
-    }
+  	  	initGraph = new GraphMLFile().load(BarrioConstants.JUNG_GRAPH_FILE);
+  	  			
+		processGraph();
+		updateOutputs(true);
+	}
 	
+	
+	private void btnRefreshClick(List<NodeFilter> nodeFilters, List<EdgeFilter> edgeFilters) 
+	{
+		processGraph();
+		updateUI();
+		updateOutputs(false);
+	}
 	
 	
 	private void sliderMove(Label label, int value)
 	{
 		label.setText("Separation level = "+ value);
 		separationLevel = value;
+		updateUI();
 	}
-	
-	
-	
-	private void btnRefreshClick(List<NodeFilter> nodeFilters, List<EdgeFilter> edgeFilters) 
-	{
-		if(filteredGraph!=null)
-		{
-			Graph clusteredGraph = (Graph) filteredGraph.copy();
-			cluster(clusteredGraph);
-			System.out.println("[InputUI]: clustered edges = "+clusteredGraph.getEdges().size());
-			OutputGenrator.clusteredGraph = clusteredGraph;
-			OutputGenrator.generatePackagesWithMultipleClusters(OutputUI.treePwMC);
-			OutputUI.treePwMC.update();
-			OutputGenrator.generateClustersWithMuiltiplePackages(OutputUI.treeCwMP);
-			OutputUI.treeCwMP.update();
-			
-			List<String[]> list = new ArrayList<String[]>();
-			OutputGenrator.generateListRemovedEdges(list, removedEdges);
-			OutputUI.updateTable(list);
-			
-			updateDisplay(clusteredGraph);
-		}
-	}
-	
 	
 	private void btnExportClick()
 	{
 		List<Exporter> exporters = KnownExporter.all();
 		Exporter e = exporters.get(0);
 		
-		e.export(graph, filteredGraph, separationLevel, activeFilters, removedEdges, OutputUI.treePwMC, OutputUI.treeCwMP);
+		e.export(initGraph, finalGraph, separationLevel, activeFilters, removedEdges, OutputUI.treePwMC, OutputUI.treeCwMP);
 	}
 	
 	
 	
-	@SuppressWarnings("deprecation")
-	private void cluster(Graph g)
+	private void processGraph()
+	{
+		finalGraph = (Graph) initGraph.copy();
+		filterGraph();
+		clusterGraph();
+	}
+	
+	private void filterGraph()
+	{
+		if(needFiltering())
+			for(Filter filter:knownFilters)
+			{
+				Filter f = filter;
+				if(activeFilters.contains(f.getName()))
+				{
+					finalGraph = f.filter(finalGraph).assemble();
+				}
+			}
+	}
+	
+	private boolean needFiltering()
+	{
+		return !previousFilters.equals(activeFilters);
+	}
+	
+	private void clusterGraph()
 	{
 		Clusterer c = KnownClusterer.all().get(0);
-		c.cluster(g, separationLevel);
+		c.cluster(finalGraph, separationLevel);
 		removedEdges = c.getEdgesRemoved();
-		removeEdges(g);
-	}
-
-
-	private void removeEdges(Graph g) 
-	{
-		Iterator<Edge> iter = removedEdges.iterator();
-		while(iter.hasNext())
+		
+		for(Edge e:removedEdges)
 		{
-			Edge e = iter.next();
-			g.removeEdge(e);
+			e.setUserDatum("relationship.state", "removed", UserData.SHARED);
 		}
 	}
 	
 	
-	private void updateDisplay(Graph jungGraph)
+	private void updateOutputs(boolean isInit)
+	{
+		if(isInit)
+		{
+			OutputGenrator.initGraph = initGraph;
+			OutputGenrator.generateProjectDescription(OutputUI.treeProject);
+			OutputUI.treeProject.update();
+		}
+		
+		OutputGenrator.clusteredGraph = finalGraph;
+		OutputGenrator.generatePackagesWithMultipleClusters(OutputUI.treePwMC);
+		OutputUI.treePwMC.update();
+		OutputGenrator.generateClustersWithMuiltiplePackages(OutputUI.treeCwMP);
+		OutputUI.treeCwMP.update();
+		
+		List<String[]> list = new ArrayList<String[]>();
+		OutputGenrator.generateListRemovedEdges(list, removedEdges);
+		OutputUI.updateTable(list);
+		
+		previousFilters = new ArrayList<String>(activeFilters);
+		lastSeparationLevel = separationLevel;
+		
+		updateDisplay();
+	}
+	
+	
+	
+	private void updateDisplay()
 	{
 		JungPrefuseBridge bridge = new JungPrefuseBridge();
 		DisplayBuilder disBuilder = new DisplayBuilder();
-		Display dis = disBuilder.getDisplay(bridge.convert(jungGraph));
+		Display dis = disBuilder.getDisplay(bridge.convert(finalGraph));
 		dis.setLayout(new BorderLayout());
 		
 		OutputUI.panelGraph.removeAll();
