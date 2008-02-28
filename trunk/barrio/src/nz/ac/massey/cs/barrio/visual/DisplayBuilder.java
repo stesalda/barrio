@@ -218,7 +218,6 @@ public class DisplayBuilder {
         
 
         LabelRenderer lr = new LabelRenderer("class.expression", "class.icon");
-//        LabelRenderer lr = new LabelRenderer("class.name");
         lr.setImagePosition(Constants.LEFT);
         lr.setImageTextPadding(5);
         lr.setRoundedCorner(8,8);
