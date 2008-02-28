@@ -64,12 +64,12 @@ public class InputUI extends Composite{
 	
 	private List<String> activeFilters = new ArrayList<String>();
 	private List<Filter> knownFilters = new ArrayList<Filter>();
-	private DisplayUpdater updater = new DisplayUpdater();
-	private boolean pan = false;
+	private List<String> currentState = new ArrayList<String>();
+	private List<String> previousState = new ArrayList<String>();
 	protected static Composite comp;
 	
 	public InputUI(Composite parent, int style) {
-		   super(parent, SWT.BORDER);
+		   super(parent, SWT.NONE);
 		   this.setLayout(new GridLayout());
 		   GridData separatorData = new GridData(GridData.FILL_HORIZONTAL);
 		   separatorData.widthHint = 200;
@@ -184,26 +184,39 @@ public class InputUI extends Composite{
 		   
 		   
 		   //visual display controls ----------------------------------------
-		   comp = new Composite(this, SWT.BORDER);
+		   comp = new Composite(this, SWT.NONE);
 		   comp.setBounds(15, 500, 150, 90);
 		   comp.setVisible(false);
+		   
+		   int y = 100;
+		   
 		   final Button btnUp = new Button(comp, SWT.ARROW|SWT.UP);
-		   btnUp.setBounds(50,0,20,20);
+		   btnUp.setBounds(50,y,20,20);
 		   Button btnLeft = new Button(comp, SWT.ARROW|SWT.LEFT);
-		   btnLeft.setBounds(0,25,20,20);
+		   btnLeft.setBounds(0,y+25,20,20);
 		   Button btnZoomOut = new Button(comp, SWT.PUSH);
-		   btnZoomOut.setBounds(25,25,20,20);
+		   btnZoomOut.setBounds(25,y+25,20,20);
 		   btnZoomOut.setText("-");
 		   Button btnZoomToFit = new Button(comp, SWT.PUSH);
-		   btnZoomToFit.setBounds(50,25,20,20);
+		   btnZoomToFit.setBounds(50,y+25,20,20);
 		   btnZoomToFit.setText("=");
 		   Button btnZoomIn = new Button(comp, SWT.PUSH);
-		   btnZoomIn.setBounds(75,25,20,20);
+		   btnZoomIn.setBounds(75,y+25,20,20);
 		   btnZoomIn.setText("+");
 		   Button btnRight = new Button(comp, SWT.ARROW|SWT.RIGHT);
-		   btnRight.setBounds(100,25,20,20);
+		   btnRight.setBounds(100,y+25,20,20);
 		   Button btnDown = new Button(comp, SWT.ARROW|SWT.DOWN);
-		   btnDown.setBounds(50,50,20,20);
+		   btnDown.setBounds(50,y+50,20,20);
+		   
+		   Button checkContainers = new Button(comp, SWT.CHECK);
+		   checkContainers.setText("View Containers");
+		   checkContainers.setBounds(0, y+70, 100, 20);
+		   Button checkPackages = new Button(comp, SWT.CHECK);
+		   checkPackages.setText("View Packages");
+		   checkPackages.setBounds(0, y+90, 100, 20);
+		   Button checkDependencyClauster = new Button(comp, SWT.CHECK);
+		   checkDependencyClauster.setText("View Dependency Clusters");
+		   checkDependencyClauster.setBounds(0, y+110, 100, 20);
 		   //----------------------------------------------------------------
 		   
 		   
@@ -381,8 +394,16 @@ public class InputUI extends Composite{
 				}
 			}
 		}
+		
+		updateUI();
 	}
 	
+	
+	private void updateUI()
+	{
+		if(currentState.equals(previousState)) btnRefresh.setEnabled(false);
+		else btnRefresh.setEnabled(true);
+	}
 	
 		
 	private void btnBrowseClick()
