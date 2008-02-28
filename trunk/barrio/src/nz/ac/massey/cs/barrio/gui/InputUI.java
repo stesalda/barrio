@@ -210,13 +210,13 @@ public class InputUI extends Composite{
 		   
 		   Button checkContainers = new Button(comp, SWT.CHECK);
 		   checkContainers.setText("View Containers");
-		   checkContainers.setBounds(0, y+70, 100, 20);
+		   checkContainers.setBounds(0, y+80, 100, 20);
 		   Button checkPackages = new Button(comp, SWT.CHECK);
 		   checkPackages.setText("View Packages");
-		   checkPackages.setBounds(0, y+90, 100, 20);
+		   checkPackages.setBounds(0, y+100, 100, 20);
 		   Button checkDependencyClauster = new Button(comp, SWT.CHECK);
 		   checkDependencyClauster.setText("View Dependency Clusters");
-		   checkDependencyClauster.setBounds(0, y+110, 100, 20);
+		   checkDependencyClauster.setBounds(0, y+120, 150, 20);
 		   //----------------------------------------------------------------
 		   
 		   
