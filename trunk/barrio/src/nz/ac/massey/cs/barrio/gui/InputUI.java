@@ -359,41 +359,41 @@ public class InputUI extends Composite{
 	
 	private void checkboxClick(Button check)
 	{
-		if(check.getSelection())
-		{
-			if(!activeFilters.contains(check.getText()))
-			{
-				activeFilters.add(check.getText());
-				
-				Iterator<Filter> filterIterator = knownFilters.iterator();
-				while (filterIterator.hasNext())
-				{
-					Filter knownFilter = filterIterator.next();
-					if(knownFilter.getName().equals(check.getText()))
-					{
-						filteredGraph = knownFilter.filter(filteredGraph).assemble();
-					}
-				}
-				
-			}
-		}
-		else
-		{
-			if(activeFilters.contains(check.getText()))
-			{
-				activeFilters.remove(check.getText());
-				filteredGraph = (Graph) graph.copy();
-				Iterator<Filter> filterIterator = knownFilters.iterator();
-				while (filterIterator.hasNext())
-				{
-					Filter knownFilter = filterIterator.next();
-					if(activeFilters.contains(knownFilter.getName()))
-					{
-						filteredGraph = knownFilter.filter(filteredGraph).assemble();
-					}
-				}
-			}
-		}
+//		if(check.getSelection())
+//		{
+//			if(!activeFilters.contains(check.getText()))
+//			{
+//				activeFilters.add(check.getText());
+//				
+//				Iterator<Filter> filterIterator = knownFilters.iterator();
+//				while (filterIterator.hasNext())
+//				{
+//					Filter knownFilter = filterIterator.next();
+//					if(knownFilter.getName().equals(check.getText()))
+//					{
+//						filteredGraph = knownFilter.filter(filteredGraph).assemble();
+//					}
+//				}
+//				
+//			}
+//		}
+//		else
+//		{
+//			if(activeFilters.contains(check.getText()))
+//			{
+//				activeFilters.remove(check.getText());
+//				filteredGraph = (Graph) graph.copy();
+//				Iterator<Filter> filterIterator = knownFilters.iterator();
+//				while (filterIterator.hasNext())
+//				{
+//					Filter knownFilter = filterIterator.next();
+//					if(activeFilters.contains(knownFilter.getName()))
+//					{
+//						filteredGraph = knownFilter.filter(filteredGraph).assemble();
+//					}
+//				}
+//			}
+//		}
 		
 		updateUI();
 	}
@@ -405,6 +405,11 @@ public class InputUI extends Composite{
 		else btnRefresh.setEnabled(true);
 	}
 	
+	private boolean isTheSame(List<String> currentState, List<String> previousState)
+	{
+		if(currentState.size() != previousState.size()) return false;
+		else return true;
+	}
 		
 	private void btnBrowseClick()
 	{
