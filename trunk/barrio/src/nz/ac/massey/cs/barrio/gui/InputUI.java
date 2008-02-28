@@ -215,9 +215,13 @@ public class InputUI extends Composite{
 		   Button checkPackages = new Button(comp, SWT.CHECK);
 		   checkPackages.setText("View Packages");
 		   checkPackages.setBounds(0, y+100, 100, 20);
-		   Button checkDependencyClauster = new Button(comp, SWT.CHECK);
-		   checkDependencyClauster.setText("View Dependency Clusters");
-		   checkDependencyClauster.setBounds(0, y+120, 150, 20);
+		   Button checkDependencyCluster = new Button(comp, SWT.CHECK);
+		   checkDependencyCluster.setText("View Dependency Clusters");
+		   checkDependencyCluster.setBounds(0, y+120, 150, 20);
+		   Button checkRemovedEdges = new Button(comp, SWT.CHECK);
+		   checkRemovedEdges.setText("View Removed Edges");
+		   checkRemovedEdges.setBounds(0, y+140, 150, 20);
+		   
 		   //----------------------------------------------------------------
 		   
 		   
@@ -358,6 +362,10 @@ public class InputUI extends Composite{
 	
 	
 	
+	
+	
+	
+	//User Interface events==============================================================
 	private void checkboxClick(Button check)
 	{
 		if(check.getSelection()) activeFilters.add(check.getText());
@@ -422,9 +430,15 @@ public class InputUI extends Composite{
 		
 		e.export(initGraph, finalGraph, separationLevel, activeFilters, removedEdges, OutputUI.treePwMC, OutputUI.treeCwMP);
 	}
+	//User Interface events end==============================================================
 	
 	
 	
+	
+	
+	
+	
+	//graph processing methods=================================================
 	private void processGraph()
 	{
 		finalGraph = (Graph) initGraph.copy();
@@ -461,8 +475,14 @@ public class InputUI extends Composite{
 			e.setUserDatum("relationship.state", "removed", UserData.SHARED);
 		}
 	}
+	//graph processing methods end=================================================
 	
 	
+	
+	
+	
+	
+	//Update outputs methods ============================================
 	private void updateOutputs(boolean isInit)
 	{
 		if(isInit)
@@ -503,4 +523,5 @@ public class InputUI extends Composite{
 		OutputUI.panelGraph.doLayout();
 		OutputUI.panelGraph.repaint();
 	}
+	//Update outputs methods end ============================================
 }
