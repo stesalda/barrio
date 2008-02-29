@@ -44,8 +44,12 @@ import org.eclipse.swt.widgets.Shell;
 
 import prefuse.Display;
 import prefuse.Visualization;
+import prefuse.data.Tuple;
+import prefuse.data.tuple.TupleSet;
 import prefuse.util.GraphicsLib;
 import prefuse.util.display.DisplayLib;
+import prefuse.visual.AggregateItem;
+import prefuse.visual.VisualItem;
 import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.filters.Filter;
@@ -68,6 +72,10 @@ public class InputUI extends Composite{
 	private int separationLevel = 0;
 	private int lastSeparationLevel = 0;
 	protected static Composite comp;
+	private Button checkContainers;
+	private Button checkPackages;
+	private Button checkDependencyCluster;
+	private final Button checkRemovedEdges;
 	
 	public InputUI(Composite parent, int style) {
 		   super(parent, SWT.NONE);
@@ -192,33 +200,49 @@ public class InputUI extends Composite{
 		   int y = 100;
 		   
 		   final Button btnUp = new Button(comp, SWT.ARROW|SWT.UP);
+		   btnUp.setToolTipText("Pan up");
 		   btnUp.setBounds(50,y,20,20);
+		   
 		   Button btnLeft = new Button(comp, SWT.ARROW|SWT.LEFT);
+		   btnLeft.setToolTipText("Pan left");
 		   btnLeft.setBounds(0,y+25,20,20);
+		   
 		   Button btnZoomOut = new Button(comp, SWT.PUSH);
+		   btnZoomOut.setToolTipText("Zoom out");
 		   btnZoomOut.setBounds(25,y+25,20,20);
 		   btnZoomOut.setText("-");
+		   
 		   Button btnZoomToFit = new Button(comp, SWT.PUSH);
+		   btnZoomToFit.setToolTipText("Zoom to fit screen");
 		   btnZoomToFit.setBounds(50,y+25,20,20);
 		   btnZoomToFit.setText("=");
+		   
 		   Button btnZoomIn = new Button(comp, SWT.PUSH);
+		   btnZoomIn.setToolTipText("Zoom in");
 		   btnZoomIn.setBounds(75,y+25,20,20);
 		   btnZoomIn.setText("+");
+		   
 		   Button btnRight = new Button(comp, SWT.ARROW|SWT.RIGHT);
+		   btnRight.setToolTipText("Pan right");
 		   btnRight.setBounds(100,y+25,20,20);
+		   
 		   Button btnDown = new Button(comp, SWT.ARROW|SWT.DOWN);
+		   btnDown.setToolTipText("Pan down");
 		   btnDown.setBounds(50,y+50,20,20);
 		   
-		   Button checkContainers = new Button(comp, SWT.CHECK);
+		   checkContainers = new Button(comp, SWT.CHECK);
 		   checkContainers.setText("View Containers");
 		   checkContainers.setBounds(0, y+80, 100, 20);
-		   Button checkPackages = new Button(comp, SWT.CHECK);
+		   
+		   checkPackages = new Button(comp, SWT.CHECK);
 		   checkPackages.setText("View Packages");
 		   checkPackages.setBounds(0, y+100, 100, 20);
-		   Button checkDependencyCluster = new Button(comp, SWT.CHECK);
+		   
+		   checkDependencyCluster = new Button(comp, SWT.CHECK);
 		   checkDependencyCluster.setText("View Dependency Clusters");
 		   checkDependencyCluster.setBounds(0, y+120, 150, 20);
-		   Button checkRemovedEdges = new Button(comp, SWT.CHECK);
+		   
+		   checkRemovedEdges = new Button(comp, SWT.CHECK);
 		   checkRemovedEdges.setText("View Removed Edges");
 		   checkRemovedEdges.setBounds(0, y+140, 150, 20);
 		   
@@ -228,8 +252,7 @@ public class InputUI extends Composite{
 		   
 		   //Events
 		   btnBrowse.addSelectionListener(new SelectionListener() {
-			      public void widgetDefaultSelected(SelectionEvent e) {
-			      }
+			      public void widgetDefaultSelected(SelectionEvent e) {}
 
 			      public void widgetSelected(SelectionEvent e) {
 			    	  btnBrowseClick();
@@ -238,8 +261,7 @@ public class InputUI extends Composite{
 		   });
 		   
 		   slider.addSelectionListener(new SelectionListener() {
-			      public void widgetDefaultSelected(SelectionEvent e) {
-			      }
+			      public void widgetDefaultSelected(SelectionEvent e) {}
 
 			      public void widgetSelected(SelectionEvent e) {
 			    	  sliderMove(lblSeparation, slider.getSelection());
@@ -247,8 +269,7 @@ public class InputUI extends Composite{
 		   });
 		   
 		   btnRefresh.addSelectionListener(new SelectionListener() {
-			      public void widgetDefaultSelected(SelectionEvent e) {
-			      }
+			      public void widgetDefaultSelected(SelectionEvent e) {}
 
 			      public void widgetSelected(SelectionEvent e) {
 			    	  btnRefreshClick(nodeFilters, edgeFilters);
@@ -256,8 +277,7 @@ public class InputUI extends Composite{
 		   });
 		   
 		   btnExport.addSelectionListener(new SelectionListener() {
-			      public void widgetDefaultSelected(SelectionEvent e) {
-			      }
+			      public void widgetDefaultSelected(SelectionEvent e) {}
 
 			      public void widgetSelected(SelectionEvent e) {
 			    	  btnExportClick();
@@ -267,91 +287,97 @@ public class InputUI extends Composite{
 		   final double panValue = 100;
 		   final long duration = 1000;
 		   btnUp.addSelectionListener(new SelectionListener(){
-				public void widgetDefaultSelected(SelectionEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
+				public void widgetDefaultSelected(SelectionEvent e) {}
 	
 				public void widgetSelected(SelectionEvent e) {
 					((Display)OutputUI.panelGraph.getComponent(0)).animatePan(0, 0-panValue, duration);
 				}
-				   
-			   });
+		   });
 		   
 		   btnDown.addSelectionListener(new SelectionListener(){
-				public void widgetDefaultSelected(SelectionEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
+				public void widgetDefaultSelected(SelectionEvent e) {}
 
 				public void widgetSelected(SelectionEvent e) {
 					((Display)OutputUI.panelGraph.getComponent(0)).animatePan(0, panValue, duration);
 				}
-				   
-			   });
+			});
 		   
 		   btnLeft.addSelectionListener(new SelectionListener(){
-				public void widgetDefaultSelected(SelectionEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
+				public void widgetDefaultSelected(SelectionEvent e) {}
 
 				public void widgetSelected(SelectionEvent e) {
 					((Display)OutputUI.panelGraph.getComponent(0)).animatePan(0-panValue, 0, duration);
 				}
-				   
-			   });
+			});
 		   
 		   btnRight.addSelectionListener(new SelectionListener(){
-				public void widgetDefaultSelected(SelectionEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
+				public void widgetDefaultSelected(SelectionEvent e) {}
 
 				public void widgetSelected(SelectionEvent e) {
 					((Display)OutputUI.panelGraph.getComponent(0)).animatePan(panValue, 0, duration);
 				}
-				   
-			   });
+			});
 		   
 		   btnZoomIn.addSelectionListener(new SelectionListener(){
-				public void widgetDefaultSelected(SelectionEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
+				public void widgetDefaultSelected(SelectionEvent e) {}
 
 				public void widgetSelected(SelectionEvent e) {
 					Display display = (Display)OutputUI.panelGraph.getComponent(0);
 					display.animateZoom(new Point(display.getWidth()/2, display.getHeight()/2), 1.2, duration);
 				}
-				   
-			   });
+			});
 		   
 		   btnZoomOut.addSelectionListener(new SelectionListener(){
-				public void widgetDefaultSelected(SelectionEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
+				public void widgetDefaultSelected(SelectionEvent e) {}
 
 				public void widgetSelected(SelectionEvent e) {
 					Display display = (Display)OutputUI.panelGraph.getComponent(0);
 					display.animateZoom(new Point(display.getWidth()/2, display.getHeight()/2), 0.8, duration);
 				}
-				   
-			   });
+			});
 		   
 		   btnZoomToFit.addSelectionListener(new SelectionListener(){
-				public void widgetDefaultSelected(SelectionEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
+				public void widgetDefaultSelected(SelectionEvent e) {}
 
 				public void widgetSelected(SelectionEvent e) {
 					Display display = (Display)OutputUI.panelGraph.getComponent(0);
 					DisplayLib.fitViewToBounds(display,display.getVisualization().getBounds(Visualization.ALL_ITEMS), duration); 
 				}
-				   
-			   });
+			});
+		   
+		   checkDependencyCluster.addSelectionListener(new SelectionListener(){
+			   public void widgetDefaultSelected(SelectionEvent e) {}
+
+			   public void widgetSelected(SelectionEvent e) {
+				   updateDependencyClusterAggregates();
+			   }
+		   });
+		   
+		   checkPackages.addSelectionListener(new SelectionListener(){
+			   public void widgetDefaultSelected(SelectionEvent e) {}
+
+			   public void widgetSelected(SelectionEvent e) {
+				   updatePackageAggregates();
+			   }
+		   });
+		   
+		   checkContainers.addSelectionListener(new SelectionListener(){
+			   public void widgetDefaultSelected(SelectionEvent e) {}
+
+			   public void widgetSelected(SelectionEvent e) {
+				   updateConatainerAggregates();
+			   }
+		   });
+		   
+		   checkRemovedEdges.addSelectionListener(new SelectionListener(){
+
+				public void widgetDefaultSelected(SelectionEvent e) {}
+		
+					public void widgetSelected(SelectionEvent e) {
+						updateVisualRemovedEdges();
+					}
+		   });
+		   
 		   updateUI();
 	}
 	
@@ -518,10 +544,88 @@ public class InputUI extends Composite{
 		dis.setLayout(new BorderLayout());
 		
 		OutputUI.panelGraph.removeAll();
-		OutputUI.checkboxInit();
 		OutputUI.panelGraph.add(dis, 0);
 		OutputUI.panelGraph.doLayout();
 		OutputUI.panelGraph.repaint();
+		
+		updateVisualElements();
+	}
+	
+	private void updateVisualElements()
+	{
+		updateConatainerAggregates();
+		updatePackageAggregates();
+		updateDependencyClusterAggregates();
+		updateVisualRemovedEdges();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void updateConatainerAggregates()
+	{
+		boolean viewContainers = checkContainers.getSelection();
+		if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
+		{
+			Display dis = (Display) OutputUI.panelGraph.getComponent(0);
+			Iterator<VisualItem> i = dis.getVisualization().getVisualGroup("aggregates").tuples();
+			while(i.hasNext())
+			{
+				AggregateItem ai = ((AggregateItem)i.next());
+				if (ai.get("type")!=null && ai.getString("type").equals("jar") && viewContainers) ai.setVisible(true);
+				if (ai.get("type")!=null && ai.getString("type").equals("jar") && !viewContainers) ai.setVisible(false);
+			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void updatePackageAggregates()
+	{
+		boolean viewPackages = checkPackages.getSelection();
+		if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
+		{
+			Display dis = (Display) OutputUI.panelGraph.getComponent(0);
+			Iterator<VisualItem> i = dis.getVisualization().getVisualGroup("aggregates").tuples();
+			while(i.hasNext())
+			{
+				AggregateItem ai = ((AggregateItem)i.next());
+				if (ai.get("type")!=null && ai.getString("type").equals("package") && viewPackages) ai.setVisible(true);
+				if (ai.get("type")!=null && ai.getString("type").equals("package") && !viewPackages) ai.setVisible(false);
+			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void updateDependencyClusterAggregates()
+	{
+		boolean viewClusters = checkDependencyCluster.getSelection();
+		if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
+		{
+			Display dis = (Display) OutputUI.panelGraph.getComponent(0);
+			Iterator<VisualItem> i = dis.getVisualization().getVisualGroup("aggregates").tuples();
+			while(i.hasNext())
+			{
+				AggregateItem ai = ((AggregateItem)i.next());
+				if (ai.get("type")!=null && ai.getString("type").equals("cluster") && viewClusters) ai.setVisible(true);
+				if (ai.get("type")!=null && ai.getString("type").equals("cluster") && !viewClusters) ai.setVisible(false);
+			}
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void updateVisualRemovedEdges()
+	{
+		boolean viewEdges = checkRemovedEdges.getSelection();
+		if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
+		{			
+			Display display = (Display) OutputUI.panelGraph.getComponent(0);
+			Iterator<VisualItem> edgeIterator = display.getVisualization().getVisualGroup("graph.edges").tuples();
+			while(edgeIterator.hasNext())
+			{
+				VisualItem edge = edgeIterator.next();
+				if(!viewEdges && edge.getString("relationship.state").equals("removed")) edge.setVisible(false);
+				else edge.setVisible(true);
+			}
+			
+		}
 	}
 	//Update outputs methods end ============================================
 }
