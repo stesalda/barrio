@@ -329,8 +329,7 @@ public class InputUI extends Composite{
 				public void widgetDefaultSelected(SelectionEvent e) {}
 
 				public void widgetSelected(SelectionEvent e) {
-					Display display = (Display)OutputUI.panelGraph.getComponent(0);
-					DisplayLib.fitViewToBounds(display,display.getVisualization().getBounds(Visualization.ALL_ITEMS), duration); 
+					zoomToFitDisplay(duration); 
 				}
 			});
 		   
@@ -426,8 +425,8 @@ public class InputUI extends Composite{
 	private void btnRefreshClick(List<NodeFilter> nodeFilters, List<EdgeFilter> edgeFilters) 
 	{
 		processGraph();
-		updateUI();
 		updateOutputs(false);
+		updateUI();
 	}
 	
 	
@@ -538,6 +537,7 @@ public class InputUI extends Composite{
 		OutputUI.panelGraph.repaint();
 		
 		updateVisualElements();
+//		zoomToFitDisplay(10000);
 	}
 	
 	private void updateVisualElements()
@@ -615,6 +615,12 @@ public class InputUI extends Composite{
 			}
 			
 		}
+	}
+	
+	private void zoomToFitDisplay(long duration)
+	{
+		Display display = (Display)OutputUI.panelGraph.getComponent(0);
+		DisplayLib.fitViewToBounds(display,display.getVisualization().getBounds(Visualization.ALL_ITEMS), duration);
 	}
 	//Update outputs methods end ============================================
 }
