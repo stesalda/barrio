@@ -38,10 +38,6 @@ public class OutputUI extends Composite{
 	
 	private static JTable table;
 	
-	private final static JCheckBox checkJars = new JCheckBox("View Jars");
-	private final static JCheckBox checkPacks = new JCheckBox("View Packages");
-	private final static JCheckBox checkClusters = new JCheckBox("View Clusters");
-	
 	public OutputUI(Composite parent, int style) {
 		super(parent, style);
 		this.setLayout(new GridLayout());
@@ -117,32 +113,7 @@ public class OutputUI extends Composite{
 				paint(g);  
 			}  
 		}; 
-		Panel controls = new Panel(null);
-		controls.setBounds(5, 25, 120,60);
-		checkJars.setBounds(0,0,120,20);
-		checkJars.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				checkJarActionPerformed(evt, checkJars.isSelected());
-			}
-		});
 		
-		checkPacks.setBounds(0,20,120,20);
-		checkPacks.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				checkPacksActionPerformed(evt, checkPacks.isSelected());
-			}
-		});
-		
-		checkClusters.setBounds(0,40,120,20);
-		checkClusters.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent evt) {
-				checkClustersActionPerformed(evt, checkClusters.isSelected());
-			}
-		});
-		controls.add(checkJars);
-		controls.add(checkPacks);
-		controls.add(checkClusters);
-		frame.add(controls);
 		frame.add(panelGraph);
 		itemGraph.setControl(graphVis);
 		tabFolder.addSelectionListener(new SelectionListener(){
@@ -214,15 +185,6 @@ public class OutputUI extends Composite{
 				if (ai.get("type")!=null && ai.getString("type").equals("jar") && !b) ai.setVisible(false);
 			}
 		}
-	}
-
-
-	public static void checkboxInit() 
-	{
-		checkClusters.setSelected(false);
-		checkJars.setSelected(false);
-		checkPacks.setSelected(false);
-		
 	}
 
 
