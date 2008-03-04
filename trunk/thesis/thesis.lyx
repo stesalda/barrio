@@ -34,12 +34,19 @@
 \tracking_changes false
 \output_changes false
 \author "" 
+\author "" 
 \end_header
 
 \begin_body
 
 \begin_layout Abstract
 Text
+\begin_inset LatexCommand cite
+key "key"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Section*
@@ -94,9 +101,10 @@ Exploring antipaterns
 Summary
 \end_layout
 
-\begin_layout Bibliography
-\begin_inset LatexCommand bibitem
-key "key-1"
+\begin_layout Standard
+\begin_inset LatexCommand bibtex
+options "plain"
+bibfiles "references"
 
 \end_inset
 
