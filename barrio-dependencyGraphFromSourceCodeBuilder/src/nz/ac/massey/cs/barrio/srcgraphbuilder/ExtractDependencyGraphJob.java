@@ -288,7 +288,6 @@ public class ExtractDependencyGraphJob  extends Job {
 					c.setOwner(p);
 					if (isJavaLang) {
 						this.coreJavaClassesByName.put(n,c);
-						System.out.println(n);
 					}
 					registerType(c);
 				}
