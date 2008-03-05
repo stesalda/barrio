@@ -27,6 +27,7 @@ public class SourceRef extends ClassRef {
 	// tmp variables
 	private Collection<String> importedPackages = new ArrayList<String>();
 	private Collection<String> importedClasses = new ArrayList<String>();
+	// TODO check static imports
 	private String superClassName = null;
 	private Collection<String> interfaceNames = new ArrayList<String>();
 	private Collection<String> typeParameterNames = new ArrayList<String>();
