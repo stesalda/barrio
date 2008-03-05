@@ -2,7 +2,7 @@
 \lyxformat 276
 \begin_document
 \begin_header
-\textclass article
+\textclass report
 \language english
 \inputencoding auto
 \font_roman default
@@ -31,6 +31,9 @@
 \papercolumns 1
 \papersides 1
 \paperpagestyle default
+\bullet 1 0 9 -1
+\bullet 2 0 10 -1
+\bullet 3 0 0 -1
 \tracking_changes false
 \output_changes false
 \author "" 
@@ -39,14 +42,20 @@
 
 \begin_body
 
+\begin_layout Title
+Title
+\end_layout
+
+\begin_layout Author
+Vyacheslav Yakovlev
+\end_layout
+
+\begin_layout Date
+Date
+\end_layout
+
 \begin_layout Abstract
 Text
-\begin_inset LatexCommand cite
-key "key"
-
-\end_inset
-
-
 \end_layout
 
 \begin_layout Section*
@@ -81,23 +90,132 @@ Text
 
 \end_layout
 
-\begin_layout Part
+\begin_layout Chapter
 Introduction
 \end_layout
 
-\begin_layout Part
+\begin_layout Section
+section 1
+\end_layout
+
+\begin_layout Section
+section 2
+\end_layout
+
+\begin_layout Chapter
 Background
 \end_layout
 
-\begin_layout Part
+\begin_layout Section
+section 1
+\end_layout
+
+\begin_layout Chapter
 Improvements
 \end_layout
 
-\begin_layout Part
-Exploring antipaterns
+\begin_layout Section
+Converting Java standalone application to Eclipse plugin
 \end_layout
 
-\begin_layout Part
+\begin_layout Standard
+Java standalone -> EPF
+\end_layout
+
+\begin_layout Chapter
+Exploring antipaterns: detection and correction
+\end_layout
+
+\begin_layout Standard
+Naouel Moha and Yann-Gael Gueheneuc define Software Architectural Defects
+ (SAD) design defects as antipatterns 
+\begin_inset LatexCommand cite
+key "Moha"
+
+\end_inset
+
+ and present tools and techniques for detection SAD objects.
+\newline
+
+\end_layout
+
+\begin_layout Standard
+Tools:
+\end_layout
+
+\begin_layout Itemize
+OptimalAdvisor 
+\begin_inset LatexCommand cite
+key "OptimalAdvisor"
+
+\end_inset
+
+ is a static code analysis and refactoring tool.
+ OptimalAdvisor can analyze source files, class files or a combination of
+ the two.
+ OptimalAdvisor's automated expertise can be requested about code fragments
+ (methods, classes) or complete projects.
+ Core features include:
+\end_layout
+
+\begin_deeper
+\begin_layout Itemize
+Package and code analysis - visualization of the application 
+\end_layout
+
+\begin_layout Itemize
+Code Analysis Rules validation 
+\end_layout
+
+\begin_layout Itemize
+Refactoring: Dependency Inversion
+\end_layout
+
+\end_deeper
+\begin_layout Itemize
+IBM Structural aAnalysis totl for Java (SA4J) 
+\begin_inset LatexCommand cite
+key "ibm-tool"
+
+\end_inset
+
+ analyzes structural dependencies of Java applications in order to measure
+ their stability.
+ It detects structural "anti-patterns" (suspicious design elements) and
+ provides dependency web browsing for detailed exploration of anti-patterns
+ in the dependency web.
+ SA4J also enables "what if" analysis in order to assess the impact of change
+ on the functionality of the application; and it offers guidelines for package
+ re-factoring.
+\end_layout
+
+\begin_layout Itemize
+SmallLint 
+\begin_inset LatexCommand cite
+key "smalllint"
+
+\end_inset
+
+.
+ Automatically checks for over 60 common types of bugs in the code level
+ such as identification of long methods or inutile code.
+\end_layout
+
+\begin_layout Standard
+Techniques:
+\end_layout
+
+\begin_layout Itemize
+Refactoring 
+\begin_inset LatexCommand cite
+key "refactoring-opdyke"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Chapter
 Summary
 \end_layout
 
