@@ -13,25 +13,8 @@ package nz.ac.massey.cs.barrio.srcgraphbuilder;
 
 import java.util.List;
 import java.util.StringTokenizer;
-
-import org.eclipse.jdt.core.dom.ASTVisitor;
-import org.eclipse.jdt.core.dom.Block;
-import org.eclipse.jdt.core.dom.CompilationUnit;
-import org.eclipse.jdt.core.dom.Expression;
-import org.eclipse.jdt.core.dom.FieldAccess;
-import org.eclipse.jdt.core.dom.ImportDeclaration;
-import org.eclipse.jdt.core.dom.Initializer;
-import org.eclipse.jdt.core.dom.MethodDeclaration;
-import org.eclipse.jdt.core.dom.MethodInvocation;
-import org.eclipse.jdt.core.dom.Name;
-import org.eclipse.jdt.core.dom.PackageDeclaration;
-import org.eclipse.jdt.core.dom.QualifiedName;
-import org.eclipse.jdt.core.dom.SimpleName;
-import org.eclipse.jdt.core.dom.SimpleType;
-import org.eclipse.jdt.core.dom.SingleVariableDeclaration;
-import org.eclipse.jdt.core.dom.Type;
-import org.eclipse.jdt.core.dom.TypeDeclaration;
-import org.eclipse.jdt.core.dom.VariableDeclarationFragment;
+import org.eclipse.jdt.core.dom.*;
+import org.pfsw.odem.DependencyClassification;
 
 
 /**
@@ -46,7 +29,7 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
 	private SourceRef owner = null;
 	private int context = DECLARATION;
 	private VariableNameTracker varTracker = new VariableNameTracker();
-	private boolean recordVarNames = false;
+	private boolean testMode = true;
 	
     public ExtractTypeInfoVisitor(SourceRef owner) {
 		super();
@@ -54,42 +37,54 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
 		this.context = DECLARATION;
 	}
     
-    
+	@Override
+	public boolean visit(SingleMemberAnnotation node) {
+		String annotation = node.getTypeName().toString();
+		DependencyClassification refType = null;
+		
+		if ("test.ExpectUses".equals(annotation)) {
+			refType = DependencyClassification.NEEDS;
+		}
+		else if ("test.ExpectImplements".equals(annotation)) {
+			refType = DependencyClassification.IMPLEMENTATION;
+		}
+		else if ("test.ExpectExtends".equals(annotation)) {
+			refType = DependencyClassification.EXTENSION;
+		}
+			
+		if (refType!=null) {
+			StringLiteral lit = (StringLiteral)node.getValue();			
+			String value = lit.getLiteralValue();
+			for (StringTokenizer tok = new StringTokenizer(value,",");tok.hasMoreTokens();) {
+				String refedType = tok.nextToken().trim();
+				ExpectedDependency constraint = new ExpectedDependency(refType,refedType);
+				this.owner.getExpectedDependencies().add(constraint);
+			}
+		}
+		else {
+			String n = node.getTypeName().toString();
+			this.add2used(n);
+		}
+		
+		return false;
+	}
+
 	public boolean visit(CompilationUnit node) {
 		this.varTracker.reset();
 		return true;
 	}
 
-	
-
-
-
-
-	@Override
-	public void endVisit(SingleVariableDeclaration node) {
-		this.recordVarNames =false;
-	}
-
-
-	@Override
-	public void endVisit(VariableDeclarationFragment node) {
-		this.recordVarNames =false;
-	}
-
-
-	@Override
 	public boolean visit(SingleVariableDeclaration node) {
-		this.recordVarNames=true;
+		this.varTracker.addDefined(node.getName().toString());
+		// there might still be type names in the initializer !	
 		return true;
 	}
 
-
-	@Override
 	public boolean visit(VariableDeclarationFragment node) {
-		this.recordVarNames=true;
+		this.varTracker.addDefined(node.getName().toString());
+		// there might still be type names in the initializer !
 		return true;
 	}
-
 
 	public boolean visit(Block b) {
         context = BODY;
@@ -114,18 +109,12 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
         return false;
     }
 	
-	public boolean visit(MethodInvocation i) {
-		// System.out.println("method invocation "+i);
-		Expression x = i.getExpression();
-		analyzeMemberAccess(x);
-		return true;
-	}
 	
 	private void analyzeMemberAccess (Expression x) {
 
 		if (x instanceof QualifiedName) {
 			QualifiedName qn = (QualifiedName)x;
-			System.out.println("encountered qualified name " + qn);
+			// System.out.println("encountered qualified name " + qn);
 			// check whether the first token is this, super or a known field
 			// otherwise, we assume that this is the invocation of a static method
 			// otherwise, we have to try (to resolve to type names) all combinations of substrings 
@@ -140,12 +129,12 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
 					}
 					name=token;
 					this.add2used(name);
-					System.out.println("add type ref " + name);
+					//System.out.println("add type ref " + name);
 				}
 				else {
 					name = name+'.'+token;
 					this.add2used(name);
-					System.out.println("add type ref " + name);
+					//System.out.println("add type ref " + name);
 				}
 			}
 		}
@@ -153,29 +142,52 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
 			SimpleName s = (SimpleName)x;
 			if (!this.varTracker.isDefined(s.toString())) {
 				this.add2used(s.toString());
-				System.out.println("add type ref " + s);
+				//System.out.println("add type ref " + s);
 			}
 		}
 		else {
-			System.out.println("encountered something else " + x);
+			System.out.println("encountered unknown element in member access node " + x);
 		}
 
 	
 	}
 	public boolean visit(SimpleName i) {
-		if (this.recordVarNames) {
-			this.varTracker.addDefined(i.toString());
+		if (!this.varTracker.isDefined(i.toString())) {
+			this.add2used(i.toString());
+			//System.out.println("add type ref " + i);
 		}
+		return true;
+	}
+	public boolean visit(QualifiedName qn) {
+		//System.out.println("encountered qualified name " + qn);
+		// check whether the first token is this, super or a known field
+		// otherwise, we assume that this is the invocation of a static method
+		// otherwise, we have to try (to resolve to type names) all combinations of substrings 
+		// because we don't now whether tokens are fields or part of qualified type names
+		String name = null;
+		StringTokenizer tokenizer = new StringTokenizer(qn.toString(),".");
+		while (tokenizer.hasMoreTokens()) {
+			String token = tokenizer.nextToken();
+			if (name==null) {
+				if (this.varTracker.isDefined(token)) { // there is a variable defined with this name
+					break;
+				}
+				name=token;
+				this.add2used(name);
+				//System.out.println("add type ref " + name);
+			}
+			else {
+				name = name+'.'+token;
+				this.add2used(name);
+				//System.out.println("add type ref " + name);
+			}
+		}
+		
 		return true;
 	}
 	
 	public boolean visit(PackageDeclaration p) {
 		return false;
-	}
-	
-	public boolean visit(Initializer i) {
-		System.out.println("visiting initializer");
-		return true;
 	}
     
     public boolean visit(TypeDeclaration t) {
@@ -204,8 +216,8 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
     		add2used(t.toString());
 		return false;  
     }
-
-    public boolean visit(MethodDeclaration m) {
+    
+	public boolean visit(MethodDeclaration m) {
     	List exceptions = m.thrownExceptions();
     	for (Object x:exceptions) {
     		Name n = (Name)x;
@@ -214,14 +226,6 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
     	this.varTracker.down();
     	return true;
     }
-
-	@Override
-	public boolean visit(FieldAccess f) {
-		// System.out.println("field access "+i);
-		Expression x = f.getExpression();
-		analyzeMemberAccess(x);
-		return true;
-	}
 
 
 	private void add2used(String type) {
@@ -240,6 +244,16 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
     		"double".equals(t) ||
     		"float".equals(t) ||
     		"boolean".equals(t);    	
-    } 
+    }
+
+
+	public boolean isTestMode() {
+		return testMode;
+	}
+
+
+	public void setTestMode(boolean testMode) {
+		this.testMode = testMode;
+	} 
 
 }

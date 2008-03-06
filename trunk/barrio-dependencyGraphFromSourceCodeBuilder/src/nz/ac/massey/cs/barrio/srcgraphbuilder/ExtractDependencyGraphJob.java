@@ -12,6 +12,9 @@
 package nz.ac.massey.cs.barrio.srcgraphbuilder;
 
 import java.util.*;
+
+import nz.ac.massey.cs.barrio.srcgraphbuilder.odem.ExplorationContext;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -39,15 +42,20 @@ public class ExtractDependencyGraphJob  extends Job {
 	private Map<String,Collection<ClassRef>> classesByName = new HashMap<String,Collection<ClassRef>>();
 	private Map<String,ClassRef> classesByFullName = new HashMap<String,ClassRef>();
 	private Map<String,ClassRef> coreJavaClassesByName = new HashMap<String,ClassRef>();
-	//private Map<String,IClassFile> bins = new HashMap<String,IClassFile>();
-	//private Map<IPackageFragment,IPackageFragmentRoot> packages = new HashMap<IPackageFragment,IPackageFragmentRoot>();
-	//private Map<String,List<IPackageFragment>> classes = new HashMap<String,List<IPackageFragment>>();
 	
+	private boolean TESTMODE = true;
+
+	// root - this is the object we create
+	private ExplorationContext context = null;
 	
 	public ExtractDependencyGraphJob(IJavaProject project) {
 		super("Loading graph dependency extractor...");
 		setUser(true); // this is a user-spawned job
 		this.project = project;
+		
+		this.context = new ExplorationContext();
+		this.context.setName(project.getElementName());
+		this.context.setDescription("Eclipse Java project "+project.getElementName());
 	}
 
 	public IStatus createError(String message, Exception e) {
@@ -115,6 +123,7 @@ public class ExtractDependencyGraphJob  extends Job {
 				for (ClassRef c:p.getClasses()) {
 					SourceRef src = (SourceRef)c;
 					ExtractTypeInfoVisitor v = new ExtractTypeInfoVisitor(src);
+					v.setTestMode(TESTMODE);
 					ASTParser parser = ASTParser.newParser(AST.JLS3);
 					parser.setSource(src.getCompilationUnit());
 					parser.setResolveBindings(false);
@@ -133,6 +142,14 @@ public class ExtractDependencyGraphJob  extends Job {
 					resolveReferences(src);
 				}
 			}			
+			
+			// STEP4 - map ODEM structure
+			
+			if (this.TESTMODE) {
+				for (ContainerRef c:containers) {
+					c.test();
+				}
+			}
 			
 			monitor.done();
 			return Status.OK_STATUS;

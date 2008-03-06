@@ -68,4 +68,7 @@ public class ClassRef {
 		this.type = type;
 	}
 
+	public void test() {
+		// nothing to do here
+	}
 }

@@ -46,4 +46,11 @@ public class PackageRef {
 	public String toString() {
 		return "aPackageRef["+this.name+']';
 	}
+	
+	public void test() {
+		for (ClassRef c:classes) {
+			c.test();
+		}
+	}
+	
 }
