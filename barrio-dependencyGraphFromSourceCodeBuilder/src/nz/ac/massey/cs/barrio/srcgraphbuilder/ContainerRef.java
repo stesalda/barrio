@@ -49,4 +49,10 @@ public class ContainerRef {
 	public String toString() {
 		return "aContainerRef["+this.name+']';
 	}
+	
+	public void test() {
+		for (PackageRef p:packages) {
+			p.test();
+		}
+	}
 }

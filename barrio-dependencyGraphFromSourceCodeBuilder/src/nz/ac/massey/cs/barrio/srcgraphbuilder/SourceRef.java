@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.pfsw.odem.DependencyClassification;
 
 /**
  * References to types defined in the project (i.e., for which we have the source code).
@@ -33,10 +34,13 @@ public class SourceRef extends ClassRef {
 	private Collection<String> typeParameterNames = new ArrayList<String>();
 	private Collection<String> usedTypeNames = new HashSet<String>();
 	// final relationships
-	private Collection<ClassRef> interfaces = new ArrayList<ClassRef>();
+	private Collection<ClassRef> interfaces = new HashSet<ClassRef>();
 	private ClassRef superClass = null;
-	private Collection<ClassRef> usedClasses = new ArrayList<ClassRef>();
+	private Collection<ClassRef> usedClasses = new HashSet<ClassRef>();
 	private boolean resolved = false;
+	// test cases built from @ExpectedDependency(kind="use",target="MyClass") annotations
+	private Collection<ExpectedDependency> expectedDependencies = new HashSet<ExpectedDependency>();
+	
 	
 	public ICompilationUnit getCompilationUnit() {
 		return compilationUnit;
@@ -107,6 +111,78 @@ public class SourceRef extends ClassRef {
 		interfaceNames = null;
 		typeParameterNames = null;
 		usedTypeNames = null;
+		
+	}
+
+	public Collection<ExpectedDependency> getExpectedDependencies() {
+		return expectedDependencies;
+	}
+	/**
+	 * Compare expected and encountered dependencies.
+	 */
+	public void test() {
+		// gather expected
+		Collection<String> expectedUsedTypes = new HashSet<String>();
+		Collection<String> expectedImplementedTypes = new HashSet<String>();
+		String expectedSuperClass = null;
+		for (ExpectedDependency expected:this.expectedDependencies) {
+			if (expected.getKind()==DependencyClassification.NEEDS) {
+				expectedUsedTypes.add(expected.getTarget());
+			}
+			else if (expected.getKind()==DependencyClassification.EXTENSION) {
+				expectedSuperClass=expected.getTarget();
+			}
+			else if (expected.getKind()==DependencyClassification.IMPLEMENTATION) {
+				expectedImplementedTypes.add(expected.getTarget());
+			}
+		}
+		// gather computed
+		Collection<String> computedUsedTypes = new HashSet<String>();
+		Collection<String> computedImplementedTypes = new HashSet<String>();
+		String computedSuperClass = this.superClass==null?null:this.superClass.getFullName();
+		
+		for (ClassRef c:this.usedClasses) {
+			if (c!=null && !c.getFullName().equals(this.getFullName())) // remove self reference
+				computedUsedTypes.add(c.getFullName());
+		}
+		for (ClassRef c:this.interfaces) {
+			if (c!=null)
+				computedImplementedTypes.add(c.getFullName());
+		}
+		// compare
+		boolean ok = true;
+		boolean allOk = true;
+		if (expectedSuperClass==null)
+			ok = computedSuperClass==null;
+		else 
+			ok = expectedSuperClass.equals(computedSuperClass);
+		allOk = allOk && ok;
+		if (!ok) {
+			System.err.println("test failed in " + this.getFullName());
+			System.err.println("expected superclass: " + expectedSuperClass);
+			System.err.println("computed superclass: " + computedSuperClass);
+		}
+		
+		ok = expectedImplementedTypes.equals(computedImplementedTypes);		
+		if (!ok) {
+			System.err.println("test failed in " + this.getFullName());
+			System.err.println("expected interfaces: " + expectedImplementedTypes);
+			System.err.println("computed interfaces: " + computedImplementedTypes);
+		}
+		allOk = allOk && ok;
+		
+		ok = expectedUsedTypes.equals(computedUsedTypes);		
+		if (!ok) {
+			System.err.println("test failed in " + this.getFullName());
+			System.err.println("expected used types: " + expectedUsedTypes);
+			System.err.println("computed used types: " + computedUsedTypes);
+		}
+		allOk = allOk && ok;
+		
+		if (allOk) {
+			System.out.println("tests succeeded for " + this.getFullName());
+		}
+		
 		
 	}
 }
