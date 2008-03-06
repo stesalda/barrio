@@ -107,7 +107,7 @@ Background
 \end_layout
 
 \begin_layout Section
-section 1
+Starting point: existing tool
 \end_layout
 
 \begin_layout Chapter
@@ -122,8 +122,70 @@ Converting Java standalone application to Eclipse plugin
 Java standalone -> EPF
 \end_layout
 
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename images/Barrio epf diagram.jpg
+	lyxscale 20
+	display none
+	width 8cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset LatexCommand label
+name "fig:applicationStructure"
+
+\end_inset
+
+
+\begin_inset Caption
+
+\begin_layout Standard
+Application Structure
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Visualisation
+\end_layout
+
+\begin_layout Section
+Source code parsing
+\end_layout
+
 \begin_layout Chapter
-Exploring antipaterns: detection and correction
+Exploring antipaterns
+\end_layout
+
+\begin_layout Section
+Anitpattern types
+\end_layout
+
+\begin_layout Section
+Detection of antipatterns
 \end_layout
 
 \begin_layout Standard
@@ -199,6 +261,12 @@ key "smalllint"
 .
  Automatically checks for over 60 common types of bugs in the code level
  such as identification of long methods or inutile code.
+\newline
+
+\end_layout
+
+\begin_layout Section
+Techniques and methods to remove antipatterns
 \end_layout
 
 \begin_layout Standard
@@ -208,11 +276,14 @@ Techniques:
 \begin_layout Itemize
 Refactoring 
 \begin_inset LatexCommand cite
-key "refactoring-opdyke"
+key "refactoring-opdyke,refactoring"
 
 \end_inset
 
 .
+ It is a technique for restructuring an existing body of code, altering
+ its internal structure without changing its external behavior.
+ Refactoring should not fix bugs or modify functionality.
 \end_layout
 
 \begin_layout Chapter

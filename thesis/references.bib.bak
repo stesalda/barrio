@@ -54,6 +54,15 @@
   url = {http://portal.acm.org/citation.cfm?doid=1094855.1094915}
 }
 
+@PHDTHESIS{refactoring-opdyke,
+  author = {William F. Opdyke},
+  title = {Object-Oriented Refactoring, Legacy Constraints and Reuse},
+  school = {Department of Computer Science, University of Illinois},
+  year = {1997},
+  owner = {vsiakovl},
+  timestamp = {2008.03.05}
+}
+
 @comment{jabref-meta: selector_author:}
 
 @comment{jabref-meta: selector_journal:}
