@@ -79,8 +79,14 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
 		// there might still be type names in the initializer !	
 		return true;
 	}
+	
+	public boolean visit(Initializer node) {
+		context = BODY;
+		return super.visit(node);
+	}
 
 	public boolean visit(VariableDeclarationFragment node) {
+		context = BODY;
 		this.varTracker.addDefined(node.getName().toString());
 		// there might still be type names in the initializer !
 		return true;
@@ -153,7 +159,9 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
 	}
 	public boolean visit(SimpleName i) {
 		if (!this.varTracker.isDefined(i.toString())) {
-			this.add2used(i.toString());
+			// exclude method names
+			if (!(i.getParent() instanceof MethodDeclaration))
+					this.add2used(i.toString());
 			//System.out.println("add type ref " + i);
 		}
 		return true;
@@ -206,7 +214,7 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
         }
 
         // @fixme type parameters are not yet supported
-
+        
         return true;
     }
     
@@ -218,6 +226,7 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
     }
     
 	public boolean visit(MethodDeclaration m) {
+		context = BODY;
     	List exceptions = m.thrownExceptions();
     	for (Object x:exceptions) {
     		Name n = (Name)x;
