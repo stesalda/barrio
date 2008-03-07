@@ -226,7 +226,7 @@ public class ExtractDependencyGraphJob  extends Job {
 		}
 		
 		if (c==null) {
-			System.err.println("cannot resolve type reference " + type + " in " + src);
+			//System.err.println("cannot resolve type reference " + type + " in " + src);
 		}	
 		/*
 		else {
@@ -269,6 +269,9 @@ public class ExtractDependencyGraphJob  extends Job {
 	}
 	
 	private void gatherSources(PackageRef p,IPackageFragment pf) {
+		// filter used for debugging
+		// if (!p.getName().endsWith("inheritance")) return;
+		
 		boolean isJavaLang = "java.lang".equals(p.getName());
 		try {
 			for (IJavaElement e:pf.getChildren()) {
