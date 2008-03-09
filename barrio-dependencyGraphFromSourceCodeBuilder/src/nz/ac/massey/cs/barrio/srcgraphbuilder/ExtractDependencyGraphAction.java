@@ -21,6 +21,8 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -36,6 +38,7 @@ public class ExtractDependencyGraphAction implements IWorkbenchWindowActionDeleg
 	 * The constructor.
 	 */
 	public ExtractDependencyGraphAction() {
+		
 	}
 
 	/**
@@ -53,10 +56,22 @@ public class ExtractDependencyGraphAction implements IWorkbenchWindowActionDeleg
 					window.getShell(),
 					"DependencyGraphExtractor Plug-in",
 					"No Java project selected");
+			return;
 		}
 		
+		FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
+        fd.setText("Save");
+        String[] filterExt = { "*.odem", "*.xml"};
+        fd.setFilterExtensions(filterExt);
+        String fileName = fd.open();
+        if (fileName==null) {
+        	System.out.println("cancelled");
+        	return;
+        }
+        
 
-		ExtractDependencyGraphJob job = new ExtractDependencyGraphJob(project);
+        ExtractDependencyGraph2OdemFileJob job = new ExtractDependencyGraph2OdemFileJob(project);
+		job.setFileName(fileName);
 		job.schedule();
 		/*
 		MessageDialog.openInformation(
@@ -112,7 +127,7 @@ public class ExtractDependencyGraphAction implements IWorkbenchWindowActionDeleg
 			}
 		}
 		action.setEnabled(project!=null);
-		System.out.println("Selected project is : " + project);
+		// System.out.println("Selected project is : " + project);
 	}
 
 	/**
