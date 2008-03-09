@@ -34,16 +34,14 @@ import org.eclipse.jdt.core.dom.ASTParser;
  * @author <a href="http://www-ist.massey.ac.nz/JBDietrich/">Jens Dietrich</a>
  */
 
-public class ExtractDependencyGraphJob  extends Job {
+public abstract class ExtractDependencyGraphJob  extends Job {
 
-	private IJavaProject project = null;
-	
-	private Collection<ContainerRef> containers = new ArrayList<ContainerRef> ();
-	private Map<String,Collection<ClassRef>> classesByName = new HashMap<String,Collection<ClassRef>>();
-	private Map<String,ClassRef> classesByFullName = new HashMap<String,ClassRef>();
-	private Map<String,ClassRef> coreJavaClassesByName = new HashMap<String,ClassRef>();
-	
-	private boolean TESTMODE = true;
+	protected IJavaProject project = null;
+	protected Collection<ContainerRef> containers = new ArrayList<ContainerRef> ();
+	protected Map<String,Collection<ClassRef>> classesByName = new HashMap<String,Collection<ClassRef>>();
+	protected Map<String,ClassRef> classesByFullName = new HashMap<String,ClassRef>();
+	protected Map<String,ClassRef> coreJavaClassesByName = new HashMap<String,ClassRef>();
+	protected boolean TESTMODE = true;
 
 	// root - this is the object we create
 	private ExplorationContext context = null;
@@ -143,13 +141,17 @@ public class ExtractDependencyGraphJob  extends Job {
 				}
 			}			
 			
-			// STEP4 - map ODEM structure
+			// STEP5 optional: testing
 			
 			if (this.TESTMODE) {
 				for (ContainerRef c:containers) {
 					c.test();
 				}
 			}
+			
+			// STEP6 export graph
+			monitor.subTask("exporting dependency graph");
+			exportGraph();
 			
 			monitor.done();
 			return Status.OK_STATUS;
@@ -158,12 +160,19 @@ public class ExtractDependencyGraphJob  extends Job {
 		}
 	}
 
+	protected abstract void exportGraph();
+
 	private void resolveReferences(SourceRef src) {
+		ClassRef target = null;
 		for (String t:src.getInterfaceNames()) {
-			src.getInterfaces().add(this.resolveReference(src,t));
+			target = this.resolveReference(src,t);
+			if (target!=src)
+				src.getInterfaces().add(target);
 		}
 		for (String t:src.getUsedTypeNames()) {
-			src.getUsedClasses().add(this.resolveReference(src,t));
+			target = this.resolveReference(src,t);
+			if (target!=src)
+				src.getUsedClasses().add(target);
 		}
 		if (src.getSuperClassName()!=null) {
 			src.setSuperClass(this.resolveReference(src,src.getSuperClassName()));

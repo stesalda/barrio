@@ -112,6 +112,22 @@ public class SourceRef extends ClassRef {
 		typeParameterNames = null;
 		usedTypeNames = null;
 		
+		// copy hashsets into arrays to get rid of nulls
+		ArrayList<ClassRef> list = new ArrayList();
+		for (ClassRef c:this.usedClasses) {
+			if (c!=null)
+				list.add(c);
+		}
+		usedClasses = list;
+		
+		list = new ArrayList();
+		for (ClassRef c:this.interfaces) {
+			if (c!=null)
+				list.add(c);
+		}
+		interfaces = list;
+		
+		
 	}
 
 	public Collection<ExpectedDependency> getExpectedDependencies() {

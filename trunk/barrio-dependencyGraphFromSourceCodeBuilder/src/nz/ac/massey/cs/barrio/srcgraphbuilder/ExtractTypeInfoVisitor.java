@@ -111,7 +111,10 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
 	public boolean visit(ImportDeclaration imp) {
         String name = imp.getName().getFullyQualifiedName();
         if (imp.isOnDemand()) owner.getImportedPackages().add(name);
-        else owner.getImportedClasses().add(name);
+        else {
+        	owner.getImportedClasses().add(name);
+        	// this.add2used(name); // add to uses list @TODO make this configurable
+        }
         return false;
     }
 	
@@ -235,7 +238,11 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
     	this.varTracker.down();
     	return true;
     }
-
+	
+	public boolean visit(FieldDeclaration node) {
+		context = BODY;
+		return true;
+	}
 
 	private void add2used(String type) {
     	if (type!=null && !isPrimitiveType(type)) {
