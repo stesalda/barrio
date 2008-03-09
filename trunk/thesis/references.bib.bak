@@ -12,6 +12,26 @@
   url = {http://st-www.cs.uiuc.edu/users/brant/Refactory/Lint.html}
 }
 
+@BOOK{epf-book,
+  title = {Eclipse. Building commercial-quality plug-ins},
+  publisher = {Addison-Wesley},
+  year = {2006},
+  editor = {Erich Gamma, Lee Nackman, John Wiegand},
+  author = {Eric Clayberg, Dan Rubel},
+  edition = {2nd edition},
+  owner = {vsiakovl},
+  timestamp = {2008.03.10}
+}
+
+@MISC{refactoring,
+  author = {Martin Fowler},
+  title = {Refactoring},
+  howpublished = {http://www.refactoring.com/},
+  owner = {vsiakovl},
+  timestamp = {2008.03.06},
+  url = {http://www.refactoring.com/}
+}
+
 @MISC{ibm-tool,
   author = {IBM},
   title = {Structural Analysis for Java},
@@ -43,7 +63,7 @@
   url = {http://www-etud.iro.umontreal.ca/~mohanaou/paper/WOOR05/WOOR05a.doc.pdf}
 }
 
-@CONFERENCE{Neeraj2005,
+@CONFERENCE{Neeraj2005-lattix,
   author = {Neeraj Sangal, Ev Jordan, Vineet Sinha, Daniel Jackson},
   title = {Conference on Object Oriented Programming Systems Languages and Applications},
   booktitle = {Using dependency models to manage software architecture},

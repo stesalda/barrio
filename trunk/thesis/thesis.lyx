@@ -120,6 +120,12 @@ Converting Java standalone application to Eclipse plugin
 
 \begin_layout Standard
 Java standalone -> EPF
+\begin_inset LatexCommand cite
+key "epf-book"
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Standard
@@ -130,6 +136,8 @@ sideways false
 status open
 
 \begin_layout Standard
+\noindent
+\align center
 \begin_inset Graphics
 	filename images/Barrio epf diagram.jpg
 	lyxscale 20
@@ -156,10 +164,6 @@ Application Structure
 
 \end_inset
 
-
-\end_layout
-
-\begin_layout Standard
 
 \end_layout
 
