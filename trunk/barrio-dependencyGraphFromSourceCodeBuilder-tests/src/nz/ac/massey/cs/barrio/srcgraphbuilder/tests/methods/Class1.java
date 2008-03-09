@@ -1,4 +1,4 @@
-package nz.ac.massey.cs.barrio.srcgraphbuilder.tests.params;
+package nz.ac.massey.cs.barrio.srcgraphbuilder.tests.methods;
 
 import java.util.*;
 
