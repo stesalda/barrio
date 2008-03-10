@@ -61,7 +61,7 @@ public class OdemXMLEncoder {
 	}
 	private void encode(ContainerRef container) {
 		out.print("<container classification=\"");
-		out.print("jar"); // TODO
+		out.print(container.isArchive()?"jar":"dir");
 		out.print("\" name=\"");
 		out.print(container.getName());
 		out.println("\">");
