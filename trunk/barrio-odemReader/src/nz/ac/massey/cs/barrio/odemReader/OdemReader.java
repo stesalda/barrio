@@ -11,7 +11,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import nz.ac.massey.cs.barrio.constants.BarrioConstants;
 import nz.ac.massey.cs.barrio.inputReader.InputReader;
 
 import org.w3c.dom.Document;
@@ -31,7 +30,7 @@ public class OdemReader implements InputReader{
 	{	
 		if(filename==null || filename.length()<1) return;
 		try {
-			File folder = new File(BarrioConstants.GRAPHML_FOLDER);
+			File folder = new File("barrioPlugin");
 			folder.mkdir();
 			
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -39,7 +38,7 @@ public class OdemReader implements InputReader{
 			docBuilder = docBuilderFactory.newDocumentBuilder();
 			Document doc = docBuilder.parse(new File(filename));
 			
-			PrintStream out = new PrintStream(BarrioConstants.JUNG_GRAPH_FILE);
+			PrintStream out = new PrintStream("barrioPlugin/jGraph.xml");
 	
 			out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			out.print("<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns/graphml\"");
