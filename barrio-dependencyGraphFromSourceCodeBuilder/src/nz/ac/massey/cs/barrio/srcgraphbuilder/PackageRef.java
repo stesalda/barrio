@@ -53,4 +53,13 @@ public class PackageRef {
 		}
 	}
 	
+	public boolean hasTestCases() {
+		for (ClassRef c:classes) {
+			if (c.hasTestCases())
+				return true;
+		}
+		return false;
+	}
+	
+	
 }

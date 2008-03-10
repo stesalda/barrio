@@ -29,7 +29,6 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
 	private SourceRef owner = null;
 	private int context = DECLARATION;
 	private VariableNameTracker varTracker = new VariableNameTracker();
-	private boolean testMode = true;
 	
     public ExtractTypeInfoVisitor(SourceRef owner) {
 		super();
@@ -215,13 +214,43 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
         for (Object i:interfaces) {
         	owner.getInterfaceNames().add(i.toString());
         }
-
-        // @fixme type parameters are not yet supported
+        applyModifier(t.getModifiers());
         
+       
+        // TODO type parameters are not yet supported
         return true;
     }
     
-    // declaration of single variables
+	private void applyModifier(int flags) {
+		this.owner.setAbstract(Modifier.isAbstract(flags));
+		this.owner.setFinal(Modifier.isFinal(flags));
+		if (Modifier.isPublic(flags)) 
+			this.owner.setVisibility("public");
+		else if (Modifier.isProtected(flags))
+			this.owner.setVisibility("protected");
+		else if (Modifier.isPrivate(flags))
+			this.owner.setVisibility("private");
+		else 
+			this.owner.setVisibility("default");
+	}
+
+	public boolean visit(AnnotationTypeDeclaration node) {
+		owner.setType(JavaType.ANNOTATION);
+		applyModifier(node.getModifiers());
+		return true;
+	}
+
+	public boolean visit(EnumDeclaration node) {
+		owner.setType(JavaType.ENUMERATION);
+		List interfaces = node.superInterfaceTypes();
+        for (Object i:interfaces) {
+        	owner.getInterfaceNames().add(i.toString());
+        }
+        applyModifier(node.getModifiers());
+		return true;
+	}
+
+	// declaration of single variables
     public boolean visit(SimpleType t) {
     	if (context==BODY)
     		add2used(t.toString());
@@ -262,14 +291,5 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
     		"boolean".equals(t);    	
     }
 
-
-	public boolean isTestMode() {
-		return testMode;
-	}
-
-
-	public void setTestMode(boolean testMode) {
-		this.testMode = testMode;
-	} 
 
 }

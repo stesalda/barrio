@@ -55,4 +55,15 @@ public class ContainerRef {
 			p.test();
 		}
 	}
+	
+	public boolean hasTestCases() {
+		if (!this.isSourceContainer())
+			return false;
+		for (PackageRef p:packages) {
+			if (p.hasTestCases())
+				return true;
+		}
+		return false;
+	}
+	
 }
