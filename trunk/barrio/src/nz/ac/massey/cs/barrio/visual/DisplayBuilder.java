@@ -226,7 +226,7 @@ public class DisplayBuilder {
         lr.setManageBounds(true);
         
         EdgeRenderer er = new LabelEdgeRenderer();
-        er.setArrowHeadSize(15,20);
+        er.setArrowHeadSize(30,40);
         er.setDefaultLineWidth(1.5);
         er.setManageBounds(true);
         
