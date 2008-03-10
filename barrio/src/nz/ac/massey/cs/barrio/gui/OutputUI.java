@@ -12,7 +12,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-import nz.ac.massey.cs.barrio.constants.BarrioConstants;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
@@ -160,7 +159,7 @@ public class OutputUI extends Composite{
 		Display dis = (Display) panelGraph.getComponent(0);
 		if(dis!=null)
 		{
-			AggregateTable at = (AggregateTable) dis.getVisualization().getVisualGroup(BarrioConstants.VISUAL_AGGREGATES);
+			AggregateTable at = (AggregateTable) dis.getVisualization().getVisualGroup("aggregates");
 			Iterator i = at.tuples();
 			while(i.hasNext())
 			{

@@ -9,7 +9,6 @@ import java.util.List;
 
 import nz.ac.massey.cs.barrio.clusterer.Clusterer;
 import nz.ac.massey.cs.barrio.clusterer.KnownClusterer;
-import nz.ac.massey.cs.barrio.constants.BarrioConstants;
 import nz.ac.massey.cs.barrio.exporter.Exporter;
 import nz.ac.massey.cs.barrio.exporter.KnownExporter;
 import nz.ac.massey.cs.barrio.filters.EdgeFilter;
@@ -401,8 +400,8 @@ public class InputUI extends Composite{
 		
 	private void btnBrowseClick()
 	{
-		new File(BarrioConstants.JUNG_GRAPH_FILE).delete();
-		new File(BarrioConstants.PREFUSE_GRAPH_FILE).delete();
+		new File("barrioPlugin/jGraph.xml").delete();
+		new File("barrioPlugin/pGraph.xml").delete();
 		
 		Shell shell = new Shell();
 		FileDialog dlg = new FileDialog(shell, SWT.OPEN);
@@ -415,7 +414,7 @@ public class InputUI extends Composite{
 		InputReader reader = readers.get(0);
 		reader.read(filename);
   	  	
-  	  	initGraph = new GraphMLFile().load(BarrioConstants.JUNG_GRAPH_FILE);
+  	  	initGraph = new GraphMLFile().load("barrioPlugin/jGraph.xml");
   	  			
 		processGraph();
 		updateOutputs(true);

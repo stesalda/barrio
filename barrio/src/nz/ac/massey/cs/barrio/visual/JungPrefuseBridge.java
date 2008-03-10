@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Iterator;
 
-import nz.ac.massey.cs.barrio.constants.BarrioConstants;
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphMLReader;
 
@@ -18,7 +17,7 @@ public class JungPrefuseBridge {
 			writePrefuseGraphMl(jungGraph);
 			try {
 				GraphMLReader reader = new GraphMLReader();
-				prefuseGraph = reader.readGraph(BarrioConstants.PREFUSE_GRAPH_FILE);
+				prefuseGraph = reader.readGraph("barrioPlugin/pGraph.xml");
 				prefuseGraph.addColumn("class.expression", new LabelExpression("class.jar","class.packageName","class.name"));
 				prefuseGraph.addColumn("class.icon", new ImageExpression("class.isInterface", "class.isException", "class.isAbstract", "class.access"));
 			} catch (DataIOException e) {
@@ -36,7 +35,7 @@ public class JungPrefuseBridge {
 	private void writePrefuseGraphMl(edu.uci.ics.jung.graph.Graph jungGraph) 
 	{
 		try {
-			PrintStream out = new PrintStream(BarrioConstants.PREFUSE_GRAPH_FILE);
+			PrintStream out = new PrintStream("barrioPlugin/pGraph.xml");
 			out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			out.println("<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\">");
 			out.println("<graph edgedefault=\"directed\">");
