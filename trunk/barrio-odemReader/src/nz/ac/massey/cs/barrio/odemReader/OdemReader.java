@@ -94,6 +94,7 @@ public class OdemReader implements InputReader{
 							Node type = types.item(k);
 							NamedNodeMap typeAttr = type.getAttributes();
 							String containerStr = containerAttr.getNamedItem("name").getNodeValue();
+							String namespaceStr = namespaceAttr.getNamedItem("name").getNodeValue();
 							String typeStr = typeAttr.getNamedItem("name").getNodeValue();
 							out.print("<node id=\"");
 							out.print(nodeId);
@@ -102,11 +103,15 @@ public class OdemReader implements InputReader{
 							out.print("\" class.jar=\"");
 							out.print(containerStr.substring(containerStr.lastIndexOf('/')+1));
 							out.print("\" class.packageName=\"");
-							out.print(namespaceAttr.getNamedItem("name").getNodeValue());
+							out.print(namespaceStr);
 							out.print("\" class.name=\"");
 							out.print(typeStr.substring(typeStr.lastIndexOf('.')+1));
 							out.print("\" class.cluster=\"null\" class.isInterface=\"");
-							out.print(typeAttr.getNamedItem("classification").getNodeValue().equals("interface"));
+							
+							if(typeAttr.getNamedItem("classification")!=null)
+								out.print(typeAttr.getNamedItem("classification").getNodeValue().equals("interface"));
+							else out.print("null");
+							
 							out.print("\" class.isAbstract=\"");
 							if(typeAttr.getNamedItem("isAbstract")!=null && typeAttr.getNamedItem("isAbstract").getNodeValue().equals("yes"))
 								out.print("true");
@@ -114,9 +119,15 @@ public class OdemReader implements InputReader{
 							out.print("\" class.isException=\"");
 							out.print(typeStr.contains("Exception"));
 							out.print("\" class.access=\"");
-							out.print(typeAttr.getNamedItem("visibility").getNodeValue());
+							
+							if(typeAttr.getNamedItem("visibility")!=null)
+								out.print(typeAttr.getNamedItem("visibility").getNodeValue());
+							else out.print("null");
+							
 							out.println("\" node.isSelected=\"false\" />");
-							nodes.add(nodeId, typeStr);
+							
+							if(typeStr.contains(namespaceStr)) nodes.add(nodeId, typeStr);
+							else nodes.add(nodeId, namespaceStr+'.'+typeStr);
 							
 							if(type.getNodeType()==Node.ELEMENT_NODE)
 							{
