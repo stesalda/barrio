@@ -33,7 +33,7 @@ public class OdemXMLEncoder {
 	
 	public void encode(IJavaProject project,Collection<ContainerRef> containers) throws IOException {
 		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
-		// out.println("<!DOCTYPE ODEM SYSTEM \"odem-1.1.dtd\" >"); // TODO check for latest version and reference to URL
+		out.println("<!DOCTYPE ODEM PUBLIC \"-//PFSW//DTD ODEM 1.1\" \"http://pfsw.org/ODEM/schema/dtd/odem-1.1.dtd\">"); 
 		out.println("<ODEM version=\"1\">");
 		out.println("<header>");
 		out.println("<created-by>");
@@ -88,6 +88,28 @@ public class OdemXMLEncoder {
 		// <type visibility="default" classification="class" name="junit.extensions.ActiveTestSuite$1">
 		out.print("<type name=\"");
 		out.print(src.getName());
+		
+		out.print("\" visibility=\"");
+		out.print(src.getVisibility());
+		
+		out.print("\" classification=\"");
+		if (src.getType()==JavaType.ANNOTATION)
+			out.print("annotation");
+		else if (src.getType()==JavaType.INTERFACE)
+			out.print("interface");
+		else if (src.getType()==JavaType.ENUMERATION)
+			out.print("enum");
+		else if (src.getType()==JavaType.CLASS)
+			out.print("class");
+		else
+			out.print("unknown");
+		
+		out.print("\" isAbstract=\"");
+		out.print(src.isAbstract()?"yes":"no");
+		
+		out.print("\" isFinal=\"");
+		out.print(src.isFinal()?"yes":"no");
+		
 		out.println("\">");
 		
 		out.print("<dependencies count=\"");

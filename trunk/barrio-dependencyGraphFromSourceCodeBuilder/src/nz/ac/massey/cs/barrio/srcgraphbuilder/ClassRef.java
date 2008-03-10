@@ -22,6 +22,9 @@ public class ClassRef {
 	private String fullName = null;
 	private PackageRef owner = null;
 	private JavaType type = JavaType.CLASS;
+	private String visibility = null;
+	private boolean isAbstract = false;
+	private boolean isFinal = false;
 
 
 	public PackageRef getOwner() {
@@ -70,5 +73,33 @@ public class ClassRef {
 
 	public void test() {
 		// nothing to do here
+	}
+
+	public boolean hasTestCases() {
+		return false;
+	}
+
+	public String getVisibility() {
+		return visibility;
+	}
+
+	public void setVisibility(String visibility) {
+		this.visibility = visibility;
+	}
+
+	public boolean isAbstract() {
+		return isAbstract;
+	}
+
+	public void setAbstract(boolean isAbstract) {
+		this.isAbstract = isAbstract;
+	}
+
+	public boolean isFinal() {
+		return isFinal;
+	}
+
+	public void setFinal(boolean isFinal) {
+		this.isFinal = isFinal;
 	}
 }

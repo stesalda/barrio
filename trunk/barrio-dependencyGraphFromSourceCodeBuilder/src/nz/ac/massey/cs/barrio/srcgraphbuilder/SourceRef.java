@@ -39,7 +39,7 @@ public class SourceRef extends ClassRef {
 	private Collection<ClassRef> usedClasses = new HashSet<ClassRef>();
 	private boolean resolved = false;
 	// test cases built from @ExpectedDependency(kind="use",target="MyClass") annotations
-	private Collection<ExpectedDependency> expectedDependencies = new HashSet<ExpectedDependency>();
+	private Collection<ExpectedDependency> expectedDependencies = null;
 	
 	
 	public ICompilationUnit getCompilationUnit() {
@@ -131,12 +131,21 @@ public class SourceRef extends ClassRef {
 	}
 
 	public Collection<ExpectedDependency> getExpectedDependencies() {
+		if (this.expectedDependencies==null) {
+			expectedDependencies = new HashSet<ExpectedDependency>();
+		}
 		return expectedDependencies;
+	}
+	public boolean hasTestCases() {
+		return expectedDependencies!=null;
 	}
 	/**
 	 * Compare expected and encountered dependencies.
 	 */
 	public void test() {
+		if (!hasTestCases()) 
+			return;
+		
 		// gather expected
 		Collection<String> expectedUsedTypes = new HashSet<String>();
 		Collection<String> expectedImplementedTypes = new HashSet<String>();

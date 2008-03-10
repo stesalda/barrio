@@ -41,7 +41,6 @@ public abstract class ExtractDependencyGraphJob  extends Job {
 	protected Map<String,Collection<ClassRef>> classesByName = new HashMap<String,Collection<ClassRef>>();
 	protected Map<String,ClassRef> classesByFullName = new HashMap<String,ClassRef>();
 	protected Map<String,ClassRef> coreJavaClassesByName = new HashMap<String,ClassRef>();
-	protected boolean TESTMODE = true;
 
 	// root - this is the object we create
 	private ExplorationContext context = null;
@@ -121,7 +120,6 @@ public abstract class ExtractDependencyGraphJob  extends Job {
 				for (ClassRef c:p.getClasses()) {
 					SourceRef src = (SourceRef)c;
 					ExtractTypeInfoVisitor v = new ExtractTypeInfoVisitor(src);
-					v.setTestMode(TESTMODE);
 					ASTParser parser = ASTParser.newParser(AST.JLS3);
 					parser.setSource(src.getCompilationUnit());
 					parser.setResolveBindings(false);
@@ -141,12 +139,10 @@ public abstract class ExtractDependencyGraphJob  extends Job {
 				}
 			}			
 			
-			// STEP5 optional: testing
-			
-			if (this.TESTMODE) {
-				for (ContainerRef c:containers) {
-					c.test();
-				}
+			// STEP5: testing
+			for (ContainerRef c:containers) {
+				if (c.hasTestCases())
+						c.test();
 			}
 			
 			// STEP6 export graph
