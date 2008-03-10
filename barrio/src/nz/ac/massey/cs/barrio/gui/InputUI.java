@@ -245,7 +245,7 @@ public class InputUI extends Composite{
 
 			      public void widgetSelected(SelectionEvent e) {
 			    	  btnBrowseClick();
-			    	  btnRefreshClick(nodeFilters, edgeFilters);
+			    	  //btnRefreshClick(nodeFilters, edgeFilters);
 			      }  
 		   });
 		   
@@ -366,7 +366,7 @@ public class InputUI extends Composite{
 					}
 		   });
 		   
-		   updateUI();
+		   ubdateBtnRefreshEnabled();
 	}
 	
 		
@@ -385,10 +385,10 @@ public class InputUI extends Composite{
 		if(check.getSelection()) activeFilters.add(check.getText());
 		else activeFilters.remove(check.getText());
 		
-		updateUI();
+		ubdateBtnRefreshEnabled();
 	}
 	
-	private void updateUI()
+	private void ubdateBtnRefreshEnabled()
 	{
 		if(initGraph!=null)
 		{
@@ -426,7 +426,7 @@ public class InputUI extends Composite{
 	{
 		processGraph();
 		updateOutputs(false);
-		updateUI();
+		ubdateBtnRefreshEnabled();
 	}
 	
 	
@@ -434,7 +434,7 @@ public class InputUI extends Composite{
 	{
 		label.setText("Separation level = "+ value);
 		separationLevel = value;
-		updateUI();
+		ubdateBtnRefreshEnabled();
 	}
 	
 	private void btnExportClick()
@@ -462,21 +462,16 @@ public class InputUI extends Composite{
 	
 	private void filterGraph()
 	{
-		if(needFiltering())
-			for(Filter filter:knownFilters)
+		for(Filter filter:knownFilters)
+		{
+			Filter f = filter;
+			if(activeFilters.contains(f.getName()))
 			{
-				Filter f = filter;
-				if(activeFilters.contains(f.getName()))
-				{
-					finalGraph = f.filter(finalGraph).assemble();
-				}
+				finalGraph = f.filter(finalGraph).assemble();
 			}
+		}
 	}
 	
-	private boolean needFiltering()
-	{
-		return !previousFilters.equals(activeFilters);
-	}
 	
 	private void clusterGraph()
 	{
@@ -526,6 +521,7 @@ public class InputUI extends Composite{
 	
 	private void updateDisplay()
 	{
+		System.out.println("[InputUI]: update display called");
 		JungPrefuseBridge bridge = new JungPrefuseBridge();
 		DisplayBuilder disBuilder = new DisplayBuilder();
 		Display dis = disBuilder.getDisplay(bridge.convert(finalGraph));
