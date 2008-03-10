@@ -78,6 +78,7 @@ public abstract class ExtractDependencyGraphJob  extends Job {
 							ContainerRef c = new ContainerRef();
 							c.setSourceContainer(true);
 							c.setName(pfr.getElementName());
+							c.setArchive(pfr.isArchive());
 							this.containers.add(c);
 							gatherSources(c,pfr);
 							// System.out.println("Added container " + c.getName() + " - contains " + c.getClassCount() + " sources");

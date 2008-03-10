@@ -23,6 +23,8 @@ public class ContainerRef {
 	private boolean isSourceContainer = false;
 	private String name = null;
 	private Collection<PackageRef> packages = new ArrayList<PackageRef>();
+	private boolean isArchive = false;
+	
 	public boolean isSourceContainer() {
 		return isSourceContainer;
 	}
@@ -64,6 +66,12 @@ public class ContainerRef {
 				return true;
 		}
 		return false;
+	}
+	public boolean isArchive() {
+		return isArchive;
+	}
+	public void setArchive(boolean isArchive) {
+		this.isArchive = isArchive;
 	}
 	
 }
