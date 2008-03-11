@@ -1,8 +1,9 @@
-package nz.ac.massey.cs.barrio.visual;
+package nz.ac.massey.cs.barrio.graphconverter;
 
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Iterator;
+
 
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphMLReader;

@@ -1,4 +1,4 @@
-package nz.ac.massey.cs.barrio.visual;
+package nz.ac.massey.cs.barrio.graphconverter;
 
 import prefuse.data.Schema;
 import prefuse.data.Tuple;

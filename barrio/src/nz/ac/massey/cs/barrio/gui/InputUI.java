@@ -15,11 +15,11 @@ import nz.ac.massey.cs.barrio.filters.EdgeFilter;
 import nz.ac.massey.cs.barrio.filters.KnownEdgeFilters;
 import nz.ac.massey.cs.barrio.filters.KnownNodeFilters;
 import nz.ac.massey.cs.barrio.filters.NodeFilter;
+import nz.ac.massey.cs.barrio.graphconverter.JungPrefuseBridge;
 import nz.ac.massey.cs.barrio.inputReader.InputReader;
 import nz.ac.massey.cs.barrio.inputReader.KnownInputReader;
 import nz.ac.massey.cs.barrio.outputs.OutputGenrator;
 import nz.ac.massey.cs.barrio.visual.DisplayBuilder;
-import nz.ac.massey.cs.barrio.visual.JungPrefuseBridge;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
