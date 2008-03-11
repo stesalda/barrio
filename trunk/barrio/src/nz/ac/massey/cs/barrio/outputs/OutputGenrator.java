@@ -24,7 +24,7 @@ public class OutputGenrator {
 		{
 			tree.removeAll();
 			TreeItem jarcount = new TreeItem(tree, 0);
-			jarcount.setText(" jar file(s)");
+			jarcount.setText(" container(s)");
 			TreeItem packcount = new TreeItem(tree, 0);
 			packcount.setText(" package(s)");
 			TreeItem classcount = new TreeItem(tree, 0);
@@ -67,7 +67,7 @@ public class OutputGenrator {
 		TreeItem[] rootItems = t.getItems();
 		for(int i=0; i<rootItems.length; i++)
 		{
-			if(rootItems[i].getText().equals(" jar file(s)")) rootItems[i].setText(jarCount+" jar file(s)");
+			if(rootItems[i].getText().equals(" container(s)")) rootItems[i].setText(jarCount+" container(s)");
 			if(rootItems[i].getText().equals(" package(s)")) rootItems[i].setText(packCount+" package(s)");
 		}
 	}
