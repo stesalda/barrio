@@ -171,8 +171,10 @@ public abstract class ExtractDependencyGraphJob  extends Job {
 			if (target!=src)
 				src.getUsedClasses().add(target);
 		}
-		if (src.getSuperClassName()!=null) {
-			src.setSuperClass(this.resolveReference(src,src.getSuperClassName()));
+		for (String t:src.getSuperTypeNames()) {
+			target = this.resolveReference(src,t);
+			if (target!=src)
+				src.getSuperTypes().add(target);
 		}
 		
 		src.setResolved(true);
