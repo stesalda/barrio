@@ -29,13 +29,13 @@ public class SourceRef extends ClassRef {
 	private Collection<String> importedPackages = new ArrayList<String>();
 	private Collection<String> importedClasses = new ArrayList<String>();
 	// TODO check static imports
-	private String superClassName = null;
+	private Collection<String> superTypeNames = new ArrayList<String>();
 	private Collection<String> interfaceNames = new ArrayList<String>();
 	private Collection<String> typeParameterNames = new ArrayList<String>();
 	private Collection<String> usedTypeNames = new HashSet<String>();
 	// final relationships
 	private Collection<ClassRef> interfaces = new HashSet<ClassRef>();
-	private ClassRef superClass = null;
+	private Collection<ClassRef> superTypes = new HashSet<ClassRef>();
 	private Collection<ClassRef> usedClasses = new HashSet<ClassRef>();
 	private boolean resolved = false;
 	// test cases built from @ExpectedDependency(kind="use",target="MyClass") annotations
@@ -62,14 +62,6 @@ public class SourceRef extends ClassRef {
 		return "aSrcRef["+this.getFullName()+']';
 	}
 
-	public String getSuperClassName() {
-		return superClassName;
-	}
-
-	public void setSuperClassName(String superClassName) {
-		this.superClassName = superClassName;
-	}
-
 	public Collection<String> getInterfaceNames() {
 		return interfaceNames;
 	}
@@ -80,14 +72,6 @@ public class SourceRef extends ClassRef {
 
 	public Collection<String> getUsedTypeNames() {
 		return usedTypeNames;
-	}
-
-	public ClassRef getSuperClass() {
-		return superClass;
-	}
-
-	public void setSuperClass(ClassRef superClass) {
-		this.superClass = superClass;
 	}
 
 	public Collection<ClassRef> getInterfaces() {
@@ -107,7 +91,7 @@ public class SourceRef extends ClassRef {
 		// rest tmp variables
 		importedPackages = null;
 		importedClasses = new ArrayList<String>();
-		superClassName = null;
+		superTypeNames = null;
 		interfaceNames = null;
 		typeParameterNames = null;
 		usedTypeNames = null;
@@ -149,13 +133,13 @@ public class SourceRef extends ClassRef {
 		// gather expected
 		Collection<String> expectedUsedTypes = new HashSet<String>();
 		Collection<String> expectedImplementedTypes = new HashSet<String>();
-		String expectedSuperClass = null;
+		Collection<String> expectedExtendedTypes = new HashSet<String>();
 		for (ExpectedDependency expected:this.expectedDependencies) {
 			if (expected.getKind()==DependencyClassification.NEEDS) {
 				expectedUsedTypes.add(expected.getTarget());
 			}
 			else if (expected.getKind()==DependencyClassification.EXTENSION) {
-				expectedSuperClass=expected.getTarget();
+				expectedExtendedTypes.add(expected.getTarget());
 			}
 			else if (expected.getKind()==DependencyClassification.IMPLEMENTATION) {
 				expectedImplementedTypes.add(expected.getTarget());
@@ -164,7 +148,7 @@ public class SourceRef extends ClassRef {
 		// gather computed
 		Collection<String> computedUsedTypes = new HashSet<String>();
 		Collection<String> computedImplementedTypes = new HashSet<String>();
-		String computedSuperClass = this.superClass==null?null:this.superClass.getFullName();
+		Collection<String> computedExtendedTypes = new HashSet<String>();
 		
 		for (ClassRef c:this.usedClasses) {
 			if (c!=null && !c.getFullName().equals(this.getFullName())) // remove self reference
@@ -174,19 +158,21 @@ public class SourceRef extends ClassRef {
 			if (c!=null)
 				computedImplementedTypes.add(c.getFullName());
 		}
+		for (ClassRef c:this.superTypes) {
+			if (c!=null)
+				computedExtendedTypes.add(c.getFullName());
+		}
 		// compare
 		boolean ok = true;
 		boolean allOk = true;
-		if (expectedSuperClass==null)
-			ok = computedSuperClass==null;
-		else 
-			ok = expectedSuperClass.equals(computedSuperClass);
-		allOk = allOk && ok;
+
+		ok = expectedExtendedTypes.equals(computedExtendedTypes);
 		if (!ok) {
 			System.err.println("test failed in " + this.getFullName());
-			System.err.println("expected superclass: " + expectedSuperClass);
-			System.err.println("computed superclass: " + computedSuperClass);
+			System.err.println("expected super types: " + expectedExtendedTypes);
+			System.err.println("computed super types: " + computedExtendedTypes);
 		}
+		allOk = allOk && ok;
 		
 		ok = expectedImplementedTypes.equals(computedImplementedTypes);		
 		if (!ok) {
@@ -209,5 +195,14 @@ public class SourceRef extends ClassRef {
 		}
 		
 		
+	}
+
+	public Collection<ClassRef> getSuperTypes() {
+		return superTypes;
+	}
+
+
+	public Collection<String> getSuperTypeNames() {
+		return superTypeNames;
 	}
 }

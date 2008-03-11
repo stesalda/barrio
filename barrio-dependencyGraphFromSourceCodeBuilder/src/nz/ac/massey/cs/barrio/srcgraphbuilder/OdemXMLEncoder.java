@@ -116,8 +116,8 @@ public class OdemXMLEncoder {
 		out.print(getDependencyCount(src));
 		out.println("\">");
 		
-		if (src.getSuperClass()!=null) {
-			encode(src.getSuperClass(),"extends");
+		for (ClassRef target:src.getSuperTypes()) {
+			encode(target,"extends");
 		}
 		for (ClassRef target:src.getInterfaces()) {
 			encode(target,"implements");
@@ -142,7 +142,7 @@ public class OdemXMLEncoder {
 	}
 
 	private int getDependencyCount(SourceRef src) {
-		int count = src.getSuperClass()==null?0:1;
+		int count = src.getSuperTypes().size();
 		count = count+src.getInterfaces().size();
 		count = count+src.getUsedClasses().size();
 		return count;

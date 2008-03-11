@@ -209,10 +209,15 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
         
         Type superClass = t.getSuperclassType();
         if (superClass!=null)
-        	owner.setSuperClassName(superClass.toString());
+        	owner.getSuperTypeNames().add(superClass.toString());
         List interfaces = t.superInterfaceTypes();
         for (Object i:interfaces) {
-        	owner.getInterfaceNames().add(i.toString());
+        	if (t.isInterface()) {
+        		owner.getSuperTypeNames().add(i.toString());
+        	}
+        	else {
+        		owner.getInterfaceNames().add(i.toString());
+        	}
         }
         applyModifier(t.getModifiers());
         
