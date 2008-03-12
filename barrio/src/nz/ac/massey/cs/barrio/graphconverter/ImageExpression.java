@@ -52,6 +52,6 @@ public class ImageExpression extends AbstractExpression{
 
 	private String getFilePath(String path)
 	{
-		return ImageExpression.class.getResource(path).getFile();
+		return this.getClass().getResource(path).getFile().toString();
 	}
 }
