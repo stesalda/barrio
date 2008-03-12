@@ -21,6 +21,9 @@ import nz.ac.massey.cs.barrio.inputReader.KnownInputReader;
 import nz.ac.massey.cs.barrio.outputs.OutputGenrator;
 import nz.ac.massey.cs.barrio.visual.DisplayBuilder;
 
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -417,14 +420,12 @@ public class InputUI extends Composite{
   	  	initGraph = new GraphMLFile().load("barrioPlugin/jGraph.xml");
   	  			
 		processGraph();
-		updateOutputs(true);
 	}
 	
 	
 	private void btnRefreshClick(List<NodeFilter> nodeFilters, List<EdgeFilter> edgeFilters) 
 	{
 		processGraph();
-		updateOutputs(false);
 		ubdateBtnRefreshEnabled();
 	}
 	
@@ -457,6 +458,7 @@ public class InputUI extends Composite{
 		finalGraph = (Graph) initGraph.copy();
 		filterGraph();
 		clusterGraph();
+		
 	}
 	
 	private void filterGraph()
@@ -474,14 +476,33 @@ public class InputUI extends Composite{
 	
 	private void clusterGraph()
 	{
-		Clusterer c = KnownClusterer.all().get(0);
+		final Clusterer c = KnownClusterer.all().get(0);
 		c.cluster(finalGraph, separationLevel);
-		removedEdges = c.getEdgesRemoved();
 		
-		for(Edge e:removedEdges)
-		{
-			e.setUserDatum("relationship.state", "removed", UserData.SHARED);
-		}
+		Job job = c.getJob();
+		job.addJobChangeListener(new IJobChangeListener(){
+
+			public void aboutToRun(IJobChangeEvent event) {}
+
+			public void awake(IJobChangeEvent event) {}
+
+			public void done(IJobChangeEvent event) {
+				if(removedEdges!=null) for(Edge e:removedEdges)
+				{
+					e.setUserDatum("relationship.state", "removed", UserData.SHARED);
+					removedEdges = c.getEdgesRemoved();
+				}
+				updateOutputs(false);
+			}
+
+			public void running(IJobChangeEvent event) {}
+
+			public void scheduled(IJobChangeEvent event) {}
+
+			public void sleeping(IJobChangeEvent event) {}
+			
+		});
+		
 	}
 	//graph processing methods end=================================================
 	

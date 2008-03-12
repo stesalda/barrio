@@ -166,10 +166,8 @@ public class OutputGenrator {
 	{
 		int i = 1;
 		list.clear();		
-		Iterator<Edge> edgeIterator = removedEdges.iterator();
-		while(edgeIterator.hasNext())
+		if(removedEdges!=null) for(Edge e:removedEdges)
 		{
-			Edge e = edgeIterator.next();
 			Vertex src = (Vertex) e.getEndpoints().getFirst();
 			Vertex dest = (Vertex) e.getEndpoints().getSecond();
 			
