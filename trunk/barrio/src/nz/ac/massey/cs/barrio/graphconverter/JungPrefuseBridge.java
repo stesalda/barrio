@@ -4,6 +4,8 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.Iterator;
 
+import edu.uci.ics.jung.graph.Edge;
+
 
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphMLReader;
@@ -102,10 +104,9 @@ public class JungPrefuseBridge {
 			out.println();
 			out.println("<!-- edges -->");
 			
-			Iterator<edu.uci.ics.jung.graph.Edge> edgeIterator = jungGraph.getEdges().iterator();
-			while(edgeIterator.hasNext())
+			for(Object obj:jungGraph.getEdges())
 			{
-				edu.uci.ics.jung.graph.Edge e = edgeIterator.next();
+				edu.uci.ics.jung.graph.Edge e = (Edge) obj;
 				out.print("<edge source=\"");
 				out.print(e.getUserDatum("sourceId").toString());
 				out.print("\" target=\"");
