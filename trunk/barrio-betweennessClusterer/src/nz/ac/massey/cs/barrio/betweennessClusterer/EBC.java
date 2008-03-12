@@ -68,13 +68,12 @@ public class EBC implements GraphClusterer {
 	            	lastRank = rankValue;
             	}
             }
-            System.out.println("[EBC]: Betweenness level done = "+(i+1));
+            //System.out.println("[EBC]: Betweenness level done = "+(i+1));
         }
 
 	    WeakComponentClusterer wcSearch = new WeakComponentClusterer();
 	    ClusterSet clusterSet = wcSearch.extract(graph);
-	    for (Iterator<Edge> iter = edgesRemoved.iterator(); iter.hasNext(); )
-        graph.addEdge((Edge)iter.next());
+
 	    
 	    nameClusters(clusterSet);
 	    return clusterSet;
