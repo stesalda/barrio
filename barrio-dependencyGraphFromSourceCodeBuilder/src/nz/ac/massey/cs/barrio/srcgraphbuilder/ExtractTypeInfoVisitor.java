@@ -12,6 +12,7 @@
 package nz.ac.massey.cs.barrio.srcgraphbuilder;
 
 import java.util.List;
+import java.util.Stack;
 import java.util.StringTokenizer;
 import org.eclipse.jdt.core.dom.*;
 import org.pfsw.odem.DependencyClassification;
@@ -26,16 +27,20 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
 
 	private final static int DECLARATION = 0;
 	private final static int BODY = 1;
-	private SourceRef owner = null;
+	private Stack<SourceRef> owner = new Stack<SourceRef>(); // use stack to support inner classes
 	private int context = DECLARATION;
 	private VariableNameTracker varTracker = new VariableNameTracker();
+	private boolean isTopLevelClass = true;
 	
-    public ExtractTypeInfoVisitor(SourceRef owner) {
+    public ExtractTypeInfoVisitor(SourceRef src) {
 		super();
-		this.owner = owner;
+		this.owner.push(src);
 		this.context = DECLARATION;
 	}
     
+    private SourceRef getSourceClass() {
+    	return this.owner.peek();
+    }
 	@Override
 	public boolean visit(SingleMemberAnnotation node) {
 		String annotation = node.getTypeName().toString();
@@ -57,7 +62,7 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
 			for (StringTokenizer tok = new StringTokenizer(value,",");tok.hasMoreTokens();) {
 				String refedType = tok.nextToken().trim();
 				ExpectedDependency constraint = new ExpectedDependency(refType,refedType);
-				this.owner.getExpectedDependencies().add(constraint);
+				this.getSourceClass().getExpectedDependencies().add(constraint);
 			}
 		}
 		else {
@@ -109,9 +114,9 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
 
 	public boolean visit(ImportDeclaration imp) {
         String name = imp.getName().getFullyQualifiedName();
-        if (imp.isOnDemand()) owner.getImportedPackages().add(name);
+        if (imp.isOnDemand()) getSourceClass().getImportedPackages().add(name);
         else {
-        	owner.getImportedClasses().add(name);
+        	getSourceClass().getImportedClasses().add(name);
         	// this.add2used(name); // add to uses list @TODO make this configurable
         }
         return false;
@@ -201,55 +206,72 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
 	}
     
     public boolean visit(TypeDeclaration t) {
+    	if (!isTopLevelClass) {
+    		SourceRef parent = this.owner.peek();
+    		SourceRef ic = new SourceRef();
+    		ic.setOuterClass(parent); 
+    		ic.setName(parent.getName()+'.'+t.getName().toString());
+    		this.owner.push(ic);
+    		
+    		// register references in both directions
+    		parent.getUsedTypeNames().add(ic.getFullName());
+    		ic.getUsedTypeNames().add(parent.getFullName());
+    	}
         if (t.isInterface())
-        	owner.setType(JavaType.INTERFACE);
+        	getSourceClass().setType(JavaType.INTERFACE);
         else {
-        	owner.setType(JavaType.CLASS);
+        	getSourceClass().setType(JavaType.CLASS);
         }
         
         Type superClass = t.getSuperclassType();
         if (superClass!=null)
-        	owner.getSuperTypeNames().add(superClass.toString());
+        	getSourceClass().getSuperTypeNames().add(superClass.toString());
         List interfaces = t.superInterfaceTypes();
         for (Object i:interfaces) {
         	if (t.isInterface()) {
-        		owner.getSuperTypeNames().add(i.toString());
+        		getSourceClass().getSuperTypeNames().add(i.toString());
         	}
         	else {
-        		owner.getInterfaceNames().add(i.toString());
+        		getSourceClass().getInterfaceNames().add(i.toString());
         	}
         }
         applyModifier(t.getModifiers());
         
        
+        isTopLevelClass = false;
         // TODO type parameters are not yet supported
         return true;
     }
     
+    public void endVisit(TypeDeclaration t) {
+    	if (!isTopLevelClass) {
+    		this.owner.pop();
+    	}
+    }
 	private void applyModifier(int flags) {
-		this.owner.setAbstract(this.owner.getType()==JavaType.INTERFACE?true:Modifier.isAbstract(flags));
-		this.owner.setFinal(Modifier.isFinal(flags));
+		this.getSourceClass().setAbstract(this.getSourceClass().getType()==JavaType.INTERFACE?true:Modifier.isAbstract(flags));
+		this.getSourceClass().setFinal(Modifier.isFinal(flags));
 		if (Modifier.isPublic(flags)) 
-			this.owner.setVisibility("public");
+			this.getSourceClass().setVisibility("public");
 		else if (Modifier.isProtected(flags))
-			this.owner.setVisibility("protected");
+			this.getSourceClass().setVisibility("protected");
 		else if (Modifier.isPrivate(flags))
-			this.owner.setVisibility("private");
+			this.getSourceClass().setVisibility("private");
 		else 
-			this.owner.setVisibility("default");
+			this.getSourceClass().setVisibility("default");
 	}
 
 	public boolean visit(AnnotationTypeDeclaration node) {
-		owner.setType(JavaType.ANNOTATION);
+		getSourceClass().setType(JavaType.ANNOTATION);
 		applyModifier(node.getModifiers());
 		return true;
 	}
 
 	public boolean visit(EnumDeclaration node) {
-		owner.setType(JavaType.ENUMERATION);
+		getSourceClass().setType(JavaType.ENUMERATION);
 		List interfaces = node.superInterfaceTypes();
         for (Object i:interfaces) {
-        	owner.getInterfaceNames().add(i.toString());
+        	getSourceClass().getInterfaceNames().add(i.toString());
         }
         applyModifier(node.getModifiers());
 		return true;
@@ -281,7 +303,7 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
 	private void add2used(String type) {
     	if (type!=null && !isPrimitiveType(type)) {
     		//System.out.println(type + " referenced in " + owner.getFullName());
-    		owner.getUsedTypeNames().add(type);
+    		getSourceClass().getUsedTypeNames().add(type);
     	}
     }
     private boolean isPrimitiveType(String t) {

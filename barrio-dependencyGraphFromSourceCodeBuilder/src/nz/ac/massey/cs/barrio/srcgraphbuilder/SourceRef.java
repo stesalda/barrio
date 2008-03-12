@@ -25,6 +25,9 @@ import org.pfsw.odem.DependencyClassification;
 public class SourceRef extends ClassRef {
 	private ICompilationUnit compilationUnit = null;
 	
+	private SourceRef outerClass = null;
+	private Collection<SourceRef> innerClasses = new ArrayList<SourceRef>();
+	
 	// tmp variables
 	private Collection<String> importedPackages = new ArrayList<String>();
 	private Collection<String> importedClasses = new ArrayList<String>();
@@ -205,4 +208,30 @@ public class SourceRef extends ClassRef {
 	public Collection<String> getSuperTypeNames() {
 		return superTypeNames;
 	}
+
+
+
+	public Collection<SourceRef> getInnerClasses() {
+		return innerClasses;
+	}
+
+	public SourceRef getOuterClass() {
+		return outerClass;
+	}
+
+	public void setOuterClass(SourceRef outerClass) {
+		this.outerClass = outerClass;
+		outerClass.getInnerClasses().add(this);
+		this.importedClasses = outerClass.importedClasses;
+		this.importedPackages = outerClass.importedPackages;
+	}
+
+	public PackageRef getOwner() {
+		if (this.outerClass==null)
+			return super.getOwner();
+		else
+			return this.outerClass.getOwner();
+	}
+	
+	
 }
