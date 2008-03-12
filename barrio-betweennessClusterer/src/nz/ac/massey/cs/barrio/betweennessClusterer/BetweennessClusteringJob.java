@@ -3,6 +3,8 @@ package nz.ac.massey.cs.barrio.betweennessClusterer;
 import java.util.ArrayList;
 import java.util.List;
 
+import nz.ac.massey.cs.barrio.clusterer.Clusterer;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -11,7 +13,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
 
-public class BetweennessClusteringJob extends Job {
+public class BetweennessClusteringJob extends Job implements Clusterer{
 
 	private Graph graph;
 	private int separation;
@@ -33,19 +35,25 @@ public class BetweennessClusteringJob extends Job {
 			monitor.subTask(String.valueOf(i+1));
 			ebc.extract(graph);
 			removedEdges.addAll(ebc.getEdgesRemoved());
-			
+			monitor.worked(1);
 		}
-		
 		monitor.done();
-		
-	    
 		return Status.OK_STATUS;
+	}
+
+	public void cluster(Graph graph, int separation) {
+		// TODO Auto-generated method stub
 		
 	}
 
-	public List<Edge> getRemovedEdges() {
+	public List<Edge> getEdgesRemoved() {
 		// TODO Auto-generated method stub
-		return removedEdges;
+		return null;
+	}
+
+	public Job getJob() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
