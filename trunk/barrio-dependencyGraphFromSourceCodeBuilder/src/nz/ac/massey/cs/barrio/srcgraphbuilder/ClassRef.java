@@ -45,11 +45,11 @@ public class ClassRef {
 			if (name==null) {
 				return null;
 			}
-			else if (owner==null) {
+			else if (this.getOwner()==null) {
 				return null;
 			}
 			else {
-				fullName = owner.getName()+'.'+name;
+				fullName = this.getOwner().getName()+'.'+name;
 			}
 		}
 		return fullName;

@@ -134,6 +134,14 @@ public abstract class ExtractDependencyGraphJob  extends Job {
 			for (PackageRef p:packages) {
 				monitor.subTask("resolving references " + p.getName());
 				monitor.worked(delta);
+				// add inner classes
+				List<ClassRef> classlist = new ArrayList<ClassRef>(); // to avoid concurrent modification exception
+				classlist.addAll(p.getClasses());
+				for (ClassRef c:classlist) {
+					addInnerClasses((SourceRef)c,p);
+				}
+				
+				// resolve references
 				for (ClassRef c:p.getClasses()) {
 					SourceRef src = (SourceRef)c;
 					resolveReferences(src);
@@ -154,6 +162,14 @@ public abstract class ExtractDependencyGraphJob  extends Job {
 			return Status.OK_STATUS;
 		} finally {
 
+		}
+	}
+
+	private void addInnerClasses(SourceRef c, PackageRef p) {
+		for (SourceRef ic:c.getInnerClasses()) {
+			ic.setOwner(p);
+			registerType(null,ic);
+			addInnerClasses(ic,p); // recurse
 		}
 	}
 
@@ -279,8 +295,7 @@ public abstract class ExtractDependencyGraphJob  extends Job {
 	private void gatherSources(PackageRef p,IPackageFragment pf) {
 		// filter used for debugging
 		// if (!p.getName().endsWith("inheritance")) return;
-		
-		boolean isJavaLang = "java.lang".equals(p.getName());
+
 		try {
 			for (IJavaElement e:pf.getChildren()) {
 				if (e instanceof ICompilationUnit ) {
@@ -291,10 +306,7 @@ public abstract class ExtractDependencyGraphJob  extends Job {
 					c.setName(n);
 					c.setOwner(p);
 					c.setCompilationUnit((ICompilationUnit)e);
-					if (isJavaLang) {
-						this.coreJavaClassesByName.put(n,c);
-					}
-					registerType(c);
+					registerType(n,c);
 				}
 			}
 		}
@@ -304,7 +316,7 @@ public abstract class ExtractDependencyGraphJob  extends Job {
 	}
 	
 	private void gatherBinaries(PackageRef p,IPackageFragment pf) {
-		boolean isJavaLang = "java.lang".equals(p.getName());
+		
 		try {
 			for (IJavaElement e:pf.getChildren()) {
 				if (e instanceof IClassFile ) {
@@ -314,10 +326,7 @@ public abstract class ExtractDependencyGraphJob  extends Job {
 					ClassRef c = new ClassRef();
 					c.setName(n);
 					c.setOwner(p);
-					if (isJavaLang) {
-						this.coreJavaClassesByName.put(n,c);
-					}
-					registerType(c);
+					registerType(n,c);
 				}
 			}
 		}
@@ -329,7 +338,11 @@ public abstract class ExtractDependencyGraphJob  extends Job {
 	private String normalizeClassName (String n) {
 		return n.replace('$','.');
 	}
-	private void registerType(ClassRef c) {
+	void registerType(String n,ClassRef c) {
+		boolean isJavaLang = n!=null && "java.lang".equals(c.getOwner().getName());
+		if (isJavaLang) {
+			this.coreJavaClassesByName.put(n,c);
+		}
 		// there should be only one
 		this.classesByFullName.put(c.getFullName(),c);
 		// but more than one for a name
