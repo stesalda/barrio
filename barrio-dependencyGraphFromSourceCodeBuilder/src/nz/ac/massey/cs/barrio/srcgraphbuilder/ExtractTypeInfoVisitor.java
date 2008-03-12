@@ -227,7 +227,7 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
     }
     
 	private void applyModifier(int flags) {
-		this.owner.setAbstract(Modifier.isAbstract(flags));
+		this.owner.setAbstract(this.owner.getType()==JavaType.INTERFACE?true:Modifier.isAbstract(flags));
 		this.owner.setFinal(Modifier.isFinal(flags));
 		if (Modifier.isPublic(flags)) 
 			this.owner.setVisibility("public");
