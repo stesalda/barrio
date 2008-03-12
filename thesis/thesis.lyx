@@ -95,11 +95,27 @@ Introduction
 \end_layout
 
 \begin_layout Section
-section 1
+Antipatterns
+\end_layout
+
+\begin_layout Standard
+text
 \end_layout
 
 \begin_layout Section
-section 2
+Rules
+\end_layout
+
+\begin_layout Standard
+text
+\end_layout
+
+\begin_layout Section
+Refactoring
+\end_layout
+
+\begin_layout Standard
+text
 \end_layout
 
 \begin_layout Chapter
@@ -170,6 +186,10 @@ Application Structure
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+runtime jobs for graphBuilder and clusterer
 \end_layout
 
 \begin_layout Section
