@@ -18,7 +18,7 @@ import nz.ac.massey.cs.barrio.filters.NodeFilter;
 import nz.ac.massey.cs.barrio.graphconverter.JungPrefuseBridge;
 import nz.ac.massey.cs.barrio.inputReader.InputReader;
 import nz.ac.massey.cs.barrio.inputReader.KnownInputReader;
-import nz.ac.massey.cs.barrio.outputs.OutputGenrator;
+import nz.ac.massey.cs.barrio.outputs.OutputGenerator;
 import nz.ac.massey.cs.barrio.visual.DisplayBuilder;
 
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -420,6 +420,9 @@ public class InputUI extends Composite{
   	  	initGraph = new GraphMLFile().load("barrioPlugin/jGraph.xml");
   	  			
 		processGraph();
+
+		
+		updateOutputs(true);
 	}
 	
 	
@@ -427,6 +430,9 @@ public class InputUI extends Composite{
 	{
 		processGraph();
 		ubdateBtnRefreshEnabled();
+
+		
+		updateOutputs(false);
 	}
 	
 	
@@ -478,31 +484,6 @@ public class InputUI extends Composite{
 	{
 		final Clusterer c = KnownClusterer.all().get(0);
 		c.cluster(finalGraph, separationLevel);
-		
-		Job job = c.getJob();
-		job.addJobChangeListener(new IJobChangeListener(){
-
-			public void aboutToRun(IJobChangeEvent event) {}
-
-			public void awake(IJobChangeEvent event) {}
-
-			public void done(IJobChangeEvent event) {
-				if(removedEdges!=null) for(Edge e:removedEdges)
-				{
-					e.setUserDatum("relationship.state", "removed", UserData.SHARED);
-					removedEdges = c.getEdgesRemoved();
-				}
-				updateOutputs(false);
-			}
-
-			public void running(IJobChangeEvent event) {}
-
-			public void scheduled(IJobChangeEvent event) {}
-
-			public void sleeping(IJobChangeEvent event) {}
-			
-		});
-		
 	}
 	//graph processing methods end=================================================
 	
@@ -516,19 +497,19 @@ public class InputUI extends Composite{
 	{
 		if(isInit)
 		{
-			OutputGenrator.initGraph = initGraph;
-			OutputGenrator.generateProjectDescription(OutputUI.treeProject);
+			OutputGenerator.initGraph = initGraph;
+			OutputGenerator.generateProjectDescription(OutputUI.treeProject);
 			OutputUI.treeProject.update();
 		}
 		
-		OutputGenrator.clusteredGraph = finalGraph;
-		OutputGenrator.generatePackagesWithMultipleClusters(OutputUI.treePwMC);
+		OutputGenerator.clusteredGraph = finalGraph;
+		OutputGenerator.generatePackagesWithMultipleClusters(OutputUI.treePwMC);
 		OutputUI.treePwMC.update();
-		OutputGenrator.generateClustersWithMuiltiplePackages(OutputUI.treeCwMP);
+		OutputGenerator.generateClustersWithMuiltiplePackages(OutputUI.treeCwMP);
 		OutputUI.treeCwMP.update();
 		
 		List<String[]> list = new ArrayList<String[]>();
-		OutputGenrator.generateListRemovedEdges(list, removedEdges);
+		OutputGenerator.generateListRemovedEdges(list, removedEdges);
 		OutputUI.updateTable(list);
 		
 		previousFilters = new ArrayList<String>(activeFilters);

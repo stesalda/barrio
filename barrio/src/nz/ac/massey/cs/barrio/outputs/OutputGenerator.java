@@ -11,7 +11,7 @@ import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Vertex;
 
-public class OutputGenrator {
+public class OutputGenerator {
 	
 	public static Graph initGraph = null;
 	public static Graph clusteredGraph = null;
