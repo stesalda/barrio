@@ -17,10 +17,12 @@ import nz.ac.massey.cs.barrio.filters.KnownNodeFilters;
 import nz.ac.massey.cs.barrio.filters.NodeFilter;
 import nz.ac.massey.cs.barrio.graphconverter.JungPrefuseBridge;
 import nz.ac.massey.cs.barrio.inputReader.InputReader;
+import nz.ac.massey.cs.barrio.inputReader.InputReaderJob;
 import nz.ac.massey.cs.barrio.inputReader.KnownInputReader;
 import nz.ac.massey.cs.barrio.outputs.OutputGenerator;
 import nz.ac.massey.cs.barrio.visual.DisplayBuilder;
 
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.Job;
@@ -413,16 +415,17 @@ public class InputUI extends Composite{
 	    String filename = dlg.open();
 	    shell.close();
 	    
-	    List<InputReader> readers = KnownInputReader.all();
-		InputReader reader = readers.get(0);
-		reader.read(filename);
+	    List<InputReaderJob> readers = KnownInputReader.all();
+	    IAdaptable reader = readers.get(0);
+	    reader.setFilename(filename);
+  	  	reader.schedule();
   	  	
-  	  	initGraph = new GraphMLFile().load("barrioPlugin/jGraph.xml");
-  	  			
-		processGraph();
-
-		
-		updateOutputs(true);
+//  	initGraph = new GraphMLFile().load("barrioPlugin/jGraph.xml");
+//  	  			
+//		processGraph();
+//
+//		
+//		updateOutputs(true);
 	}
 	
 	
