@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="dca_plugin">
+<schema targetNamespace="barrio.inputReader">
 <annotation>
       <appInfo>
-         <meta.schema plugin="dca_plugin" id="nz.ac.massey.cs.dca_plugin.inputReader" name="inputReader"/>
+         <meta.schema plugin="nz.ac.massey.cs.barrio.inputReader" id="nz.ac.massey.cs.barrio.inputReader" name="inputReader"/>
       </appInfo>
       <documentation>
          Reads input file and converts it to graphML file to be opened by JUNG
@@ -41,7 +41,7 @@
 
    <element name="implementations">
       <complexType>
-         <attribute name="readerClass" type="string">
+         <attribute name="inputReaderClass" type="string">
             <annotation>
                <documentation>
                   
