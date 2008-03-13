@@ -11,3 +11,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.jdt.core,
  org.eclipse.core.resources
 Eclipse-LazyStart: true
+Bundle-ClassPath: lib/pf-odem.jar,
+ .
