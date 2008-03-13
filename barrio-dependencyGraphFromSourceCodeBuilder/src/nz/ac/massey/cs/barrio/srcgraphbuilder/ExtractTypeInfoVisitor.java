@@ -244,7 +244,7 @@ public class ExtractTypeInfoVisitor extends ASTVisitor {
     }
     
     public void endVisit(TypeDeclaration t) {
-    	if (!isTopLevelClass) {
+    	if (!isTopLevelClass && this.owner.size()>1) {
     		this.owner.pop();
     	}
     }
