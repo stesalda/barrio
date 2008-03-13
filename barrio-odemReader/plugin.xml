@@ -6,7 +6,7 @@
          name="Barrio ODEM Reader"
          point="nz.ac.massey.cs.barrio.inputReader">
          <implementations
-               inputReaderClass="nz.ac.massey.cs.barrio.odemReader.OdemReader"/>
+               inputReaderClass="nz.ac.massey.cs.barrio.inputReader.InputReaderJob"/>
    </extension>
 
 </plugin>
