@@ -16,13 +16,11 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.utils.UserData;
 
-public class EBC implements GraphClusterer {
+public class EdgeBetweennessClusterer implements GraphClusterer {
 
-	private int separation;
 	private List<Edge> edgesRemoved;
 	
-	public EBC(int separationLevel) {
-		separation = separationLevel;
+	public EdgeBetweennessClusterer() {
 		edgesRemoved = new ArrayList<Edge>();
 	}
 
@@ -35,40 +33,30 @@ public class EBC implements GraphClusterer {
 		
 		Graph graph = (Graph)g;
 		
-		Iterator<Edge> edgeIter = graph.getEdges().iterator();
-		while(edgeIter.hasNext())
-		{
-			edgeIter.next().setUserDatum("relationship.betweenness", "null", UserData.SHARED);
-		}
 		
-       
-		for (int i=0; i<separation; i++) 
+        BetweennessCentrality bc = new BetweennessCentrality(graph,false);
+        bc.setRemoveRankScoresOnFinalize(true);
+        bc.evaluate();
+        
+        double lastRank = -1.0;
+        List<?> rankings = bc.getRankings();
+        
+        Iterator<?> iter = rankings.iterator();
+        while(iter.hasNext())
         {
-            BetweennessCentrality bc = new BetweennessCentrality(graph,false);
-            bc.setRemoveRankScoresOnFinalize(true);
-            bc.evaluate();
-            
-            double lastRank = -1.0;
-            List<?> rankings = bc.getRankings();
-//	            System.out.println("[EBC]: rankings = "+rankings);
-            Iterator<?> iter = rankings.iterator();
-            while(iter.hasNext())
-            {
-            	Object edgeRanking = iter.next();
-            	double rankValue = Double.parseDouble(edgeRanking.toString());
-            	
-            	if(lastRank<0 || rankValue==lastRank)
-            	{
-            		EdgeRanking highestBetweenness = (EdgeRanking) edgeRanking;
-            		Edge e = (Edge)highestBetweenness.edge.getEqualEdge(graph);
-            		e.setUserDatum("relationship.betweenness", rankValue, UserData.SHARED);
-		            edgesRemoved.add(e);
-		            graph.removeEdge(e);//highestBetweenness.edge);
+        	Object edgeRanking = iter.next();
+        	double rankValue = Double.parseDouble(edgeRanking.toString());
+        	
+        	if(lastRank<0 || rankValue==lastRank)
+        	{
+        		EdgeRanking highestBetweenness = (EdgeRanking) edgeRanking;
+        		Edge e = (Edge)highestBetweenness.edge.getEqualEdge(graph);
+        		e.setUserDatum("relationship.betweenness", rankValue, UserData.SHARED);
+	            edgesRemoved.add(e);
+	            graph.removeEdge(e);//highestBetweenness.edge);
 
-	            	lastRank = rankValue;
-            	}
-            }
-            //System.out.println("[EBC]: Betweenness level done = "+(i+1));
+            	lastRank = rankValue;
+        	}
         }
 
 	    WeakComponentClusterer wcSearch = new WeakComponentClusterer();
