@@ -1,4 +1,4 @@
-package nz.ac.massey.cs.barrio.outputs;
+package nz.ac.massey.cs.barrio.gui;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -13,12 +13,18 @@ import edu.uci.ics.jung.graph.Vertex;
 
 public class OutputGenerator {
 	
-	public static Graph initGraph = null;
-	public static Graph clusteredGraph = null;
+	private Graph initGraph = null;
+	private Graph finalGraph = null;
+	
+	public OutputGenerator(Graph initGraph, Graph finalGraph)
+	{
+		this.initGraph = initGraph;
+		this.finalGraph = finalGraph;
+	}
 	
 	//Methods to output project description
 	@SuppressWarnings("unchecked")
-	public static void generateProjectDescription(Tree tree)
+	public void generateProjectDescription(Tree tree)
 	{
 		if(initGraph!=null)
 		{
@@ -51,7 +57,7 @@ public class OutputGenerator {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private static void countPackagesAndJars(Tree t, TreeItem root)
+	private void countPackagesAndJars(Tree t, TreeItem root)
 	{
 		int jarCount = 0;
 		int packCount = 0;
@@ -76,15 +82,15 @@ public class OutputGenerator {
 	
 	//Building output tree for packages with multiple clusters
 	@SuppressWarnings("unchecked")
-	public static void generatePackagesWithMultipleClusters(Tree tree)
+	public void generatePackagesWithMultipleClusters(Tree tree)
 	{
-		if(clusteredGraph!=null)
+		if(finalGraph!=null)
 		{
 			tree.removeAll();
 			TreeItem root = new TreeItem (tree,0);
 			root.setText("Packages with multiple clusters");
 			
-			Iterator<Vertex> vertexIterator = clusteredGraph.getVertices().iterator();
+			Iterator<Vertex> vertexIterator = finalGraph.getVertices().iterator();
 			while(vertexIterator.hasNext())
 			{
 				Vertex v = vertexIterator.next();
@@ -101,7 +107,7 @@ public class OutputGenerator {
 		}
 	}
 	
-	private static void removePackagesWithSingleCluster(TreeItem root)
+	private void removePackagesWithSingleCluster(TreeItem root)
 	{
 		TreeItem[] level1 = root.getItems();
 		for(int i=0; i<level1.length; i++)
@@ -118,15 +124,15 @@ public class OutputGenerator {
 	
 	//generate tree of clusters with multiple packages
 	@SuppressWarnings("unchecked")
-	public static void generateClustersWithMuiltiplePackages(Tree tree)
+	public void generateClustersWithMuiltiplePackages(Tree tree)
 	{
-		if(clusteredGraph!=null)
+		if(finalGraph!=null)
 		{
 			tree.removeAll();
 			TreeItem root = new TreeItem (tree,0);
 			root.setText("Packages with multiple clusters");
 			
-			Iterator<Vertex> vertexIterator = clusteredGraph.getVertices().iterator();
+			Iterator<Vertex> vertexIterator = finalGraph.getVertices().iterator();
 			while(vertexIterator.hasNext())
 			{
 				Vertex v = vertexIterator.next();
@@ -143,7 +149,7 @@ public class OutputGenerator {
 		}
 	}
 	
-	private static void removeClustersWithSinglePackage(TreeItem root)
+	private void removeClustersWithSinglePackage(TreeItem root)
 	{
 		TreeItem[] level1 = root.getItems();
 		for(int i=0; i<level1.length; i++)
@@ -162,7 +168,7 @@ public class OutputGenerator {
 	//done generating tree of clusters with multiple packages
 	
 	
-	public static void generateListRemovedEdges(List<String[]> list, List<Edge> removedEdges)
+	public void generateListRemovedEdges(List<String[]> list, List<Edge> removedEdges)
 	{
 		int i = 1;
 		list.clear();		
@@ -201,7 +207,7 @@ public class OutputGenerator {
 	}
 	
 	
-	private static void addElement(TreeItem parent, String[] element)
+	private void addElement(TreeItem parent, String[] element)
 	{
 		if(element.length==0) return;
 		
@@ -233,7 +239,7 @@ public class OutputGenerator {
 		addElement(newParent, newElement);
 	}
 	
-	private static void finaliseTree(Object[] items)
+	private void finaliseTree(Object[] items)
 	{
 		if(items==null || items.length==0) return;
 		

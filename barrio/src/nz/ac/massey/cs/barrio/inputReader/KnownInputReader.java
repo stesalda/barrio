@@ -6,11 +6,11 @@ import nz.ac.massey.cs.barrio.extensionFinder.ExtensionFinderUtil;
 
 public class KnownInputReader {
 
-private static List<InputReaderJob> readers = null;
+private static List<InputReader> readers = null;
 	
-	public static List<InputReaderJob> all() {
+	public static List<InputReader> all() {
 		if (readers==null) {
-			 ExtensionFinderUtil<InputReaderJob> extensionFinder = new ExtensionFinderUtil<InputReaderJob>();
+			 ExtensionFinderUtil<InputReader> extensionFinder = new ExtensionFinderUtil<InputReader>();
 			 readers = extensionFinder.findExtensionObjects("nz.ac.massey.cs.barrio.inputReader", "inputReaderClass");
 		}
 		return readers;
