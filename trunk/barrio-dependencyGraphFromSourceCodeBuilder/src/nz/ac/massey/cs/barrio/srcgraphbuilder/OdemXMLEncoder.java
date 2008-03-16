@@ -87,7 +87,7 @@ public class OdemXMLEncoder {
 	private void encode(SourceRef src) {
 		// <type visibility="default" classification="class" name="junit.extensions.ActiveTestSuite$1">
 		out.print("<type name=\"");
-		out.print(src.getName());
+		out.print(src.getFullName());
 		
 		out.print("\" visibility=\"");
 		out.print(src.getVisibility());
