@@ -40,13 +40,13 @@ public class GraphProcessingJob extends Job {
 	private List<String> filters;
 	private int separation;
 	private List<Edge> removedEdges;
-	private boolean doTheJob;
+	private boolean canceled;
+	
 	private boolean viewContainers;
 	private boolean viewPackages;
 	private boolean viewClusters;
 	private boolean viewEdges;
 	
-	private boolean jobDone;
 	private OutputGenerator og;
 	
 	public GraphProcessingJob(String filename, Graph initGraph, Graph finalGraph) {
@@ -58,8 +58,7 @@ public class GraphProcessingJob extends Job {
 		
 		filters = null;
 		separation = 0;		
-		doTheJob = true;
-		jobDone = false;
+		canceled = false;
 		removedEdges = new ArrayList<Edge>();
 	}
 	
@@ -68,7 +67,7 @@ public class GraphProcessingJob extends Job {
 	@Override
 	protected void canceling() {
 //		System.out.println("[JOB]: canceling called");
-		doTheJob = false;
+		canceled = true;
 		
 	}
 	
@@ -98,7 +97,7 @@ public class GraphProcessingJob extends Job {
 			updateVisualElements();
 			monitor.done();
 			
-			if(doTheJob) jobDone = true;
+			if(canceled) return Status.CANCEL_STATUS;
 			return Status.OK_STATUS;
 		}
 		
@@ -109,7 +108,7 @@ public class GraphProcessingJob extends Job {
 
 
 	private void readInput(IProgressMonitor monitor) {
-		if(!doTheJob) return;
+		if(canceled) return;
 		monitor.subTask("Reading Input File");
 		List<InputReader> readers = KnownInputReader.all();
 		InputReader reader = readers.get(0);
@@ -121,7 +120,7 @@ public class GraphProcessingJob extends Job {
 	
 	
 	private void buildGraph(IProgressMonitor monitor) {
-		if(!doTheJob) return;
+		if(canceled) return;
 		monitor.subTask("Building Graph");
 		GraphMLFile graphML = new GraphMLFile();
 		initGraph = graphML.load("barrioPlugin/jGraph.xml");
@@ -146,7 +145,7 @@ public class GraphProcessingJob extends Job {
 				finalGraph = f.filter(finalGraph).assemble();
 			}
 			monitor.worked(1);
-			if(!doTheJob) return;
+			if(canceled) return;
 		}
 	}
 
@@ -161,18 +160,20 @@ public class GraphProcessingJob extends Job {
 		Set<Edge> edges = finalGraph.getEdges();
 		for(Edge edge:edges) 
 			edge.setUserDatum("relationship.betweenness", "null", UserData.SHARED);
+		removedEdges.clear();
 		
+		List<Clusterer> clusterers = KnownClusterer.all();
+		Clusterer clusterer = clusterers.get(0);
 		for(int i=0; i<separation; i++)
 		{
 			monitor.subTask(subtask+(i+1));
-			List<Clusterer> clusterers = KnownClusterer.all();
-			Clusterer clusterer = clusterers.get(0);
 			clusterer.cluster(finalGraph);
 			removedEdges.addAll(clusterer.getEdgesRemoved());
 						
 			monitor.worked(1);
-			if(!doTheJob) return;
+			if(canceled) return;
 		}	
+		clusterer.nameClusters(finalGraph);
 		
 		for(Edge edge:removedEdges)
 		{
@@ -186,7 +187,7 @@ public class GraphProcessingJob extends Job {
 
 	private void buildVisual(IProgressMonitor monitor) {
 
-		if(!doTheJob) return;
+		if(canceled) return;
 		monitor.subTask("Produsing Visualisation");
 
 		updateOutputs();
@@ -211,7 +212,7 @@ public class GraphProcessingJob extends Job {
 	
 	private void updateOutputs()
     {
-		if(!doTheJob) return;
+		if(canceled) return;
 		if(OutputUI.display !=null && OutputUI.display instanceof org.eclipse.swt.widgets.Display) 
 		{
 			OutputUI.display.asyncExec(new Runnable(){
@@ -240,7 +241,7 @@ public class GraphProcessingJob extends Job {
 	
 	private void updateVisualElements()
     {
-		if(!doTheJob) return;
+		if(canceled) return;
         updateConatainerAggregates();
         updatePackageAggregates();
         updateDependencyClusterAggregates();
@@ -387,12 +388,14 @@ public class GraphProcessingJob extends Job {
 	}
 
 
-	public boolean isJobDone() {
-		return jobDone;
+
+	public boolean isCanceled() {
+		return canceled;
 	}
 
 
-	public void setDoTheJob(boolean doTheJob) {
-		this.doTheJob = doTheJob;
+
+	public void setCanceled(boolean canceled) {
+		this.canceled = canceled;
 	}
 }
