@@ -21,11 +21,8 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 
 import prefuse.Display;
-import prefuse.Visualization;
-import prefuse.util.display.DisplayLib;
 import prefuse.visual.AggregateItem;
 import prefuse.visual.VisualItem;
-
 import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.filters.Filter;
@@ -82,7 +79,7 @@ public class GraphProcessingJob extends Job {
 		if(filename!=null && filename.length()>0)
 		{
 			int SCALE = 4+filters.size()+separation;
-			monitor.beginTask("processing", SCALE);
+			monitor.beginTask("Processing Graph", SCALE);
 			
 			if(isInit) 
 			{
@@ -110,7 +107,7 @@ public class GraphProcessingJob extends Job {
 
 	private void readInput(IProgressMonitor monitor) {
 		
-		monitor.subTask("reading input file");
+		monitor.subTask("Reading Input File");
 		List<InputReader> readers = KnownInputReader.all();
 		InputReader reader = readers.get(0);
 		reader.read(filename);
@@ -122,7 +119,7 @@ public class GraphProcessingJob extends Job {
 	
 	private void buildGraph(IProgressMonitor monitor) {
 		
-		monitor.subTask("building graph");
+		monitor.subTask("Building Graph");
 		GraphMLFile graphML = new GraphMLFile();
 		initGraph = graphML.load("barrioPlugin/jGraph.xml");
 		monitor.worked(1);		
@@ -137,7 +134,7 @@ public class GraphProcessingJob extends Job {
 		List<Filter> knownFilters = new ArrayList<Filter>();
 		knownFilters.addAll(KnownNodeFilters.all());
 		knownFilters.addAll(KnownEdgeFilters.all());
-		monitor.subTask("filtering graph");
+		monitor.subTask("Filtering Graph");
 		for(Filter filter:knownFilters)
 		{
 			Filter f = filter;
@@ -155,7 +152,7 @@ public class GraphProcessingJob extends Job {
 	@SuppressWarnings("unchecked")
 	private void clusterGraph(IProgressMonitor monitor) {
 
-		String subtask = "removing separation level ";
+		String subtask = "Removing Separation Level ";
 		
 		Set<Edge> edges = finalGraph.getEdges();
 		for(Edge edge:edges) 
@@ -168,7 +165,12 @@ public class GraphProcessingJob extends Job {
 			Clusterer clusterer = clusterers.get(0);
 			clusterer.cluster(finalGraph);
 			removedEdges.addAll(clusterer.getEdgesRemoved());
-			
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			monitor.worked(1);
 		}	
 		
@@ -184,7 +186,7 @@ public class GraphProcessingJob extends Job {
 
 	private void buildVisual(IProgressMonitor monitor) {
 
-		monitor.subTask("produsing visualisation");
+		monitor.subTask("Produsing Visualisation");
 
 		updateOutputs();
 		monitor.worked(1);
@@ -207,23 +209,28 @@ public class GraphProcessingJob extends Job {
 	
 	private void updateOutputs()
     {
-		if(isInit)
-        {
-			og = new OutputGenerator(initGraph, finalGraph);
-			og.generateProjectDescription(OutputUI.treeProject);
-//          OutputUI.treeProject.update();
-        }
-//        
-//        OutputGenerator.clusteredGraph = finalGraph;
-//        OutputGenerator.generatePackagesWithMultipleClusters(OutputUI.treePwMC);
-//        OutputUI.treePwMC.update();
-//        OutputGenerator.generateClustersWithMuiltiplePackages(OutputUI.treeCwMP);
-//        OutputUI.treeCwMP.update();
-//        
-//        List<String[]> list = new ArrayList<String[]>();
-//        OutputGenerator.generateListRemovedEdges(list, removedEdges);
-//        OutputUI.updateTable(list);
-    }
+		if(OutputUI.display !=null && OutputUI.display instanceof org.eclipse.swt.widgets.Display) 
+		{
+			OutputUI.display.asyncExec(new Runnable(){
+
+				public void run() {
+					if(isInit)
+					{
+						og = new OutputGenerator(initGraph, finalGraph);
+						og.generateProjectDescription(OutputUI.treeProject);
+					}	
+					
+			        og.generatePackagesWithMultipleClusters(OutputUI.treePwMC);
+			        og.generateClustersWithMuiltiplePackages(OutputUI.treeCwMP);
+			        
+			        List<String[]> list = new ArrayList<String[]>();
+			        og.generateListRemovedEdges(list, removedEdges);
+			        OutputUI.updateTable(list);
+					
+				}
+			});
+		}
+	}
 	
 	
 	private void updateVisualElements()

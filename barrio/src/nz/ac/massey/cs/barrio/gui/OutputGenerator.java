@@ -53,6 +53,7 @@ public class OutputGenerator {
 			}
 			countPackagesAndJars(tree, project);
 			finaliseTree(tree.getItems());
+			tree.update();
 		}
 	}
 	
@@ -104,6 +105,8 @@ public class OutputGenerator {
 			}
 			removePackagesWithSingleCluster(root);
 			finaliseTree(tree.getItems());
+			
+			tree.update();
 		}
 	}
 	
@@ -146,6 +149,8 @@ public class OutputGenerator {
 			}
 			removeClustersWithSinglePackage(root);
 			finaliseTree(tree.getItems());
+			
+			tree.update();
 		}
 	}
 	
