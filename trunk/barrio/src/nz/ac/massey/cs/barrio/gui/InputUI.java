@@ -22,13 +22,16 @@ import nz.ac.massey.cs.barrio.inputReader.KnownInputReader;
 import nz.ac.massey.cs.barrio.visual.DisplayBuilder;
 
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -37,6 +40,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Tree;
 
 import prefuse.Display;
 import prefuse.Visualization;
@@ -71,27 +75,39 @@ public class InputUI extends Composite{
 	private final Button checkRemovedEdges;
 	
 	private GraphProcessingJob job;
+	org.eclipse.swt.widgets.Display display;
 	
 	public InputUI(Composite parent, int style) {
 		   super(parent, SWT.NONE);
-		   this.setLayout(new GridLayout());
+		   this.setLayout(new FillLayout());
+		   ScrolledComposite sc = new ScrolledComposite(this, SWT.H_SCROLL | SWT.V_SCROLL);
+		   sc.setLayout(new FillLayout());
+		   Composite composite = new Composite(sc, SWT.NONE);
+
+		   
+		   sc.setContent(composite);
+		   sc.setExpandHorizontal(true);
+		   sc.setExpandVertical(true);
+		   sc.setMinSize(composite.computeSize(200, 680));
+		   
+		   composite.setLayout(new GridLayout());
 		   GridData separatorData = new GridData(GridData.FILL_HORIZONTAL);
 		   separatorData.widthHint = 200;
 		   
-		   Label lblXML = new Label(this, SWT.NONE);
-		   lblXML.setText("Open Annotated XML file");
+		   Label lblXML = new Label(composite, SWT.NONE);
+		   lblXML.setText("Browse for input file");
 
-		   btnBrowse = new Button(this, SWT.PUSH | SWT.CENTER);
+		   btnBrowse = new Button(composite, SWT.PUSH | SWT.CENTER);
 		   btnBrowse.setText("Browse"); 
 		   
-		   Label separator1 = new Label(this, SWT.HORIZONTAL | SWT.SEPARATOR);
+		   Label separator1 = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		   separator1.setLayoutData(separatorData);
 		   //-----------------------------------------------------------
 		   
-		   Label lblFilters = new Label(this, SWT.NONE);
+		   Label lblFilters = new Label(composite, SWT.NONE);
 		   lblFilters.setText("Filter out:");
 		   
-		   Label lblNodes = new Label(this, SWT.NONE);
+		   Label lblNodes = new Label(composite, SWT.NONE);
 		   lblNodes.setText("Nodes (classes)");
 		   
 		   final List<NodeFilter> nodeFilters = KnownNodeFilters.all();
@@ -103,7 +119,7 @@ public class InputUI extends Composite{
 			   knownFilters.add(nf);
 			   String label = nf.getName();
 			   
-			   final Button checkboxNode = new Button(this, SWT.CHECK);
+			   final Button checkboxNode = new Button(composite, SWT.CHECK);
 			   checkboxNode.setText(label);
 			   checkboxNode.addSelectionListener(new SelectionListener() {
 
@@ -119,7 +135,7 @@ public class InputUI extends Composite{
 			   });
 		   }
 		   
-		   Label lblEdges = new Label(this, SWT.NONE);
+		   Label lblEdges = new Label(composite, SWT.NONE);
 		   lblEdges.setText("Edges (relationships)");
 		   
 		   final List<EdgeFilter> edgeFilters = KnownEdgeFilters.all();
@@ -131,7 +147,7 @@ public class InputUI extends Composite{
 			   knownFilters.add(ef);
 			   String edgeFilterLabel = ef.getName();
 			   
-			   final Button checkboxEdge = new Button(this, SWT.CHECK);
+			   final Button checkboxEdge = new Button(composite, SWT.CHECK);
 			   checkboxEdge.setText(edgeFilterLabel); 
 			   checkboxEdge.addSelectionListener(new SelectionListener() {
 
@@ -148,17 +164,17 @@ public class InputUI extends Composite{
 			   });
 		   }
 		   
-		   Label separator2 = new Label(this, SWT.HORIZONTAL | SWT.SEPARATOR);
+		   Label separator2 = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		   separator2.setLayoutData(separatorData);
 		   //-------------------------------------------------------------
 		   
-		   final Label lblSeparation = new Label(this, SWT.NONE);
+		   final Label lblSeparation = new Label(composite, SWT.NONE);
 		   lblSeparation.setText("Separation level = 0");
 		   GridData lblSeparationtData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		   lblSeparationtData.widthHint = 120;
 		   lblSeparation.setLayoutData(lblSeparationtData);
 		   
-		   final Scale slider = new Scale(this, SWT.HORIZONTAL);
+		   final Scale slider = new Scale(composite, SWT.HORIZONTAL);
 		   slider.setMinimum(0);
 		   slider.setMaximum(500);
 		   slider.setIncrement(1);
@@ -167,18 +183,18 @@ public class InputUI extends Composite{
 		   GridData sliderData = new GridData(GridData.FILL_HORIZONTAL);
 		   slider.setLayoutData(sliderData);
 		   
-		   Label separator3 = new Label(this, SWT.HORIZONTAL | SWT.SEPARATOR);
+		   Label separator3 = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		   separator3.setLayoutData(separatorData);
 		   //--------------------------------------------------------------
 		   
-		   btnRefresh = new Button(this, SWT.PUSH | SWT.CENTER);
+		   btnRefresh = new Button(composite, SWT.PUSH | SWT.CENTER);
 		   btnRefresh.setText("Refresh");
 		   GridData refreshData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		   refreshData.heightHint = 40;
 		   refreshData.widthHint = 90;
 		   btnRefresh.setLayoutData(refreshData);
 		   
-		   btnExport = new Button(this, SWT.PUSH | SWT.CENTER);
+		   btnExport = new Button(composite, SWT.PUSH | SWT.CENTER);
 		   btnExport.setText("Export Results");
 		   GridData exportData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		   exportData.widthHint = 90;
@@ -188,7 +204,7 @@ public class InputUI extends Composite{
 		   
 		   
 		   //visual display controls ----------------------------------------
-		   comp = new Composite(this, SWT.NONE);
+		   comp = new Composite(composite, SWT.NONE);
 		   comp.setBounds(15, 500, 150, 90);
 		   comp.setVisible(false);
 		   
@@ -374,6 +390,7 @@ public class InputUI extends Composite{
 		   });
 		   
 		   updateBtnRefreshEnabled();
+		   display = super.getDisplay();
 	}
 	
 		
@@ -398,10 +415,6 @@ public class InputUI extends Composite{
 	{
 		if(initGraph!=null)
 		{
-			System.out.println("[InputUI]: previousFilters: "+previousFilters);
-			System.out.println("[InputUI]: activeFilters: "+activeFilters);
-			System.out.println("[InputUI]: last sep = : "+lastSeparationLevel);
-			System.out.println("[InputUI]: sep = : "+separationLevel);
 			if(previousFilters.equals(activeFilters) && lastSeparationLevel==separationLevel) 
 				btnRefresh.setEnabled(false);
 			else btnRefresh.setEnabled(true);
@@ -421,21 +434,6 @@ public class InputUI extends Composite{
 	    String filename = dlg.open();
 	    shell.close();
 	    
-	    GraphBuildingJob job1 = new GraphBuildingJob(filename, initGraph);
-	    job1.setRule(new ISchedulingRule(){
-
-			public boolean contains(ISchedulingRule rule) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-
-			public boolean isConflicting(ISchedulingRule rule) {
-				// TODO Auto-generated method stub
-				return false;
-			}
-	    	
-	    });
-	    
 	    job = new GraphProcessingJob(filename, initGraph, finalGraph);
 	    job.setUser(true);
 	    runJob(true);
@@ -446,7 +444,7 @@ public class InputUI extends Composite{
 	
 	private void btnRefreshClick(List<NodeFilter> nodeFilters, List<EdgeFilter> edgeFilters) 
 	{
-		job.setDoTheJob(true);
+		job.setCanceled(false);
 		runJob(false);
 	}
 	
@@ -475,7 +473,14 @@ public class InputUI extends Composite{
 			}
 
 			public void done(IJobChangeEvent event) {
-		  	  	updateElements();
+				display.asyncExec(new Runnable(){
+
+					public void run() {
+						updateElements();
+						
+					}
+				});
+				
 			}
 
 			public void running(IJobChangeEvent event) {
@@ -500,8 +505,7 @@ public class InputUI extends Composite{
 	
 	
 	private void updateElements() {
-		System.out.println("[InputUI]: job done = "+job.isJobDone());
-		if(job.isJobDone())
+		if(job.getResult().equals(Status.OK_STATUS))
 		{
 			initGraph = job.getInitGraph();
 			finalGraph = job.getFinalGraph();
@@ -510,9 +514,9 @@ public class InputUI extends Composite{
 			previousFilters.clear();
 			previousFilters.addAll(activeFilters);
 			lastSeparationLevel = separationLevel;
-		}
 
-		updateBtnRefreshEnabled();
+			updateBtnRefreshEnabled();
+		}
 	}
 
 

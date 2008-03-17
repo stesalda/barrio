@@ -7,6 +7,7 @@ import java.util.Iterator;
 import edu.uci.ics.jung.graph.Edge;
 
 
+import prefuse.data.Graph;
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphMLReader;
 
@@ -25,8 +26,10 @@ public class JungPrefuseBridge {
 				prefuseGraph.addColumn("class.icon", new ImageExpression("class.isInterface", "class.isException", "class.isAbstract", "class.access"));
 			} catch (DataIOException e) {
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				//e.printStackTrace();
+				prefuseGraph = new Graph();
 			}
+				
 		}
 		return prefuseGraph;
 	}
@@ -45,17 +48,20 @@ public class JungPrefuseBridge {
 			out.println();
 			out.println("<!-- data schema -->");
 			
-			Iterator iter = jungGraph.getVertices().iterator();
-			edu.uci.ics.jung.graph.Vertex vert = (edu.uci.ics.jung.graph.Vertex) iter.next();
-			Iterator<String> keyIter = vert.getUserDatumKeyIterator();
-			while(keyIter.hasNext())
+			if(jungGraph.getVertices().size()>0)
 			{
-				String key = keyIter.next();
-				out.print("<key id=\"");
-				out.print(key);
-				out.print("\" for=\"node\" attr.name=\"");
-				out.print(key);
-				out.println("\" attr.type=\"string\" />");
+				Iterator iter = jungGraph.getVertices().iterator();
+				edu.uci.ics.jung.graph.Vertex vert = (edu.uci.ics.jung.graph.Vertex) iter.next();
+				Iterator<String> keyIter = vert.getUserDatumKeyIterator();
+				while(keyIter.hasNext())
+				{
+					String key = keyIter.next();
+					out.print("<key id=\"");
+					out.print(key);
+					out.print("\" for=\"node\" attr.name=\"");
+					out.print(key);
+					out.println("\" attr.type=\"string\" />");
+				}
 			}
 			
 			if(jungGraph.getEdges().size()>0)
