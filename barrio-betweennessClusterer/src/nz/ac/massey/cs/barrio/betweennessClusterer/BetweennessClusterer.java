@@ -20,4 +20,10 @@ public class BetweennessClusterer implements Clusterer{
 	public List<Edge> getEdgesRemoved() {
 		return edgesRemoved;
 	}
+
+	public void nameClusters(Graph graph) {
+		EdgeBetweennessClusterer ebc = new EdgeBetweennessClusterer();
+		ebc.nameClusters(graph);
+		
+	}
 }
