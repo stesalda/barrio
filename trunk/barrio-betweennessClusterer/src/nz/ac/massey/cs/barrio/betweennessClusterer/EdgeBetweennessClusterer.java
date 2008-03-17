@@ -39,17 +39,14 @@ public class EdgeBetweennessClusterer implements GraphClusterer {
         bc.evaluate();
         
         double lastRank = -1.0;
-        List<?> rankings = bc.getRankings();
         
-        Iterator<?> iter = rankings.iterator();
-        while(iter.hasNext())
+        for(Object rank:bc.getRankings())
         {
-        	Object edgeRanking = iter.next();
-        	double rankValue = Double.parseDouble(edgeRanking.toString());
+        	double rankValue = Double.parseDouble(rank.toString());
         	
         	if(lastRank<0 || rankValue==lastRank)
         	{
-        		EdgeRanking highestBetweenness = (EdgeRanking) edgeRanking;
+        		EdgeRanking highestBetweenness = (EdgeRanking) rank;
         		Edge e = (Edge)highestBetweenness.edge.getEqualEdge(graph);
         		e.setUserDatum("relationship.betweenness", rankValue, UserData.SHARED);
 	            edgesRemoved.add(e);
@@ -63,7 +60,7 @@ public class EdgeBetweennessClusterer implements GraphClusterer {
 	    ClusterSet clusterSet = wcSearch.extract(graph);
 
 	    
-	    nameClusters(clusterSet);
+	    //nameClusters(clusterSet);
 	    return clusterSet;
 	}
 	
@@ -87,6 +84,16 @@ public class EdgeBetweennessClusterer implements GraphClusterer {
 				v.setUserDatum("class.cluster", clusterName, UserData.SHARED);
 			}
 		}
+	}
+	
+	
+	public void nameClusters(Graph graph)
+	{
+		WeakComponentClusterer wcSearch = new WeakComponentClusterer();
+	    ClusterSet clusterSet = wcSearch.extract(graph);
+
+	    
+	    nameClusters(clusterSet);
 	}
 
 }
