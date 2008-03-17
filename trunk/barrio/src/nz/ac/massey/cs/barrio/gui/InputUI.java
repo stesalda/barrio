@@ -418,6 +418,7 @@ public class InputUI extends Composite{
 	    shell.close();
 	    
 	    job = new GraphProcessingJob(filename, activeFilters, separationLevel);
+	    job.setUser(true);
 	    job.setIsInit(true);
 	    job.setViewElements(checkContainers.getSelection(), 
 	    					checkPackages.getSelection(), 
@@ -432,6 +433,7 @@ public class InputUI extends Composite{
 	private void btnRefreshClick(List<NodeFilter> nodeFilters, List<EdgeFilter> edgeFilters) 
 	{
 		job.setIsInit(false);
+		
 		job.setViewElements(checkContainers.getSelection(), 
 	    					checkPackages.getSelection(), 
 	    					checkDependencyCluster.getSelection(), 
@@ -476,7 +478,7 @@ public class InputUI extends Composite{
     private void updateConatainerAggregates()
     {
         boolean viewContainers = checkContainers.getSelection();
-        System.out.println("[InputUI]: view containers = " + viewContainers);
+        //System.out.println("[InputUI]: view containers = " + viewContainers);
         if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
         {
             Display dis = (Display) OutputUI.panelGraph.getComponent(0);
@@ -494,7 +496,7 @@ public class InputUI extends Composite{
     private void updatePackageAggregates()
     {
         boolean viewPackages = checkPackages.getSelection();
-        System.out.println("[InputUI]: view packages = " + viewPackages);
+        //System.out.println("[InputUI]: view packages = " + viewPackages);
         if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
         {
             Display dis = (Display) OutputUI.panelGraph.getComponent(0);
@@ -512,7 +514,7 @@ public class InputUI extends Composite{
     private void updateDependencyClusterAggregates()
     {
         boolean viewClusters = checkDependencyCluster.getSelection();
-        System.out.println("[InputUI]: view clusters = " + viewClusters);
+        //System.out.println("[InputUI]: view clusters = " + viewClusters);
         if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
         {
             Display dis = (Display) OutputUI.panelGraph.getComponent(0);
@@ -530,7 +532,7 @@ public class InputUI extends Composite{
     private void updateVisualRemovedEdges()
     {
         boolean viewEdges = checkRemovedEdges.getSelection();
-        System.out.println("[InputUI]: view edges = " + viewEdges);
+        //System.out.println("[InputUI]: view edges = " + viewEdges);
         if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
         {                       
             Display display = (Display) OutputUI.panelGraph.getComponent(0);

@@ -34,11 +34,12 @@ public class OutputUI extends Composite{
 	public static Tree treePwMC;
 	public static Tree treeCwMP;
 	public static Panel panelGraph;
-	
+	public static org.eclipse.swt.widgets.Display display;
 	private static JTable table;
 	
 	public OutputUI(Composite parent, int style) {
 		super(parent, style);
+		display = super.getDisplay();
 		this.setLayout(new GridLayout());
 		GridData tabData = new GridData(GridData.FILL_BOTH);
 		
