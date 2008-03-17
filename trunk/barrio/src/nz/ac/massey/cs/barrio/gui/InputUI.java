@@ -434,7 +434,7 @@ public class InputUI extends Composite{
 				return false;
 			}
 	    	
-	    })
+	    });
 	    
 	    job = new GraphProcessingJob(filename, initGraph, finalGraph);
 	    job.setUser(true);
