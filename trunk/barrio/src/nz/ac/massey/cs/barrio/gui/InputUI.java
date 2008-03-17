@@ -24,6 +24,7 @@ import nz.ac.massey.cs.barrio.visual.DisplayBuilder;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -419,6 +420,21 @@ public class InputUI extends Composite{
 		dlg.setFilterExtensions(new String[] { "*.odem", "*.xml", "*.*" });
 	    String filename = dlg.open();
 	    shell.close();
+	    
+	    GraphBuildingJob job1 = new GraphBuildingJob(filename, initGraph);
+	    job1.setRule(new ISchedulingRule(){
+
+			public boolean contains(ISchedulingRule rule) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+
+			public boolean isConflicting(ISchedulingRule rule) {
+				// TODO Auto-generated method stub
+				return false;
+			}
+	    	
+	    })
 	    
 	    job = new GraphProcessingJob(filename, initGraph, finalGraph);
 	    job.setUser(true);
