@@ -40,6 +40,7 @@ public class GraphProcessingJob extends Job {
 	private Graph finalGraph;
 	private List<Edge> removedEdges;
 	
+	private boolean doTheJob;
 
 	private boolean viewContainers;
 	private boolean viewPackages;
@@ -52,6 +53,8 @@ public class GraphProcessingJob extends Job {
 		this.filename = filename;
 		this.filters = filters;
 		this.separation = separation;
+		
+		doTheJob = true;
 
 		initGraph = null;
 		finalGraph = null;
@@ -64,6 +67,16 @@ public class GraphProcessingJob extends Job {
 		this.isInit = isInit;
 	}
 
+	
+	@Override
+	protected void canceling() {
+//		System.out.println("[JOB]: canceling called");
+		doTheJob = false;
+		
+	}
+
+
+	
 	
 	public void setViewElements(boolean viewContainers, boolean viewPackages, boolean viewClusters, boolean viewEdges)
 	{
@@ -106,7 +119,7 @@ public class GraphProcessingJob extends Job {
 
 
 	private void readInput(IProgressMonitor monitor) {
-		
+		if(!doTheJob) return;
 		monitor.subTask("Reading Input File");
 		List<InputReader> readers = KnownInputReader.all();
 		InputReader reader = readers.get(0);
@@ -118,7 +131,7 @@ public class GraphProcessingJob extends Job {
 	
 	
 	private void buildGraph(IProgressMonitor monitor) {
-		
+		if(!doTheJob) return;
 		monitor.subTask("Building Graph");
 		GraphMLFile graphML = new GraphMLFile();
 		initGraph = graphML.load("barrioPlugin/jGraph.xml");
@@ -143,6 +156,7 @@ public class GraphProcessingJob extends Job {
 				finalGraph = f.filter(finalGraph).assemble();
 			}
 			monitor.worked(1);
+			if(!doTheJob) return;
 		}
 	}
 
@@ -165,13 +179,9 @@ public class GraphProcessingJob extends Job {
 			Clusterer clusterer = clusterers.get(0);
 			clusterer.cluster(finalGraph);
 			removedEdges.addAll(clusterer.getEdgesRemoved());
-			try {
-				Thread.sleep(200);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+						
 			monitor.worked(1);
+			if(!doTheJob) return;
 		}	
 		
 		for(Edge edge:removedEdges)
@@ -186,6 +196,7 @@ public class GraphProcessingJob extends Job {
 
 	private void buildVisual(IProgressMonitor monitor) {
 
+		if(!doTheJob) return;
 		monitor.subTask("Produsing Visualisation");
 
 		updateOutputs();
@@ -209,6 +220,7 @@ public class GraphProcessingJob extends Job {
 	
 	private void updateOutputs()
     {
+		if(!doTheJob) return;
 		if(OutputUI.display !=null && OutputUI.display instanceof org.eclipse.swt.widgets.Display) 
 		{
 			OutputUI.display.asyncExec(new Runnable(){
@@ -235,6 +247,7 @@ public class GraphProcessingJob extends Job {
 	
 	private void updateVisualElements()
     {
+		if(!doTheJob) return;
         updateConatainerAggregates();
         updatePackageAggregates();
         updateDependencyClusterAggregates();
@@ -244,7 +257,7 @@ public class GraphProcessingJob extends Job {
     @SuppressWarnings("unchecked")
     private void updateConatainerAggregates()
     {
-        System.out.println("[InputUI]: view containers = " + viewContainers);
+        //System.out.println("[InputUI]: view containers = " + viewContainers);
         if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
         {
             Display dis = (Display) OutputUI.panelGraph.getComponent(0);
@@ -261,7 +274,7 @@ public class GraphProcessingJob extends Job {
     @SuppressWarnings("unchecked")
     private void updatePackageAggregates()
     {
-    	System.out.println("[InputUI]: view packages = " + viewPackages);
+    	//System.out.println("[InputUI]: view packages = " + viewPackages);
         if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
         {
             Display dis = (Display) OutputUI.panelGraph.getComponent(0);
@@ -278,7 +291,7 @@ public class GraphProcessingJob extends Job {
     @SuppressWarnings("unchecked")
     private void updateDependencyClusterAggregates()
     {
-        System.out.println("[InputUI]: view clusters = " + viewClusters);
+        //System.out.println("[InputUI]: view clusters = " + viewClusters);
         if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
         {
             Display dis = (Display) OutputUI.panelGraph.getComponent(0);
@@ -295,7 +308,7 @@ public class GraphProcessingJob extends Job {
     @SuppressWarnings("unchecked")
     private void updateVisualRemovedEdges()
     {
-        System.out.println("[InputUI]: view edges = " + viewEdges);
+        //System.out.println("[InputUI]: view edges = " + viewEdges);
         if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
         {                       
             Display display = (Display) OutputUI.panelGraph.getComponent(0);
