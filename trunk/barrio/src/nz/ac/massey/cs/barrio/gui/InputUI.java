@@ -372,7 +372,7 @@ public class InputUI extends Composite{
 					}
 		   });
 		   
-		   ubdateBtnRefreshEnabled();
+		   updateBtnRefreshEnabled();
 	}
 	
 		
@@ -390,14 +390,17 @@ public class InputUI extends Composite{
 	{
 		if(check.getSelection()) activeFilters.add(check.getText());
 		else activeFilters.remove(check.getText());
-		
-		ubdateBtnRefreshEnabled();
+		updateBtnRefreshEnabled();
 	}
 	
-	private void ubdateBtnRefreshEnabled()
+	private void updateBtnRefreshEnabled()
 	{
 		if(initGraph!=null)
 		{
+			System.out.println("[InputUI]: previousFilters: "+previousFilters);
+			System.out.println("[InputUI]: activeFilters: "+activeFilters);
+			System.out.println("[InputUI]: last sep = : "+lastSeparationLevel);
+			System.out.println("[InputUI]: sep = : "+separationLevel);
 			if(previousFilters.equals(activeFilters) && lastSeparationLevel==separationLevel) 
 				btnRefresh.setEnabled(false);
 			else btnRefresh.setEnabled(true);
@@ -417,14 +420,9 @@ public class InputUI extends Composite{
 	    String filename = dlg.open();
 	    shell.close();
 	    
-	    job = new GraphProcessingJob(filename, activeFilters, separationLevel);
+	    job = new GraphProcessingJob(filename, initGraph, finalGraph);
 	    job.setUser(true);
-	    job.setIsInit(true);
-	    job.setViewElements(checkContainers.getSelection(), 
-	    					checkPackages.getSelection(), 
-	    					checkDependencyCluster.getSelection(), 
-	    					checkRemovedEdges.getSelection());
-  	  	job.schedule();
+	    runJob(true);
 	    
 	    
 	}
@@ -432,21 +430,81 @@ public class InputUI extends Composite{
 	
 	private void btnRefreshClick(List<NodeFilter> nodeFilters, List<EdgeFilter> edgeFilters) 
 	{
-		job.setIsInit(false);
-		
-		job.setViewElements(checkContainers.getSelection(), 
-	    					checkPackages.getSelection(), 
-	    					checkDependencyCluster.getSelection(), 
-	    					checkRemovedEdges.getSelection());
-		job.schedule();
+		job.setDoTheJob(true);
+		runJob(false);
 	}
 	
 	
+	private void runJob(boolean isInit)
+	{
+		job.setInit(isInit);
+		job.setFilters(activeFilters);
+		job.setSeparation(separationLevel);
+	    job.setViewContainers(checkContainers.getSelection()); 
+	    job.setViewPackages(checkPackages.getSelection());
+	    job.setViewClusters(checkDependencyCluster.getSelection()); 
+	    job.setViewEdges(checkRemovedEdges.getSelection());
+	    
+  	  	job.schedule();
+  	  	job.addJobChangeListener(new IJobChangeListener(){
+
+			public void aboutToRun(IJobChangeEvent event) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void awake(IJobChangeEvent event) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void done(IJobChangeEvent event) {
+		  	  	updateElements();
+			}
+
+			public void running(IJobChangeEvent event) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void scheduled(IJobChangeEvent event) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			public void sleeping(IJobChangeEvent event) {
+				// TODO Auto-generated method stub
+				
+			}
+  	  		
+  	  	});
+	}
+	
+	
+	
+	
+	private void updateElements() {
+		System.out.println("[InputUI]: job done = "+job.isJobDone());
+		if(job.isJobDone())
+		{
+			initGraph = job.getInitGraph();
+			finalGraph = job.getFinalGraph();
+			removedEdges = job.getRemovedEdges();
+			
+			previousFilters.clear();
+			previousFilters.addAll(activeFilters);
+			lastSeparationLevel = separationLevel;
+		}
+
+		updateBtnRefreshEnabled();
+	}
+
+
 	private void sliderMove(Label label, int value)
 	{
 		label.setText("Separation level = "+ value);
 		separationLevel = value;
-		ubdateBtnRefreshEnabled();
+		updateBtnRefreshEnabled();
 	}
 	
 	private void btnExportClick()

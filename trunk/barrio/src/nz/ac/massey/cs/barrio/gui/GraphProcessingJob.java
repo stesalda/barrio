@@ -31,42 +31,39 @@ import edu.uci.ics.jung.utils.UserData;
 
 public class GraphProcessingJob extends Job {
 
-	private String filename;	
-	private List<String> filters;
-	private int separation;
-	private boolean isInit;
-
+	private String filename;
 	private Graph initGraph;
 	private Graph finalGraph;
-	private List<Edge> removedEdges;
-	
-	private boolean doTheJob;
 
+	
+	private boolean isInit;
+	private List<String> filters;
+	private int separation;
+	private List<Edge> removedEdges;
+	private boolean doTheJob;
 	private boolean viewContainers;
 	private boolean viewPackages;
 	private boolean viewClusters;
 	private boolean viewEdges;
+	
+	private boolean jobDone;
 	private OutputGenerator og;
 	
-	public GraphProcessingJob(String filename, List<String> filters, int separation) {
+	public GraphProcessingJob(String filename, Graph initGraph, Graph finalGraph) {
 		super("Processing graph");
 		this.filename = filename;
-		this.filters = filters;
-		this.separation = separation;
 		
+		this.initGraph = initGraph;
+		this.finalGraph = finalGraph;
+		
+		filters = null;
+		separation = 0;		
 		doTheJob = true;
-
-		initGraph = null;
-		finalGraph = null;
+		jobDone = false;
 		removedEdges = new ArrayList<Edge>();
 	}
 	
 	
-	public void setIsInit(boolean isInit)
-	{
-		this.isInit = isInit;
-	}
-
 	
 	@Override
 	protected void canceling() {
@@ -74,17 +71,8 @@ public class GraphProcessingJob extends Job {
 		doTheJob = false;
 		
 	}
-
-
 	
 	
-	public void setViewElements(boolean viewContainers, boolean viewPackages, boolean viewClusters, boolean viewEdges)
-	{
-		this.viewContainers = viewContainers;
-		this.viewPackages = viewPackages;
-		this.viewClusters = viewClusters;
-		this.viewEdges = viewEdges;
-	}
 	
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
@@ -109,6 +97,8 @@ public class GraphProcessingJob extends Job {
 			
 			updateVisualElements();
 			monitor.done();
+			
+			if(doTheJob) jobDone = true;
 			return Status.OK_STATUS;
 		}
 		
@@ -218,6 +208,7 @@ public class GraphProcessingJob extends Job {
 	
 	
 	
+	
 	private void updateOutputs()
     {
 		if(!doTheJob) return;
@@ -245,6 +236,8 @@ public class GraphProcessingJob extends Job {
 	}
 	
 	
+	
+	
 	private void updateVisualElements()
     {
 		if(!doTheJob) return;
@@ -254,6 +247,9 @@ public class GraphProcessingJob extends Job {
         updateVisualRemovedEdges();
     }
     
+	
+	
+	
     @SuppressWarnings("unchecked")
     private void updateConatainerAggregates()
     {
@@ -270,6 +266,9 @@ public class GraphProcessingJob extends Job {
             }
         }
     }
+    
+    
+    
     
     @SuppressWarnings("unchecked")
     private void updatePackageAggregates()
@@ -288,6 +287,9 @@ public class GraphProcessingJob extends Job {
         }
     }
     
+    
+    
+    
     @SuppressWarnings("unchecked")
     private void updateDependencyClusterAggregates()
     {
@@ -304,6 +306,9 @@ public class GraphProcessingJob extends Job {
             }
         }
     }
+    
+    
+    
     
     @SuppressWarnings("unchecked")
     private void updateVisualRemovedEdges()
@@ -322,4 +327,72 @@ public class GraphProcessingJob extends Job {
                 
         }
     }
+	
+	
+	
+	public void setInit(boolean isInit) {
+		this.isInit = isInit;
+	}
+
+
+
+	public void setFilters(List<String> filters) {
+		this.filters = filters;
+	}
+
+
+
+	public void setSeparation(int separation) {
+		this.separation = separation;
+	}
+
+
+
+	public void setViewContainers(boolean viewContainers) {
+		this.viewContainers = viewContainers;
+	}
+
+
+
+	public void setViewPackages(boolean viewPackages) {
+		this.viewPackages = viewPackages;
+	}
+
+
+
+	public void setViewClusters(boolean viewClusters) {
+		this.viewClusters = viewClusters;
+	}
+
+
+
+	public void setViewEdges(boolean viewEdges) {
+		this.viewEdges = viewEdges;
+	}
+
+
+
+	public Graph getInitGraph() {
+		return initGraph;
+	}
+
+
+	public Graph getFinalGraph() {
+		return finalGraph;
+	}
+
+
+	public List<Edge> getRemovedEdges() {
+		return removedEdges;
+	}
+
+
+	public boolean isJobDone() {
+		return jobDone;
+	}
+
+
+	public void setDoTheJob(boolean doTheJob) {
+		this.doTheJob = doTheJob;
+	}
 }
