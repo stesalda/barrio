@@ -20,42 +20,34 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import edu.uci.ics.jung.graph.Edge;
+import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.Vertex;
+import edu.uci.ics.jung.graph.impl.DirectedSparseEdge;
+import edu.uci.ics.jung.graph.impl.DirectedSparseGraph;
+import edu.uci.ics.jung.graph.impl.DirectedSparseVertex;
+import edu.uci.ics.jung.utils.UserData;
+
 public class OdemReader implements InputReader{
 
-	private List<String> nodes;
 	private List<TempEdge> tempEdges;
-	private List<String> edges;
 
-	public void read(String filename) 
+	public void read(String filename, Graph graph) 
 	{	
 		if(filename==null || filename.length()<1) return;
+		//graph = new DirectedSparseGraph();
 		try {
-			File folder = new File("barrioPlugin");
-			folder.mkdir();
 			
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 	        DocumentBuilder docBuilder;
 			docBuilder = docBuilderFactory.newDocumentBuilder();
 			Document doc = docBuilder.parse(new File(filename));
 			
-			PrintStream out = new PrintStream("barrioPlugin/jGraph.xml");
-	
-			out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			out.print("<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns/graphml\"");
-			out.print(" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-			out.println(" xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns/graphml\">");
-			out.println("<graph edgedefault=\"directed\">");
-	
-			nodes = new ArrayList<String>();
 			tempEdges = new ArrayList<TempEdge>();
-			edges = new ArrayList<String>();
-			writeNodes(doc, out);
-			buildEdgeList();
-			writeEdges(out);
-	
-			out.println("</graph>");
-			out.println("</graphml>");
-			out.close();
+			addNodes(doc, graph);
+			addEdges(doc, graph);
+			
+			System.out.println("[OdemReader]: "+graph.getVertices().size()+"  "+graph.getEdges().size());
 		} catch (ParserConfigurationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -68,8 +60,9 @@ public class OdemReader implements InputReader{
 		}
 	}
 	
-	private void writeNodes(Document doc, PrintStream out)
-	{
+	
+	
+	private void addNodes(Document doc, Graph graph) {
 		int nodeId = 0;
 		NodeList containerList = doc.getElementsByTagName("container");
 		for(int i=0; i<containerList.getLength(); i++)
@@ -95,38 +88,33 @@ public class OdemReader implements InputReader{
 							String containerStr = containerAttr.getNamedItem("name").getNodeValue();
 							String namespaceStr = namespaceAttr.getNamedItem("name").getNodeValue();
 							String typeStr = typeAttr.getNamedItem("name").getNodeValue();
-							out.print("<node id=\"");
-							out.print(nodeId);
-							out.print("\" class.id=\"");
-							out.print(nodeId);
-							out.print("\" class.jar=\"");
-							out.print(containerStr.substring(containerStr.lastIndexOf('/')+1));
-							out.print("\" class.packageName=\"");
-							out.print(namespaceStr);
-							out.print("\" class.name=\"");
-							out.print(typeStr.substring(typeStr.lastIndexOf('.')+1));
-							out.print("\" class.cluster=\"null\" class.isInterface=\"");
 							
+							Vertex v = new DirectedSparseVertex();
+							v.addUserDatum("class.id", nodeId, UserData.SHARED);
+							v.addUserDatum("class.jar", containerStr.substring(containerStr.lastIndexOf('/')+1), UserData.SHARED);
+							v.addUserDatum("class.packageName", namespaceStr, UserData.SHARED);
+							v.addUserDatum("class.name", typeStr.substring(typeStr.lastIndexOf('.')+1), UserData.SHARED);
+							v.addUserDatum("class.cluster", "null", UserData.SHARED);
+							
+							String isInterface = "false";
 							if(typeAttr.getNamedItem("classification")!=null)
-								out.print(typeAttr.getNamedItem("classification").getNodeValue().equals("interface"));
-							else out.print("null");
+								isInterface = String.valueOf(typeAttr.getNamedItem("classification").getNodeValue().equals("interface"));
+							v.addUserDatum("class.isInterface", isInterface, UserData.SHARED);
 							
-							out.print("\" class.isAbstract=\"");
+							String isAbstract = "false";
 							if(typeAttr.getNamedItem("isAbstract")!=null && typeAttr.getNamedItem("isAbstract").getNodeValue().equals("yes"))
-								out.print("true");
-							else out.print("false");
-							out.print("\" class.isException=\"");
-							out.print(typeStr.contains("Exception"));
-							out.print("\" class.access=\"");
+								isAbstract = "true";
+							v.addUserDatum("class.isAbstract", isAbstract, UserData.SHARED);
 							
+							v.addUserDatum("class.isException", String.valueOf(typeStr.contains("Exception")), UserData.SHARED);
+							
+							String access = "null";
 							if(typeAttr.getNamedItem("visibility")!=null)
-								out.print(typeAttr.getNamedItem("visibility").getNodeValue());
-							else out.print("null");
-							
-							out.println("\" node.isSelected=\"false\" />");
-							
-							if(typeStr.contains(namespaceStr)) nodes.add(nodeId, typeStr);
-							else nodes.add(nodeId, namespaceStr+'.'+typeStr);
+								access = typeAttr.getNamedItem("visibility").getNodeValue();
+							v.addUserDatum("class.access", access, UserData.SHARED);
+
+							v.addUserDatum("node.isSelected", "false", UserData.SHARED);
+							graph.addVertex(v);
 							
 							if(type.getNodeType()==Node.ELEMENT_NODE)
 							{
@@ -138,7 +126,7 @@ public class OdemReader implements InputReader{
 									NamedNodeMap relationshipAttr = relationship.getAttributes();
 									
 									TempEdge tempEdge = new TempEdge();
-									tempEdge.setSource(String.valueOf(nodeId));
+									tempEdge.setSource(typeStr);
 									tempEdge.setType(relationshipAttr.getNamedItem("classification").getNodeValue());
 									tempEdge.setTarget(relationshipAttr.getNamedItem("name").getNodeValue());
 									
@@ -151,47 +139,44 @@ public class OdemReader implements InputReader{
 				}
 			}
 		}
+		
 	}
+	
+	
+	
+	
 
 	
-	private void buildEdgeList()
-	{
-		for(int i=0; i<tempEdges.size(); i++)
+	private void addEdges(Document doc, Graph graph) {
+		int edgeId = 0;
+		for(TempEdge temp:tempEdges)
 		{
-			TempEdge te = tempEdges.get(i);
-			for(int j=0; j<nodes.size(); j++)
+			Vertex src = null;
+			Vertex dest = null;
+			for(Object obj:graph.getVertices())
 			{
-				if(te.getTarget().equals(nodes.get(j)))
+				Vertex v = (Vertex) obj;
+				String vName = v.getUserDatum("class.packageName").toString()+'.'+v.getUserDatum("class.name").toString();
+				
+				if(vName.equals(temp.getSource())) src = v;
+				if(vName.equals(temp.getTarget())) dest = v;
+				
+				if(src!=null && dest!=null)
 				{
-					StringBuffer buffer = new StringBuffer();
-					buffer.append("<edge id=\"edge-");
-					buffer.append(i);
-					buffer.append("\" source=\"");
-					buffer.append(te.getSource());
-					buffer.append("\" target=\"");
-					buffer.append(j);
-					buffer.append("\" sourceId=\"");
-					buffer.append(te.getSource());
-					buffer.append("\" targetId=\"");
-					buffer.append(j);
-					buffer.append("\" relationship.type=\"");
-					buffer.append(te.getType());
-					buffer.append("\" edge.isSelected=\"false\" relationship.state=\"");
-					buffer.append("\" relationship.betweenness=\"null\" />");
-					edges.add(buffer.toString());
+					String srcName = src.getUserDatum("class.packageName").toString()+'.'+src.getUserDatum("class.name").toString();
+					String destName = dest.getUserDatum("class.packageName").toString()+'.'+dest.getUserDatum("class.name").toString();
+					Edge e = new DirectedSparseEdge(src, dest);
+					e.addUserDatum("id", "edge-"+edgeId, UserData.SHARED);
+					e.addUserDatum("sourceName", srcName, UserData.SHARED);
+					e.addUserDatum("targetName", destName, UserData.SHARED);
+					e.addUserDatum("relationship.type", temp.getType(), UserData.SHARED);
+					e.addUserDatum("edge.isSelected", "false", UserData.SHARED);
+					e.addUserDatum("relationship.state", "null", UserData.SHARED);
+					e.addUserDatum("relationship.betweenness", "null", UserData.SHARED);
+					graph.addEdge(e);
 					break;
 				}
 			}
-		}
-	}
-	
-	
-	private void writeEdges(PrintStream out)
-	{
-		Iterator<String> iter = edges.iterator();
-		while(iter.hasNext())
-		{
-			out.println(iter.next());
-		}
+		}		
 	}
 }
