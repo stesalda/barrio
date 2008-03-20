@@ -1,146 +1,114 @@
 package nz.ac.massey.cs.barrio.graphconverter;
 
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
 import java.util.Iterator;
 
-import edu.uci.ics.jung.graph.Edge;
-
-
-import prefuse.data.Graph;
-import prefuse.data.io.DataIOException;
-import prefuse.data.io.GraphMLReader;
 
 public class JungPrefuseBridge {
 	
 	public prefuse.data.Graph convert(edu.uci.ics.jung.graph.Graph jungGraph)
 	{
-		prefuse.data.Graph prefuseGraph = null;
+		prefuse.data.Graph prefuseGraph = new prefuse.data.Graph();
 		if(jungGraph!=null)
 		{
-			writePrefuseGraphMl(jungGraph);
-			try {
-				GraphMLReader reader = new GraphMLReader();
-				prefuseGraph = reader.readGraph("barrioPlugin/pGraph.xml");
-				prefuseGraph.addColumn("class.expression", new LabelExpression("class.jar","class.packageName","class.name"));
-				prefuseGraph.addColumn("class.icon", new ImageExpression("class.isInterface", "class.isException", "class.isAbstract", "class.access"));
-			} catch (DataIOException e) {
-				// TODO Auto-generated catch block
-				//e.printStackTrace();
-				prefuseGraph = new Graph();
-			}
-				
+			setColumns(prefuseGraph, jungGraph);
+			prefuseGraph.addColumn("class.expression", new LabelExpression("class.jar","class.packageName","class.name"));
+			prefuseGraph.addColumn("class.icon", new ImageExpression("class.isInterface", "class.isException", "class.isAbstract", "class.access"));
+			
+			addNodes(prefuseGraph, jungGraph);
+			addEdges(prefuseGraph, jungGraph);
 		}
 		return prefuseGraph;
 	}
 
-	
-	
-	
-	@SuppressWarnings("unchecked")
-	private void writePrefuseGraphMl(edu.uci.ics.jung.graph.Graph jungGraph) 
+
+
+
+	private void setColumns(prefuse.data.Graph prefuseGraph, edu.uci.ics.jung.graph.Graph jungGraph) 
 	{
-		try {
-			PrintStream out = new PrintStream("barrioPlugin/pGraph.xml");
-			out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			out.println("<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns\">");
-			out.println("<graph edgedefault=\"directed\">");
-			out.println();
-			out.println("<!-- data schema -->");
-			
-			if(jungGraph.getVertices().size()>0)
+		for(Object obj:jungGraph.getVertices())
+		{
+			edu.uci.ics.jung.graph.Vertex v = (edu.uci.ics.jung.graph.Vertex) obj;
+			Iterator<String> keyIterator = v.getUserDatumKeyIterator();
+			while(keyIterator.hasNext())
 			{
-				Iterator iter = jungGraph.getVertices().iterator();
-				edu.uci.ics.jung.graph.Vertex vert = (edu.uci.ics.jung.graph.Vertex) iter.next();
-				Iterator<String> keyIter = vert.getUserDatumKeyIterator();
-				while(keyIter.hasNext())
-				{
-					String key = keyIter.next();
-					out.print("<key id=\"");
-					out.print(key);
-					out.print("\" for=\"node\" attr.name=\"");
-					out.print(key);
-					out.println("\" attr.type=\"string\" />");
-				}
+				String key = keyIterator.next();
+				prefuseGraph.addColumn(key, String.class);
 			}
-			
-			if(jungGraph.getEdges().size()>0)
-			{
-				Iterator iter2 = jungGraph.getEdges().iterator();
-				edu.uci.ics.jung.graph.Edge edge = (edu.uci.ics.jung.graph.Edge) iter2.next();
-				Iterator<String> keyIter2 = edge.getUserDatumKeyIterator();
-				while(keyIter2.hasNext())
-				{
-					String key = keyIter2.next();
-					out.print("<key id=\"");
-					out.print(key);
-					out.print("\" for=\"edge\" attr.name=\"");
-					out.print(key);
-					out.println("\" attr.type=\"string\" />");
-				}
-			}
-
-			out.println();
-			out.println("<!-- nodes -->");
-			
-			Iterator<edu.uci.ics.jung.graph.Vertex> vertexIterator = jungGraph.getVertices().iterator();
-			while(vertexIterator.hasNext())
-			{
-				edu.uci.ics.jung.graph.Vertex v = vertexIterator.next();
-				out.print("<node id=\"");
-				out.print(v.getUserDatum("class.id").toString());
-				out.println("\">");
-				
-				Iterator<String> keyIterator = v.getUserDatumKeyIterator();
-				while(keyIterator.hasNext())
-				{
-					String key = keyIterator.next();
-					String value = v.getUserDatum(key).toString();
-
-					out.print("<data key=\"");
-					out.print(key);
-					out.print("\">");
-					out.print(value);
-					out.print("</data>");				
-				}
-				
-				out.println("</node>");
-			}
-			
-			out.println();
-			out.println("<!-- edges -->");
-			
-			for(Object obj:jungGraph.getEdges())
-			{
-				edu.uci.ics.jung.graph.Edge e = (Edge) obj;
-				out.print("<edge source=\"");
-				out.print(e.getUserDatum("sourceId").toString());
-				out.print("\" target=\"");
-				out.print(e.getUserDatum("targetId"));
-				out.println("\">");
-				
-				Iterator<String> keyIterator = e.getUserDatumKeyIterator();
-				while(keyIterator.hasNext())
-				{
-					String key = keyIterator.next();
-					String value = e.getUserDatum(key).toString();
-					
-					out.print("<data key=\"");
-					out.print(key);
-					out.print("\">");
-					out.print(value);
-					out.print("</data>");
-				}
-				out.println("</edge>");
-			}
-
-			out.println("</graph>");
-			out.println("</graphml>");
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			break;
 		}
 		
+		
+		for(Object obj:jungGraph.getEdges())
+		{
+			edu.uci.ics.jung.graph.Edge e = (edu.uci.ics.jung.graph.Edge) obj;
+			Iterator<String> keyIterator = e.getUserDatumKeyIterator();
+			while(keyIterator.hasNext())
+			{
+				String key = keyIterator.next();
+				prefuseGraph.addColumn(key, String.class);
+			}
+			break;
+		}
 	}
+
+	
+	
+	
+	private void addNodes(prefuse.data.Graph prefuseGraph, edu.uci.ics.jung.graph.Graph jungGraph) 
+	{
+		for(Object obj:jungGraph.getVertices())
+		{
+			edu.uci.ics.jung.graph.Vertex v = (edu.uci.ics.jung.graph.Vertex)obj;
+			prefuse.data.Node node = prefuseGraph.addNode();
+			Iterator<String> keyIterator = v.getUserDatumKeyIterator();
+			while(keyIterator.hasNext())
+			{
+				String key = keyIterator.next();
+				node.set(key, v.getUserDatum(key).toString());
+			}
+		}
+	}
+
+
+
+
+
+	private void addEdges(prefuse.data.Graph prefuseGraph, edu.uci.ics.jung.graph.Graph jungGraph) 
+	{
+		for(Object obj:jungGraph.getEdges())
+		{
+			edu.uci.ics.jung.graph.Edge e = (edu.uci.ics.jung.graph.Edge)obj;
+			String srcName = e.getUserDatum("sourceName").toString();
+			String destName = e.getUserDatum("targetName").toString();
+
+			prefuse.data.Node src = null;
+			prefuse.data.Node dest = null;
+			
+			Iterator<prefuse.data.Node> nodeIterator = prefuseGraph.nodes();
+			while(nodeIterator.hasNext())
+			{
+				prefuse.data.Node node = nodeIterator.next();
+				String nodeName = node.getString("class.packageName")+'.'+node.getString("class.name");
+				if(srcName.equals(nodeName)) src = node;
+				if(destName.equals(nodeName)) dest = node;
+				
+				if(src!=null && dest!=null)
+				{
+					prefuse.data.Edge edge = prefuseGraph.addEdge(src, dest);
+					Iterator<String> keyIterator = e.getUserDatumKeyIterator();
+					while(keyIterator.hasNext())
+					{
+						String key = keyIterator.next();
+						edge.set(key, e.getUserDatum(key).toString());
+					}
+				}
+			}
+		}
+	}
+
+
+
+
+	
 	
 }
