@@ -26,6 +26,7 @@ import prefuse.visual.VisualItem;
 import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.filters.Filter;
+import edu.uci.ics.jung.graph.impl.DirectedSparseGraph;
 import edu.uci.ics.jung.io.GraphMLFile;
 import edu.uci.ics.jung.utils.UserData;
 
@@ -84,8 +85,10 @@ public class GraphProcessingJob extends Job {
 			if(isInit) 
 			{
 				readInput(monitor);
-				buildGraph(monitor);
+				//buildGraph(monitor);
 			}else monitor.worked(2);
+			
+			System.out.println("[Job]: graph = "+initGraph.getVertices().size()+ "  "+initGraph.getEdges().size());
 			
 			if(initGraph==null) return Status.CANCEL_STATUS;
 			finalGraph = (Graph) initGraph.copy();
@@ -112,7 +115,8 @@ public class GraphProcessingJob extends Job {
 		monitor.subTask("Reading Input File");
 		List<InputReader> readers = KnownInputReader.all();
 		InputReader reader = readers.get(0);
-		reader.read(filename);
+		initGraph = new DirectedSparseGraph();
+		reader.read(filename, initGraph);
 		monitor.worked(1);
 	}
 	
@@ -188,7 +192,7 @@ public class GraphProcessingJob extends Job {
 	private void buildVisual(IProgressMonitor monitor) {
 
 		if(canceled) return;
-		monitor.subTask("Produsing Visualisation");
+		monitor.subTask("Producing Visualisation");
 
 		updateOutputs();
 		monitor.worked(1);

@@ -1,32 +1,21 @@
 package nz.ac.massey.cs.barrio.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Point;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import nz.ac.massey.cs.barrio.clusterer.Clusterer;
-import nz.ac.massey.cs.barrio.clusterer.KnownClusterer;
 import nz.ac.massey.cs.barrio.exporter.Exporter;
 import nz.ac.massey.cs.barrio.exporter.KnownExporter;
 import nz.ac.massey.cs.barrio.filters.EdgeFilter;
 import nz.ac.massey.cs.barrio.filters.KnownEdgeFilters;
 import nz.ac.massey.cs.barrio.filters.KnownNodeFilters;
 import nz.ac.massey.cs.barrio.filters.NodeFilter;
-import nz.ac.massey.cs.barrio.graphconverter.JungPrefuseBridge;
-import nz.ac.massey.cs.barrio.inputReader.InputReader;
-import nz.ac.massey.cs.barrio.inputReader.InputReaderJob;
-import nz.ac.massey.cs.barrio.inputReader.KnownInputReader;
-import nz.ac.massey.cs.barrio.visual.DisplayBuilder;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
@@ -40,7 +29,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Tree;
 
 import prefuse.Display;
 import prefuse.Visualization;
@@ -50,8 +38,6 @@ import prefuse.visual.VisualItem;
 import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.filters.Filter;
-import edu.uci.ics.jung.io.GraphMLFile;
-import edu.uci.ics.jung.utils.UserData;
 
 public class InputUI extends Composite{
 	
@@ -424,9 +410,6 @@ public class InputUI extends Composite{
 		
 	private void btnBrowseClick()
 	{
-		new File("barrioPlugin/jGraph.xml").delete();
-		new File("barrioPlugin/pGraph.xml").delete();
-		
 		Shell shell = new Shell();
 		FileDialog dlg = new FileDialog(shell, SWT.OPEN);
 		dlg.setFilterNames(new String[] { "ODEM Files","XML Files", "All Files" });
@@ -437,8 +420,6 @@ public class InputUI extends Composite{
 	    job = new GraphProcessingJob(filename, initGraph, finalGraph);
 	    job.setUser(true);
 	    runJob(true);
-	    
-	    
 	}
 	
 	

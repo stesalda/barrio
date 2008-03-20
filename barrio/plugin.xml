@@ -14,7 +14,7 @@
             visible="true">
          <menu
                id="barrio.topMenu"
-               label="Cluster Analysis">
+               label="Barrio">
          </menu>
          <action
                class="nz.ac.massey.cs.barrio.actions.ActionRun"
