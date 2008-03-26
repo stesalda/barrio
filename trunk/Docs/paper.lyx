@@ -1,0 +1,334 @@
+#LyX 1.5.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 276
+\begin_document
+\begin_header
+\textclass article
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\paperfontsize default
+\spacing single
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 2
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Section
+Visualisation
+\end_layout
+
+\begin_layout Subsection
+What to visualise
+\end_layout
+
+\begin_layout Standard
+In object oriented programming, using Java in our case, when creating classes
+ it is common practice to group related classes into packages.
+ Then completed library of the packages is distributed as Java archive (jar)
+ file which based on Zip format.
+ Jar files can represent a complete application and/or can be used as building
+ blocks for other applications as multiple libraries.
+ Jar files contain an optional manifest.mf le and potentially signature files.
+ The structure of the jar file we interested in this project is displayed
+ in figure 
+\begin_inset LatexCommand ref
+reference "fig:jarStructure"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename files/jar.jpg
+	display none
+	width 4cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Caption
+
+\begin_layout Standard
+Container structure
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset LatexCommand label
+name "fig:jarStructure"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Classes are usually created with properties which contain class description:
+ 
+\end_layout
+
+\begin_layout Itemize
+modiers: class, interface or exception
+\end_layout
+
+\begin_layout Itemize
+whether or not the class is abstract 
+\end_layout
+
+\begin_layout Itemize
+the class access level: public, private
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+only inner classes can be private
+\end_layout
+
+\end_inset
+
+ or protected
+\end_layout
+
+\begin_layout Description
+Dependency cluster is a group of the elements (nodes) in the graph interconnecte
+d by relationships (dependencies).
+ 
+\end_layout
+
+\begin_layout Standard
+Often Java application consists of multiple .jar files.
+ In cases like this one jar file may use one or more other jar files (jar
+ level dependency - figure 
+\begin_inset LatexCommand ref
+reference "fig:dependenyLevels"
+
+\end_inset
+
+a).
+ Packages have dependencies with packages belonging to the same .jar file
+ and with packages belonging to different .jar files (package level dependencies
+ - figure 
+\begin_inset LatexCommand ref
+reference "fig:dependenyLevels"
+
+\end_inset
+
+b).
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename files/jars.jpg
+	display none
+	width 3.9cm
+	height 3cm
+	subcaption
+	subcaptionText "Container level"
+
+\end_inset
+
+ 
+\begin_inset Graphics
+	filename files/packs.jpg
+	display none
+	width 3.9cm
+	height 3cm
+	subcaption
+	subcaptionText "Namespace level"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Caption
+
+\begin_layout Standard
+Levels of dependencies
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset LatexCommand label
+name "fig:dependenyLevels"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In this project we are interested in class level dependencies (figure 
+\begin_inset LatexCommand ref
+reference "fig:classDependencies"
+
+\end_inset
+
+).
+ Here dependency reflects whether the class contains variable instantiating
+ the other class, implements an interface, extends a superclass or has a
+ reference to a constant (final variable).
+ This reflects the concepts of dependency graph.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename files/classes.jpg
+	display none
+	width 4cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Caption
+
+\begin_layout Standard
+Class level dependencies
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset LatexCommand label
+name "fig:classDependencies"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection
+Visualisation library
+\end_layout
+
+\begin_layout Standard
+The prefuse visualisation toolkit
+\begin_inset LatexCommand cite
+key "prefuse"
+
+\end_inset
+
+ was used to present the visual dependency graph.
+\end_layout
+
+\begin_layout Subsection
+Visual dependency graph
+\end_layout
+
+\begin_layout Standard
+text
+\end_layout
+
+\begin_layout Subsection
+Interaction
+\end_layout
+
+\begin_layout Standard
+text
+\end_layout
+
+\begin_layout Subsection
+Future work
+\end_layout
+
+\begin_layout Standard
+text
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset LatexCommand bibitem
+key "prefuse"
+
+\end_inset
+
+The prefuse visualization toolkit.
+ http://prefuse.org/
+\end_layout
+
+\end_body
+\end_document
