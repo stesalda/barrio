@@ -234,7 +234,7 @@ reference "fig:classDependencies"
  Here dependency reflects whether the class contains variable instantiating
  the other class, implements an interface, extends a superclass or has a
  reference to a constant (final variable).
- This reflects the concepts of dependency graph.
+ This reflects the concepts of the dependency graph.
 \end_layout
 
 \begin_layout Standard
@@ -294,6 +294,12 @@ key "prefuse"
 \end_inset
 
  was used to present the visual dependency graph.
+ The prefuse provides set features for data modelling, visualisation and
+ interaction, and offers visual structures for tables, trees and graphs.
+ The prefuse includes layouts and visual encoding techniques, interaction
+ and animation.
+ The prefuse is an open source Java library that contains 2D graphics and
+ can be integrated into Java Swing.
 \end_layout
 
 \begin_layout Subsection
@@ -301,7 +307,249 @@ Visual dependency graph
 \end_layout
 
 \begin_layout Standard
-text
+The exmple figures in this section are based on analysis of Apache commons
+ collections project version 3.2 
+\begin_inset LatexCommand cite
+key "commomns"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+Our aim is to analyse dependencies of object-oriented programs at class
+ level.
+ For that reason the nodes on the graph represent classes.
+ The nodes are displayed with labels that contain name of the class, the
+ namespace name and the container name the class belongs to, and the icon
+ that reflects class properties such as class modifier (class, interface,
+ exception), access (public, private), and abstractness of the class (figure
+ 
+\begin_inset LatexCommand ref
+reference "fig:nodes"
+
+\end_inset
+
+).
+ 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename files/nodes.JPG
+	display none
+	width 5cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Caption
+
+\begin_layout Standard
+Visual nodes on the graph
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset LatexCommand label
+name "fig:nodes"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The relationships between classes are represented as directed edges on the
+ visual graph (figure 
+\begin_inset LatexCommand ref
+reference "fig:edges"
+
+\end_inset
+
+).
+ Every edge display a label describing the type of the relationship.
+ The 
+\begin_inset Quotes eld
+\end_inset
+
+uses
+\begin_inset Quotes erd
+\end_inset
+
+ label means that the source class has at least one instance of the destination
+ class as a variable or has a reference to a static field.
+ The labels 
+\begin_inset Quotes eld
+\end_inset
+
+extends
+\begin_inset Quotes erd
+\end_inset
+
+ and 
+\begin_inset Quotes eld
+\end_inset
+
+implements
+\begin_inset Quotes erd
+\end_inset
+
+ mean that the source class extends a superclass or/and implements an interface.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename files/edges.JPG
+	display none
+	width 6cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Caption
+
+\begin_layout Standard
+Visual edges on the graph
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset LatexCommand label
+name "fig:edges"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The force directed layout is used to position visual elements of the graph
+ 
+\begin_inset LatexCommand cite
+key "fdl"
+
+\end_inset
+
+.
+ Force directed algorithms views the graph as a virtual physical system,
+ where the nodes and edges of the graph are bodies of the system.
+ The nodes have antigravitational forces acting between them, edges act
+ as springs between nodes.
+ Figure 
+\begin_inset LatexCommand ref
+reference "fig:fdl"
+
+\end_inset
+
+ shows that nodes of connected clusters are held close by the edges connecting
+ them, and disconnected elements are repelled from each other.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename files/fdl.JPG
+	display none
+	width 8cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Caption
+
+\begin_layout Standard
+Force directed layout
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset LatexCommand label
+name "fig:fdl"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The force directed layout and its animation become uneffective or unsable
+ in some cases for large graph data structures (more than 1500 nodes).
+ To ovecome this problem force directed layout is replaced for a static
+\begin_inset Foot
+status open
+
+\begin_layout Standard
+does not contain animation
+\end_layout
+
+\end_inset
+
+ radial tree layout for the graphs that contain over 1200 nodes.
+\end_layout
+
+\begin_layout Standard
+Aggregates
 \end_layout
 
 \begin_layout Subsection
@@ -309,7 +557,15 @@ Interaction
 \end_layout
 
 \begin_layout Standard
-text
+Dragging
+\end_layout
+
+\begin_layout Standard
+Pan and zoom
+\end_layout
+
+\begin_layout Standard
+Highlighting
 \end_layout
 
 \begin_layout Subsection
@@ -317,7 +573,17 @@ Future work
 \end_layout
 
 \begin_layout Standard
-text
+Super nodes
+\begin_inset LatexCommand cite
+key "smallWorldNetworks"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+FDL between aggregates
 \end_layout
 
 \begin_layout Bibliography
@@ -327,7 +593,77 @@ key "prefuse"
 \end_inset
 
 The prefuse visualization toolkit.
- http://prefuse.org/
+ 
+\begin_inset LatexCommand url
+target "http://prefuse.org/"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset LatexCommand bibitem
+key "shneiderman"
+
+\end_inset
+
+Schneiderman, B.
+ 1996.
+ The Eyes Have It: A Task by Data Type Taxonomy for Information Visualization.
+ In IEEE Conference on Visual Languages (VL'96).
+ Boulder, CO: IEEE CS Press.
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset LatexCommand bibitem
+key "smallWorldNetworks"
+
+\end_inset
+
+David Auber, Yves Chiricota, Fabien Jourdan, Guy Melançon.
+ Multiscale Visualization of Small World Networks.
+ 
+\begin_inset LatexCommand url
+target "http://dept-info.labri.fr/~auber/documents/publi/auberIV03Seattle.pdf"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset LatexCommand bibitem
+key "commomns"
+
+\end_inset
+
+Apache commons collections version 3.2.
+ 
+\begin_inset LatexCommand url
+target "http://commons.apache.org/"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset LatexCommand bibitem
+key "fdl"
+
+\end_inset
+
+Dr Aaron J Quigley.
+ What is a Force Directed Algorithm (Spring Algorithm)? University College
+ Dublin.
+ 
+\begin_inset LatexCommand url
+target "http://www.csi.ucd.ie/staff/aquigley/home/index.php?Research:Projects:FADE"
+
+\end_inset
+
+
 \end_layout
 
 \end_body
