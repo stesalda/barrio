@@ -54,7 +54,8 @@ In object oriented programming, using Java in our case, when creating classes
  file which based on Zip format.
  Jar files can represent a complete application and/or can be used as building
  blocks for other applications as multiple libraries.
- Jar files contain an optional manifest.mf le and potentially signature files.
+ Jar files contain an optional manifest.mf file and potentially signature
+ files.
  The structure of the jar file we interested in this project is displayed
  in figure 
 \begin_inset LatexCommand ref
@@ -116,7 +117,7 @@ Classes are usually created with properties which contain class description:
 \end_layout
 
 \begin_layout Itemize
-modiers: class, interface or exception
+modifiers: class, interface or exception
 \end_layout
 
 \begin_layout Itemize
@@ -299,7 +300,7 @@ key "prefuse"
  The prefuse includes layouts and visual encoding techniques, interaction
  and animation.
  The prefuse is an open source Java library that contains 2D graphics and
- can be integrated into Java Swing.
+ can be integrated into Java Swing (more accurate 2.5D grapict).
 \end_layout
 
 \begin_layout Subsection
@@ -307,7 +308,7 @@ Visual dependency graph
 \end_layout
 
 \begin_layout Standard
-The exmple figures in this section are based on analysis of Apache commons
+The example figures in this section are based on analysis of Apache commons
  collections project version 3.2 
 \begin_inset LatexCommand cite
 key "commomns"
@@ -475,7 +476,7 @@ key "fdl"
 .
  Force directed algorithms views the graph as a virtual physical system,
  where the nodes and edges of the graph are bodies of the system.
- The nodes have antigravitational forces acting between them, edges act
+ The nodes have anti-gravitational forces acting between them, edges act
  as springs between nodes.
  Figure 
 \begin_inset LatexCommand ref
@@ -533,9 +534,9 @@ name "fig:fdl"
 \end_layout
 
 \begin_layout Standard
-The force directed layout and its animation become uneffective or unsable
+The force directed layout and its animation become ineffective or unusable
  in some cases for large graph data structures (more than 1500 nodes).
- To ovecome this problem force directed layout is replaced for a static
+ To overcome this problem force directed layout is replaced for a static
 \begin_inset Foot
 status open
 
@@ -549,11 +550,146 @@ does not contain animation
 \end_layout
 
 \begin_layout Standard
-Aggregates
+To display group of visual nodes prefuse 
+\begin_inset LatexCommand cite
+key "prefuse"
+
+\end_inset
+
+ offers visual elements called aggregates.
+ Aggregates draw a border around group of visual graph nodes that contain
+ the same value of the property.
+ Aggregates usually filled with colour with transparency.
+ For example figure 
+\begin_inset LatexCommand ref
+reference "fig:packAggregate"
+
+\end_inset
+
+ shows graph nodes that contain the same name of the package they belong
+ to and figure 
+\begin_inset LatexCommand ref
+reference "fig:pack-clust-Aggr"
+
+\end_inset
+
+ shows packages and dependency clusters in the graph.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename files/packAggr.JPG
+	display none
+	width 8cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Caption
+
+\begin_layout Standard
+Aggregates of packages
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset LatexCommand label
+name "fig:packAggregate"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+placement H
+wide false
+sideways false
+status open
+
+\begin_layout Standard
+\align center
+\begin_inset Graphics
+	filename files/packClustAggr.JPG
+	display none
+	width 8cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Caption
+
+\begin_layout Standard
+Aggregates of packages and dependency clusters
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset LatexCommand label
+name "fig:pack-clust-Aggr"
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsection
 Interaction
+\end_layout
+
+\begin_layout Standard
+The prefuse visual library provides user interaction options such as pan,
+ zoom, visual element drag, etc.
+ The interaction contorols for zoom and pan are buttons on user interface
+ and mouse events.
+ 
+\end_layout
+
+\begin_layout Standard
+The drag of the visual element controlled only by mouse event using click
+ and drag (only works for nodes and aggregates).
+ The aim of interaction between user and the graph is to improve layout
+ of visual elements in the way that user receives display of the analysed
+ system to have similar layout to the model of the system itself.
+ On user request any visual node can be moved to any position in the graph.
+ In the cases when user requires to move a group of nodes the aggregates
+ that represent that group must be visible.
+ The drag of the group of the visual nodes occurs on mouse click and drag
+ on the aggregate.
+ 
 \end_layout
 
 \begin_layout Standard
@@ -584,6 +720,10 @@ key "smallWorldNetworks"
 
 \begin_layout Standard
 FDL between aggregates
+\end_layout
+
+\begin_layout Standard
+Search
 \end_layout
 
 \begin_layout Bibliography
@@ -660,6 +800,24 @@ Dr Aaron J Quigley.
  
 \begin_inset LatexCommand url
 target "http://www.csi.ucd.ie/staff/aquigley/home/index.php?Research:Projects:FADE"
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Bibliography
+\begin_inset LatexCommand bibitem
+key "graphInteraction"
+
+\end_inset
+
+Hugo A.
+ D.
+ do Nascimento, A Framework for Human-Computer Interaction in Directed Graph
+ Drawing 
+\begin_inset LatexCommand url
+target "http://delivery.acm.org/10.1145/570000/564048/p63-do_nascimento.pdf?key1=564048&key2=5530296021&coll=GUIDE&dl=&CFID=15151515&CFTOKEN=6184618"
 
 \end_inset
 
