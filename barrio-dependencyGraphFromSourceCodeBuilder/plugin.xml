@@ -8,21 +8,14 @@
             label="Sample Action Set"
             visible="true"
             id="DependencyGraphExtractor.actionSet">
-         <menu
-               label="Dependency Analysis"
-               id="barrio">
-            <separator
-                  name="barrio">
-            </separator>
-         </menu>
          <action
                label="&amp;Build Dependency Graph"
                icon="icons/sample.gif"
                class="nz.ac.massey.cs.barrio.srcgraphbuilder.ExtractDependencyGraphAction"
                tooltip="Extract dependency graph fromk selected Java project"
-               menubarPath="barrio/barrio"
+               menubarPath="barrio.topMenu/barrio.SrcCodeReadAction"
                toolbarPath="barrio"
-               id="nz.ac.massey.cs.barrio.srcgraphbuilder.ExtractDependencyGraphAction">
+               id="barrio.SrcCodeReadAction">
          </action>
       </actionSet>
    </extension>
