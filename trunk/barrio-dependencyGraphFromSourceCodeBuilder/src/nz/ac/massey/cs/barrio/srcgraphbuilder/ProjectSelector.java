@@ -3,10 +3,14 @@ package nz.ac.massey.cs.barrio.srcgraphbuilder;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -19,6 +23,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -26,35 +31,34 @@ import org.eclipse.swt.widgets.TableItem;
 
 public class ProjectSelector {
 	
-	private static List<IJavaProject> projects;
+	private List<IJavaProject> selectedProjects;
+	private IJavaProject[] jprojects;
+	private Display display;
+	Shell shell;
 	
-	public ProjectSelector()
+	public ProjectSelector(Display display)
 	{
-		projects = new ArrayList<IJavaProject>();
+		this.display = display;
+		this.shell = new Shell(display, SWT.CLOSE);
+		this.selectedProjects = new ArrayList<IJavaProject>();
+		this.jprojects = null;
+		
+		buildProjectList();
 	}
 
-	public static List<IJavaProject> getProjects() {
-		selectProjects();
-		return projects;
-	}
-	
-	private static void selectProjects()
-	{
-		buildProjectSelector();
-	}
-	
-	public static void main(String[] args)
-	{
-		System.out.println(getProjects());
+	public List<IJavaProject> getProjects() {
+		return selectedProjects;
 	}
 
-	private static void buildProjectSelector() {
-		final Display display = new Display();
-	    Shell shell = new Shell(display, SWT.CLOSE);
-	    shell.setText("Select projects");
+	private void buildProjectList() {
 	    shell.setLayout(new FillLayout());
+	    shell.pack();
 	    
-	    Composite parent = new Composite(shell, SWT.NONE);
+	    Shell dialog = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+	    dialog.setLayout(new FillLayout());
+	    dialog.setText("Select projects");
+	    
+	    Composite parent = new Composite(dialog, SWT.NONE);
 	    parent.setLayout(new GridLayout(1, true));
 	    
 
@@ -65,8 +69,8 @@ public class ProjectSelector {
 	    compositeTable.setLayout(new FillLayout());
 	    compositeTable.setLayoutData(tableData);	  
 	    
-	    Table table = new Table(compositeTable, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-	    populateTable(display, table);
+	    final Table table = new Table(compositeTable, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+	    populateTable(table);
 	    
 	    GridData controlsData = new GridData(GridData.FILL_HORIZONTAL);
 	    controlsData.heightHint = 30;
@@ -89,8 +93,8 @@ public class ProjectSelector {
 			}
 
 			public void widgetSelected(SelectionEvent e) {
-				projects = null;
-				display.dispose();
+				selectedProjects.clear();
+				shell.dispose();
 			}
 	    	
 	    });
@@ -100,6 +104,25 @@ public class ProjectSelector {
 	    Button btnOk = new Button(controls, SWT.PUSH);
 	    btnOk.setText("Ok");
 	    btnOk.setLayoutData(btnData);
+	    btnOk.addSelectionListener(new SelectionListener(){
+
+			public void widgetDefaultSelected(SelectionEvent e) {}
+
+			public void widgetSelected(SelectionEvent e) {
+				if(jprojects != null)
+					for(IJavaProject project:jprojects)
+					{
+						String projectName = project.getElementName();
+						for(TableItem item:table.getItems())
+							if(item.getText().equals(projectName) && item.getChecked())
+							{
+								selectedProjects.add((IJavaProject) project);
+								System.out.println(project.getElementName());
+							}
+					}
+				shell.dispose();
+			}
+	    });
 
 	    shell.setSize(400, 250);
 	    Monitor primary = display.getPrimaryMonitor();
@@ -108,26 +131,29 @@ public class ProjectSelector {
 	    int x = bounds.x + (bounds.width - rect.width) / 2;
 	    int y = bounds.y + (bounds.height - rect.height) / 2;
 	    shell.setLocation(x, y);
-	    shell.open();
-	    
-	    while (!shell.isDisposed()) {
-	      if (!display.readAndDispatch())
-	        display.sleep();
-	    }
-	    display.dispose();
-		
+
+	    dialog.pack();
+	    dialog.open();
 	}
 
-	private static void populateTable(Display display, Table table) {
-		display.asyncExec(new Runnable(){
-
-			public void run() {
-				//IResource res = ResourcesPlugin.getWorkspace().getRoot();
-				IWorkspace workspace = ResourcesPlugin.getWorkspace();
-				System.out.println(workspace.getRoot().getProject());
+	private void populateTable(Table table) {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IJavaModel jmodel = JavaCore.create(workspace.getRoot());
+		
+		try {
+			IJavaProject[] jprojects = jmodel.getJavaProjects();
+			this.jprojects = jprojects;
+			
+			for(IJavaProject project:jprojects)
+			{
+				TableItem item = new TableItem(table, SWT.NONE);
+				item.setText(project.getElementName());
 			}
-		});
-
+		} catch (JavaModelException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		
 	}
 

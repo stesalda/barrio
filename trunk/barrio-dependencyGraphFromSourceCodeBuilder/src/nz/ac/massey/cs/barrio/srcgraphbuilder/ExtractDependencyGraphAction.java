@@ -69,7 +69,8 @@ public class ExtractDependencyGraphAction implements IWorkbenchWindowActionDeleg
         	return;
         }
         
-        ProjectSelector.main(null);
+        ProjectSelector ps = new ProjectSelector(window.getShell().getDisplay());
+        ps.getProjects();
 
         ExtractDependencyGraph2OdemFileJob job = new ExtractDependencyGraph2OdemFileJob(project);
 		job.setFileName(fileName);
