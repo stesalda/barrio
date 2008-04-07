@@ -22,6 +22,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Monitor;
@@ -29,36 +30,44 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
-public class ProjectSelector {
+public class ProjectSelectDialog extends Dialog{
 	
 	private List<IJavaProject> selectedProjects;
-	private IJavaProject[] jprojects;
+	private IJavaProject[] existingProjects;
 	private Display display;
-	Shell shell;
 	
-	public ProjectSelector(Display display)
+	public ProjectSelectDialog(Shell parent)
 	{
-		this.display = display;
-		this.shell = new Shell(display, SWT.CLOSE);
+		super(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
+		this.display = parent.getDisplay();
 		this.selectedProjects = new ArrayList<IJavaProject>();
-		this.jprojects = null;
-		
-		buildProjectList();
+		this.existingProjects = null;
 	}
-
-	public List<IJavaProject> getProjects() {
+	
+	public List<IJavaProject> open()
+	{
+		Shell shell = new Shell(getParent(), getStyle());
+		shell.setLayout(new FillLayout());
+	    shell.setText("test");
+	    createContents(shell);
+	    shell.pack();
+	    shell.open();
+	    Display display = getParent().getDisplay();
+	    while (!shell.isDisposed()) {
+	      if (!display.readAndDispatch()) {
+	        display.sleep();
+	      }
+	    }
+	    
 		return selectedProjects;
 	}
-
-	private void buildProjectList() {
+	
+	
+	private void createContents(final Shell shell) {
 	    shell.setLayout(new FillLayout());
-	    shell.pack();
+	    shell.setText("Select projects");
 	    
-	    Shell dialog = new Shell(shell, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-	    dialog.setLayout(new FillLayout());
-	    dialog.setText("Select projects");
-	    
-	    Composite parent = new Composite(dialog, SWT.NONE);
+	    Composite parent = new Composite(shell, SWT.NONE);
 	    parent.setLayout(new GridLayout(1, true));
 	    
 
@@ -94,7 +103,7 @@ public class ProjectSelector {
 
 			public void widgetSelected(SelectionEvent e) {
 				selectedProjects.clear();
-				shell.dispose();
+				shell.close();
 			}
 	    	
 	    });
@@ -109,18 +118,15 @@ public class ProjectSelector {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 
 			public void widgetSelected(SelectionEvent e) {
-				if(jprojects != null)
-					for(IJavaProject project:jprojects)
+				if(existingProjects != null)
+					for(IJavaProject project:existingProjects)
 					{
 						String projectName = project.getElementName();
 						for(TableItem item:table.getItems())
 							if(item.getText().equals(projectName) && item.getChecked())
-							{
 								selectedProjects.add((IJavaProject) project);
-								System.out.println(project.getElementName());
-							}
 					}
-				shell.dispose();
+				shell.close();
 			}
 	    });
 
@@ -130,11 +136,10 @@ public class ProjectSelector {
 	    Rectangle rect = shell.getBounds();
 	    int x = bounds.x + (bounds.width - rect.width) / 2;
 	    int y = bounds.y + (bounds.height - rect.height) / 2;
-	    shell.setLocation(x, y);
-
-	    dialog.pack();
-	    dialog.open();
+	    shell.setLocation(x, y);		
 	}
+	
+	
 
 	private void populateTable(Table table) {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -142,7 +147,7 @@ public class ProjectSelector {
 		
 		try {
 			IJavaProject[] jprojects = jmodel.getJavaProjects();
-			this.jprojects = jprojects;
+			this.existingProjects = jprojects;
 			
 			for(IJavaProject project:jprojects)
 			{
@@ -153,8 +158,6 @@ public class ProjectSelector {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
 	}
 
 }
