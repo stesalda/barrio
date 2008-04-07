@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Barrio Non Public Filter Plug-in
-Bundle-SymbolicName: barrio.nonPublicFilter;singleton:=true
+Bundle-SymbolicName: nz.ac.massey.cs.barrio.nonPublicFilter;singleton:=true
 Bundle-Version: 1.0.6
 Bundle-Activator: nz.ac.massey.cs.barrio.nonPublicFilter.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- barrio
+ nz.ac.massey.cs.barrio
 Eclipse-LazyStart: true
