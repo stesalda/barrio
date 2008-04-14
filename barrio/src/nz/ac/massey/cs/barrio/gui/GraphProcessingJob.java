@@ -1,6 +1,7 @@
 package nz.ac.massey.cs.barrio.gui;
 
 import java.awt.BorderLayout;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -19,6 +20,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 
 import prefuse.Display;
 import prefuse.visual.AggregateItem;
@@ -85,7 +89,6 @@ public class GraphProcessingJob extends Job {
 			if(isInit) 
 			{
 				readInput(monitor);
-				//buildGraph(monitor);
 			}else monitor.worked(2);
 			
 			System.out.println("[Job]: graph = "+initGraph.getVertices().size()+ "  "+initGraph.getEdges().size());
