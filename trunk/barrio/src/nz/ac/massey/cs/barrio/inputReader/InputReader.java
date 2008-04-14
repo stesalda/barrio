@@ -1,5 +1,7 @@
 package nz.ac.massey.cs.barrio.inputReader;
 
+import java.io.IOException;
+
 import edu.uci.ics.jung.graph.Graph;
 
 
