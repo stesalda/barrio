@@ -3,6 +3,7 @@ package nz.ac.massey.cs.barrio.odemReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -58,6 +59,7 @@ public class OdemReader implements InputReader{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 	}
 	
 	
@@ -106,7 +108,7 @@ public class OdemReader implements InputReader{
 								isAbstract = "true";
 							v.addUserDatum("class.isAbstract", isAbstract, UserData.SHARED);
 							
-							v.addUserDatum("class.isException", String.valueOf(typeStr.contains("Exception")), UserData.SHARED);
+							v.addUserDatum("class.isException", String.valueOf(typeStr.endsWith("Exception")), UserData.SHARED);
 							
 							String access = "null";
 							if(typeAttr.getNamedItem("visibility")!=null)
