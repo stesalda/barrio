@@ -73,12 +73,12 @@ public class ExtractDependencyGraphAction implements IWorkbenchWindowActionDeleg
         
         
         //Introdusing project select dialog ...Slava
-//        ProjectSelectDialog psd = new ProjectSelectDialog(window.getShell());
-//        List<IJavaProject> selectedProjects = psd.open();
-//        for(IJavaProject p:selectedProjects)
-//        {
-//        	System.out.println(p.getElementName());
-//        }
+        ProjectSelectDialog psd = new ProjectSelectDialog(window.getShell());
+        List<IJavaProject> selectedProjects = psd.open();
+        for(IJavaProject p:selectedProjects)
+        {
+        	System.out.println(p.getElementName());
+        }
         //project select dialog ends
         
         
