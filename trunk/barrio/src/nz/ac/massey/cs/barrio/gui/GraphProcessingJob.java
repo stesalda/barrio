@@ -91,7 +91,7 @@ public class GraphProcessingJob extends Job {
 				readInput(monitor);
 			}else monitor.worked(2);
 			
-			System.out.println("[Job]: graph = "+initGraph.getVertices().size()+ "  "+initGraph.getEdges().size());
+//			System.out.println("[Job]: graph = "+initGraph.getVertices().size()+ "  "+initGraph.getEdges().size());
 			
 			if(initGraph==null) return Status.CANCEL_STATUS;
 			finalGraph = (Graph) initGraph.copy();
