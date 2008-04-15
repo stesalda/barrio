@@ -48,7 +48,7 @@ public class OdemReader implements InputReader{
 			addNodes(doc, graph);
 			addEdges(doc, graph);
 			
-			System.out.println("[OdemReader]: "+graph.getVertices().size()+"  "+graph.getEdges().size());
+			//System.out.println("[OdemReader]: "+graph.getVertices().size()+"  "+graph.getEdges().size());
 		} catch (ParserConfigurationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
