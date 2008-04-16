@@ -13,7 +13,11 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import nz.ac.massey.cs.barrio.inputReader.InputReader;
+import nz.ac.massey.cs.barrio.inputReader.UnknownInputException;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -33,8 +37,11 @@ public class OdemReader implements InputReader{
 
 	private List<TempEdge> tempEdges;
 
-	public void read(String filename, Graph graph) 
+	public void read(Object input, Graph graph) throws UnknownInputException, IOException 
 	{	
+		String filename = null;
+		if(input instanceof String) filename = input.toString();
+		
 		if(filename==null || filename.length()<1) return;
 		//graph = new DirectedSparseGraph();
 		try {
@@ -50,14 +57,12 @@ public class OdemReader implements InputReader{
 			
 			//System.out.println("[OdemReader]: "+graph.getVertices().size()+"  "+graph.getEdges().size());
 		} catch (ParserConfigurationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		} catch (SAXException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			throw new UnknownInputException();
 		}
 
 	}
