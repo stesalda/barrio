@@ -84,7 +84,6 @@ public class InputUI extends Composite{
 		   
 		   Label lblXML = new Label(composite, SWT.NONE);
 		   lblXML.setText("Browse for input file");
-
 		   btnBrowse = new Button(composite, SWT.PUSH | SWT.CENTER);
 		   btnBrowse.setText("Browse"); 
 		   
@@ -93,6 +92,7 @@ public class InputUI extends Composite{
 		   //-----------------------------------------------------------
 		   
 		   Label lblFilters = new Label(composite, SWT.NONE);
+		   
 		   lblFilters.setText("Filter out:");
 		   
 		   Label lblNodes = new Label(composite, SWT.NONE);
@@ -158,8 +158,7 @@ public class InputUI extends Composite{
 		   
 		   final Label lblSeparation = new Label(composite, SWT.BORDER);
 		   lblSeparation.setText("Separation level = 0");
-		   GridData lblSeparationtData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
-		   lblSeparation.setLayoutData(lblSeparationtData);
+		   lblSeparation.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL));
 		   
 		   final Scale slider = new Scale(composite, SWT.HORIZONTAL);
 		   slider.setMinimum(0);
