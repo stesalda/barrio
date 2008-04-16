@@ -20,6 +20,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -70,6 +71,7 @@ public class InputUI extends Composite{
 		   sc.setLayout(new FillLayout());
 		   Composite composite = new Composite(sc, SWT.NONE);
 
+		   GridData sliderData = new GridData(GridData.FILL_HORIZONTAL);
 		   
 		   sc.setContent(composite);
 		   sc.setExpandHorizontal(true);
@@ -156,8 +158,7 @@ public class InputUI extends Composite{
 		   
 		   final Label lblSeparation = new Label(composite, SWT.NONE);
 		   lblSeparation.setText("Separation level = 0");
-		   GridData lblSeparationtData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		   lblSeparationtData.widthHint = 120;
+		   GridData lblSeparationtData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		   lblSeparation.setLayoutData(lblSeparationtData);
 		   
 		   final Scale slider = new Scale(composite, SWT.HORIZONTAL);
@@ -166,7 +167,7 @@ public class InputUI extends Composite{
 		   slider.setIncrement(1);
 		   slider.setPageIncrement(1);
 		   slider.setSelection(0);
-		   GridData sliderData = new GridData(GridData.FILL_HORIZONTAL);
+		   //GridData sliderData = new GridData(GridData.FILL_HORIZONTAL);
 		   slider.setLayoutData(sliderData);
 		   
 		   Label separator3 = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
@@ -196,11 +197,13 @@ public class InputUI extends Composite{
 		   
 		   int y = 100;
 		   
-		   final Button btnUp = new Button(comp, SWT.ARROW|SWT.UP);
+		   final Button btnUp = new Button(comp, SWT.PUSH);
+		   btnUp.setImage(new Image(display, this.getClass().getResourceAsStream("icons/arrowUp.png")));
 		   btnUp.setToolTipText("Pan up");
 		   btnUp.setBounds(50,y,20,20);
 		   
-		   Button btnLeft = new Button(comp, SWT.ARROW|SWT.LEFT);
+		   Button btnLeft = new Button(comp, SWT.PUSH);
+		   btnLeft.setImage(new Image(display, this.getClass().getResourceAsStream("icons/arrowLeft.png")));
 		   btnLeft.setToolTipText("Pan left");
 		   btnLeft.setBounds(0,y+25,20,20);
 		   
@@ -219,11 +222,13 @@ public class InputUI extends Composite{
 		   btnZoomIn.setBounds(75,y+25,20,20);
 		   btnZoomIn.setText("+");
 		   
-		   Button btnRight = new Button(comp, SWT.ARROW|SWT.RIGHT);
+		   Button btnRight = new Button(comp, SWT.PUSH);
+		   btnRight.setImage(new Image(display, this.getClass().getResourceAsStream("icons/arrowRight.png")));
 		   btnRight.setToolTipText("Pan right");
 		   btnRight.setBounds(100,y+25,20,20);
 		   
-		   Button btnDown = new Button(comp, SWT.ARROW|SWT.DOWN);
+		   Button btnDown = new Button(comp, SWT.PUSH);
+		   btnDown.setImage(new Image(display, this.getClass().getResourceAsStream("icons/arrowDown.png")));
 		   btnDown.setToolTipText("Pan down");
 		   btnDown.setBounds(50,y+50,20,20);
 		   
@@ -384,7 +389,10 @@ public class InputUI extends Composite{
 		super.dispose();
 	}
 	
-	
+	private String getFilePath(String path)
+	{
+		return this.getClass().getResource(path).getFile().toString();
+	}
 	
 	
 	

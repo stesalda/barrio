@@ -14,6 +14,7 @@ import nz.ac.massey.cs.barrio.filters.KnownNodeFilters;
 import nz.ac.massey.cs.barrio.graphconverter.JungPrefuseBridge;
 import nz.ac.massey.cs.barrio.inputReader.InputReader;
 import nz.ac.massey.cs.barrio.inputReader.KnownInputReader;
+import nz.ac.massey.cs.barrio.inputReader.UnknownInputException;
 import nz.ac.massey.cs.barrio.visual.DisplayBuilder;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -36,7 +37,7 @@ import edu.uci.ics.jung.utils.UserData;
 
 public class GraphProcessingJob extends Job {
 
-	private String filename;
+	private Object input;
 	private Graph initGraph;
 	private Graph finalGraph;
 
@@ -54,9 +55,9 @@ public class GraphProcessingJob extends Job {
 	
 	private OutputGenerator og;
 	
-	public GraphProcessingJob(String filename, Graph initGraph, Graph finalGraph) {
+	public GraphProcessingJob(Object input, Graph initGraph, Graph finalGraph) {
 		super("Processing graph");
-		this.filename = filename;
+		this.input = input;
 		
 		this.initGraph = initGraph;
 		this.finalGraph = finalGraph;
@@ -81,7 +82,7 @@ public class GraphProcessingJob extends Job {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		
-		if(filename!=null && filename.length()>0)
+		if(input!=null)
 		{
 			int SCALE = 4+filters.size()+separation;
 			monitor.beginTask("Processing Graph", SCALE);
@@ -115,23 +116,61 @@ public class GraphProcessingJob extends Job {
 
 	private void readInput(IProgressMonitor monitor) {
 		if(canceled) return;
+		
 		monitor.subTask("Reading Input File");
 		List<InputReader> readers = KnownInputReader.all();
-		InputReader reader = readers.get(0);
 		initGraph = new DirectedSparseGraph();
-		reader.read(filename, initGraph);
+		boolean done = false;
+		for(InputReader reader:readers)
+		{
+			try {
+				reader.read(input, initGraph);
+				done = true;
+				break;
+			} catch (UnknownInputException e) {
+				//e.printStackTrace();
+			} 
+			catch (IOException e) {
+				//e.printStackTrace();
+				if (e instanceof java.net.ConnectException)
+				{
+					showConnectionErrorMessage();
+					return;
+				}
+			}
+		}
+		if(!done) showUnknownInputMessage();
 		monitor.worked(1);
 	}
 	
+	private void showUnknownInputMessage()
+	{
+		OutputUI.display.asyncExec(new Runnable(){
+
+			public void run() {
+				Shell s = new Shell();
+				MessageBox mb = new MessageBox(s, SWT.ICON_ERROR);
+				mb.setText("Barrio Error: Unknown Input");
+				mb.setMessage("Cannot build graph from this input type!!!\n Refer to user manual.");
+				int rc = mb.open();
+				if(rc==SWT.OK) s.dispose();
+			}
+		});
+	}
 	
-	
-	
-	private void buildGraph(IProgressMonitor monitor) {
-		if(canceled) return;
-		monitor.subTask("Building Graph");
-		GraphMLFile graphML = new GraphMLFile();
-		initGraph = graphML.load("barrioPlugin/jGraph.xml");
-		monitor.worked(1);		
+	private void showConnectionErrorMessage()
+	{
+		OutputUI.display.asyncExec(new Runnable(){
+
+			public void run() {
+				Shell s = new Shell();
+				MessageBox mb = new MessageBox(s, SWT.ICON_ERROR);
+				mb.setText("Barrio Network Connection Error");
+				mb.setMessage("Could not connect to DTD file!!!\n Check your network settings.");
+				int rc = mb.open();
+				if(rc==SWT.OK) s.dispose();
+			}
+		});
 	}
 
 
