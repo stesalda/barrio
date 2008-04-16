@@ -156,7 +156,7 @@ public class InputUI extends Composite{
 		   separator2.setLayoutData(separatorData);
 		   //-------------------------------------------------------------
 		   
-		   final Label lblSeparation = new Label(composite, SWT.NONE);
+		   final Label lblSeparation = new Label(composite, SWT.BORDER);
 		   lblSeparation.setText("Separation level = 0");
 		   GridData lblSeparationtData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		   lblSeparation.setLayoutData(lblSeparationtData);
@@ -208,19 +208,19 @@ public class InputUI extends Composite{
 		   btnLeft.setBounds(0,y+25,20,20);
 		   
 		   Button btnZoomOut = new Button(comp, SWT.PUSH);
+		   btnZoomOut.setImage(new Image(display, this.getClass().getResourceAsStream("icons/zOut.png")));
 		   btnZoomOut.setToolTipText("Zoom out");
 		   btnZoomOut.setBounds(25,y+25,20,20);
-		   btnZoomOut.setText("-");
 		   
 		   Button btnZoomToFit = new Button(comp, SWT.PUSH);
+		   btnZoomToFit.setImage(new Image(display, this.getClass().getResourceAsStream("icons/zFit.png")));
 		   btnZoomToFit.setToolTipText("Zoom to fit screen");
 		   btnZoomToFit.setBounds(50,y+25,20,20);
-		   btnZoomToFit.setText("=");
 		   
 		   Button btnZoomIn = new Button(comp, SWT.PUSH);
+		   btnZoomIn.setImage(new Image(display, this.getClass().getResourceAsStream("icons/zIn.png")));
 		   btnZoomIn.setToolTipText("Zoom in");
 		   btnZoomIn.setBounds(75,y+25,20,20);
-		   btnZoomIn.setText("+");
 		   
 		   Button btnRight = new Button(comp, SWT.PUSH);
 		   btnRight.setImage(new Image(display, this.getClass().getResourceAsStream("icons/arrowRight.png")));
