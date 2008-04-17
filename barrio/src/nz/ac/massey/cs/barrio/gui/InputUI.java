@@ -67,24 +67,24 @@ public class InputUI extends Composite{
 	public InputUI(Composite parent, int style) {
 		   super(parent, SWT.NONE);
 		   this.setLayout(new FillLayout());
+		   
 		   ScrolledComposite sc = new ScrolledComposite(this, SWT.H_SCROLL | SWT.V_SCROLL);
-		   sc.setLayout(new FillLayout());
-		   Composite composite = new Composite(sc, SWT.BORDER);
+		   sc.setLayout(new GridLayout());
+		   
+		   
+		   Composite mainComposite = new Composite(sc, SWT.BORDER);
+		   mainComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		   mainComposite.setLayout(new GridLayout());
+		   
 
 		   GridData horizontalFillData = new GridData(GridData.FILL_HORIZONTAL);
-		   horizontalFillData.widthHint = 200;
 		   
-		   sc.setContent(composite);
+		   sc.setContent(mainComposite);
 		   sc.setExpandHorizontal(true);
 		   sc.setExpandVertical(true);
-		   sc.setMinSize(composite.computeSize(200, 680));
 		   
-		   composite.setLayout(new GridLayout());
-		   GridData separatorData = new GridData(GridData.FILL_HORIZONTAL);
-		   separatorData.widthHint = 200;
 		   
-		   Composite topComposite = new Composite(composite, SWT.BORDER);
-		   topComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		   Composite topComposite = new Composite(mainComposite, SWT.BORDER);
 		   topComposite.setLayout(new GridLayout());
 		   
 		   Label lblXML = new Label(topComposite, SWT.NONE);
@@ -93,19 +93,16 @@ public class InputUI extends Composite{
 		   btnBrowse.setText("Browse"); 
 		   
 		   Label separator1 = new Label(topComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
-		   separator1.setLayoutData(separatorData);
+		   separator1.setLayoutData(horizontalFillData);
 		   //-----------------------------------------------------------
 		   
 		   Label lblFilters = new Label(topComposite, SWT.BORDER);
-		   lblFilters.setLayoutData(horizontalFillData);
 		   lblFilters.setText("Filter out:");
 		   
 		   Label lblNodes = new Label(topComposite, SWT.BORDER);
-		   lblNodes.setLayoutData(horizontalFillData);
 		   lblNodes.setText("Nodes (classes)");
 		   
 		   final List<NodeFilter> nodeFilters = KnownNodeFilters.all();
-		   System.out.println("[inputUI]: nodeFilters = " + nodeFilters.size());
 		   Iterator<NodeFilter> iter = nodeFilters.iterator();
 		   while (iter.hasNext())
 		   {
@@ -114,28 +111,21 @@ public class InputUI extends Composite{
 			   String label = nf.getName();
 			   
 			   final Button checkboxNode = new Button(topComposite, SWT.CHECK|SWT.BORDER);
-			   checkboxNode.setLayoutData(horizontalFillData);
 			   checkboxNode.setText(label);
 			   checkboxNode.addSelectionListener(new SelectionListener() {
 
-					public void widgetDefaultSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
-						
-					}
+					public void widgetDefaultSelected(SelectionEvent e) {}
 
 					public void widgetSelected(SelectionEvent e) {
-						// TODO Auto-generated method stub
 						checkboxClick(checkboxNode);
 					}
 			   });
 		   }
 		   
 		   Label lblEdges = new Label(topComposite, SWT.BORDER);
-		   lblEdges.setLayoutData(horizontalFillData);
 		   lblEdges.setText("Edges (relationships)");
 		   
 		   final List<EdgeFilter> edgeFilters = KnownEdgeFilters.all();
-		   System.out.println("[inputUI]: edgeFilters = " + edgeFilters.size());
 		   Iterator<EdgeFilter> edgeIter = edgeFilters.iterator();
 		   while (edgeIter.hasNext())
 		   {
@@ -144,17 +134,12 @@ public class InputUI extends Composite{
 			   String edgeFilterLabel = ef.getName();
 			   
 			   final Button checkboxEdge = new Button(topComposite, SWT.CHECK|SWT.BORDER);
-			   checkboxEdge.setLayoutData(horizontalFillData);
 			   checkboxEdge.setText(edgeFilterLabel); 
 			   checkboxEdge.addSelectionListener(new SelectionListener() {
 
-				public void widgetDefaultSelected(SelectionEvent e) {
-					// TODO Auto-generated method stub
-					
-				}
+				public void widgetDefaultSelected(SelectionEvent e) {}
 
 				public void widgetSelected(SelectionEvent e) {
-					// TODO Auto-generated method stub
 					checkboxClick(checkboxEdge);
 				}
 				   
@@ -162,12 +147,11 @@ public class InputUI extends Composite{
 		   }
 		   
 		   Label separator2 = new Label(topComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
-		   separator2.setLayoutData(separatorData);
+		   separator2.setLayoutData(horizontalFillData);
 		   //-------------------------------------------------------------
 		   
 		   final Label lblSeparation = new Label(topComposite, SWT.BORDER);
 		   lblSeparation.setText("Separation level = 0");
-		   lblSeparation.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL));
 		   
 		   final Scale slider = new Scale(topComposite, SWT.HORIZONTAL);
 		   slider.setMinimum(0);
@@ -178,7 +162,7 @@ public class InputUI extends Composite{
 		   slider.setLayoutData(horizontalFillData);
 		   
 		   Label separator3 = new Label(topComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
-		   separator3.setLayoutData(separatorData);
+		   separator3.setLayoutData(horizontalFillData);
 		   //--------------------------------------------------------------
 		   
 		   btnRefresh = new Button(topComposite, SWT.PUSH | SWT.CENTER);
@@ -198,14 +182,15 @@ public class InputUI extends Composite{
 		   
 		   //----------------------------------------------------------------
 		   
+		   Composite space = new Composite(mainComposite, SWT.BORDER);
+		   space.setLayout(new GridLayout());
+		   new Label(space, SWT.NULL);
 		   
 		   
 		   //visual display controls ----------------------------------------
-		   GridData compositeFillData = new GridData(GridData.FILL_BOTH);
 		   GridLayout graphControlsLayout = new GridLayout();
 		   
-		   graphControlsComposite = new Composite(composite, SWT.BORDER);
-		   graphControlsComposite.setLayoutData(compositeFillData);
+		   graphControlsComposite = new Composite(mainComposite, SWT.BORDER);
 		   graphControlsComposite.setLayout(graphControlsLayout);
 		   graphControlsComposite.setVisible(false);
 		   
@@ -223,7 +208,6 @@ public class InputUI extends Composite{
 		   final Button btnUp = new Button(navigationComposite, SWT.PUSH);
 		   btnUp.setImage(new Image(display, this.getClass().getResourceAsStream("icons/arrowUp.png")));
 		   btnUp.setToolTipText("Pan up");
-		   btnUp.setBounds(50,y,20,20);
 
 		   new Label(navigationComposite, SWT.NULL);
 		   new Label(navigationComposite, SWT.NULL);
@@ -231,63 +215,46 @@ public class InputUI extends Composite{
 		   Button btnLeft = new Button(navigationComposite, SWT.PUSH);
 		   btnLeft.setImage(new Image(display, this.getClass().getResourceAsStream("icons/arrowLeft.png")));
 		   btnLeft.setToolTipText("Pan left");
-		   btnLeft.setBounds(0,y+25,20,20);
 		   
 		   Button btnZoomOut = new Button(navigationComposite, SWT.PUSH);
 		   btnZoomOut.setImage(new Image(display, this.getClass().getResourceAsStream("icons/zOut.png")));
 		   btnZoomOut.setToolTipText("Zoom out");
-		   btnZoomOut.setBounds(25,y+25,20,20);
 		   
 		   Button btnZoomToFit = new Button(navigationComposite, SWT.PUSH);
 		   btnZoomToFit.setImage(new Image(display, this.getClass().getResourceAsStream("icons/zFit.png")));
 		   btnZoomToFit.setToolTipText("Zoom to fit screen");
-		   btnZoomToFit.setBounds(50,y+25,20,20);
 		   
 		   Button btnZoomIn = new Button(navigationComposite, SWT.PUSH);
 		   btnZoomIn.setImage(new Image(display, this.getClass().getResourceAsStream("icons/zIn.png")));
 		   btnZoomIn.setToolTipText("Zoom in");
-		   btnZoomIn.setBounds(75,y+25,20,20);
 		   
 		   Button btnRight = new Button(navigationComposite, SWT.PUSH);
 		   btnRight.setImage(new Image(display, this.getClass().getResourceAsStream("icons/arrowRight.png")));
-		   btnRight.setToolTipText("Pan right");
-		   btnRight.setBounds(100,y+25,20,20);
-		   
+		   btnRight.setToolTipText("Pan right");		   
 
 		   new Label(navigationComposite, SWT.NULL);
 		   new Label(navigationComposite, SWT.NULL);
 		   
 		   Button btnDown = new Button(navigationComposite, SWT.PUSH);
 		   btnDown.setImage(new Image(display, this.getClass().getResourceAsStream("icons/arrowDown.png")));
-		   btnDown.setToolTipText("Pan down");
-		   btnDown.setBounds(50,y+50,20,20);
-		   
+		   btnDown.setToolTipText("Pan down");		   
 
 		   new Label(navigationComposite, SWT.NULL);
 		   new Label(navigationComposite, SWT.NULL);
 		   
 		   checkContainers = new Button(graphControlsComposite, SWT.CHECK|SWT.BORDER);
-		   checkContainers.setLayoutData(horizontalFillData);
 		   checkContainers.setText("View Containers");
-		   checkContainers.setBounds(0, y+80, 100, 20);
 		   
 		   checkPackages = new Button(graphControlsComposite, SWT.CHECK|SWT.BORDER);
-		   checkPackages.setLayoutData(horizontalFillData);
 		   checkPackages.setText("View Packages");
-		   checkPackages.setBounds(0, y+100, 100, 20);
 		   
 		   checkDependencyCluster = new Button(graphControlsComposite, SWT.CHECK|SWT.BORDER);
-		   checkDependencyCluster.setLayoutData(horizontalFillData);
 		   checkDependencyCluster.setText("View Dependency Clusters");
-		   checkDependencyCluster.setBounds(0, y+120, 150, 20);
 		   
 		   checkRemovedEdges = new Button(graphControlsComposite, SWT.CHECK|SWT.BORDER);
-		   checkRemovedEdges.setLayoutData(horizontalFillData);
 		   checkRemovedEdges.setText("View Removed Edges");
-		   checkRemovedEdges.setBounds(0, y+140, 150, 20);
 		   
 		   //----------------------------------------------------------------
-		   
 		   
 		   
 		   //Events
@@ -420,6 +387,11 @@ public class InputUI extends Composite{
 		   
 		   updateBtnRefreshEnabled();
 		   display = super.getDisplay();
+		   
+
+		   //mainComposite.setSize(mainComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		   //sc.setMinSize(mainComposite.computeSize(mainComposite.getBounds().width, mainComposite.getBounds().height));
+		   sc.setMinSize(mainComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 	
 		
