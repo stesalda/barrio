@@ -55,7 +55,7 @@ public class InputUI extends Composite{
 	private List<Filter> knownFilters = new ArrayList<Filter>();
 	private int separationLevel = 0;
 	private int lastSeparationLevel = 0;
-	protected static Composite comp;
+	protected static Composite graphControlsComposite;
 	private Button checkContainers;
 	private Button checkPackages;
 	private Button checkDependencyCluster;
@@ -69,9 +69,10 @@ public class InputUI extends Composite{
 		   this.setLayout(new FillLayout());
 		   ScrolledComposite sc = new ScrolledComposite(this, SWT.H_SCROLL | SWT.V_SCROLL);
 		   sc.setLayout(new FillLayout());
-		   Composite composite = new Composite(sc, SWT.NONE);
+		   Composite composite = new Composite(sc, SWT.BORDER);
 
-		   GridData sliderData = new GridData(GridData.FILL_HORIZONTAL);
+		   GridData horizontalFillData = new GridData(GridData.FILL_HORIZONTAL);
+		   horizontalFillData.widthHint = 200;
 		   
 		   sc.setContent(composite);
 		   sc.setExpandHorizontal(true);
@@ -82,20 +83,25 @@ public class InputUI extends Composite{
 		   GridData separatorData = new GridData(GridData.FILL_HORIZONTAL);
 		   separatorData.widthHint = 200;
 		   
-		   Label lblXML = new Label(composite, SWT.NONE);
+		   Composite topComposite = new Composite(composite, SWT.BORDER);
+		   topComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
+		   topComposite.setLayout(new GridLayout());
+		   
+		   Label lblXML = new Label(topComposite, SWT.NONE);
 		   lblXML.setText("Browse for input file");
-		   btnBrowse = new Button(composite, SWT.PUSH | SWT.CENTER);
+		   btnBrowse = new Button(topComposite, SWT.PUSH | SWT.CENTER);
 		   btnBrowse.setText("Browse"); 
 		   
-		   Label separator1 = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
+		   Label separator1 = new Label(topComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		   separator1.setLayoutData(separatorData);
 		   //-----------------------------------------------------------
 		   
-		   Label lblFilters = new Label(composite, SWT.NONE);
-		   
+		   Label lblFilters = new Label(topComposite, SWT.BORDER);
+		   lblFilters.setLayoutData(horizontalFillData);
 		   lblFilters.setText("Filter out:");
 		   
-		   Label lblNodes = new Label(composite, SWT.NONE);
+		   Label lblNodes = new Label(topComposite, SWT.BORDER);
+		   lblNodes.setLayoutData(horizontalFillData);
 		   lblNodes.setText("Nodes (classes)");
 		   
 		   final List<NodeFilter> nodeFilters = KnownNodeFilters.all();
@@ -107,7 +113,8 @@ public class InputUI extends Composite{
 			   knownFilters.add(nf);
 			   String label = nf.getName();
 			   
-			   final Button checkboxNode = new Button(composite, SWT.CHECK);
+			   final Button checkboxNode = new Button(topComposite, SWT.CHECK|SWT.BORDER);
+			   checkboxNode.setLayoutData(horizontalFillData);
 			   checkboxNode.setText(label);
 			   checkboxNode.addSelectionListener(new SelectionListener() {
 
@@ -123,7 +130,8 @@ public class InputUI extends Composite{
 			   });
 		   }
 		   
-		   Label lblEdges = new Label(composite, SWT.NONE);
+		   Label lblEdges = new Label(topComposite, SWT.BORDER);
+		   lblEdges.setLayoutData(horizontalFillData);
 		   lblEdges.setText("Edges (relationships)");
 		   
 		   final List<EdgeFilter> edgeFilters = KnownEdgeFilters.all();
@@ -135,7 +143,8 @@ public class InputUI extends Composite{
 			   knownFilters.add(ef);
 			   String edgeFilterLabel = ef.getName();
 			   
-			   final Button checkboxEdge = new Button(composite, SWT.CHECK);
+			   final Button checkboxEdge = new Button(topComposite, SWT.CHECK|SWT.BORDER);
+			   checkboxEdge.setLayoutData(horizontalFillData);
 			   checkboxEdge.setText(edgeFilterLabel); 
 			   checkboxEdge.addSelectionListener(new SelectionListener() {
 
@@ -152,98 +161,128 @@ public class InputUI extends Composite{
 			   });
 		   }
 		   
-		   Label separator2 = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
+		   Label separator2 = new Label(topComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		   separator2.setLayoutData(separatorData);
 		   //-------------------------------------------------------------
 		   
-		   final Label lblSeparation = new Label(composite, SWT.BORDER);
+		   final Label lblSeparation = new Label(topComposite, SWT.BORDER);
 		   lblSeparation.setText("Separation level = 0");
 		   lblSeparation.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL));
 		   
-		   final Scale slider = new Scale(composite, SWT.HORIZONTAL);
+		   final Scale slider = new Scale(topComposite, SWT.HORIZONTAL);
 		   slider.setMinimum(0);
 		   slider.setMaximum(500);
 		   slider.setIncrement(1);
 		   slider.setPageIncrement(1);
 		   slider.setSelection(0);
-		   //GridData sliderData = new GridData(GridData.FILL_HORIZONTAL);
-		   slider.setLayoutData(sliderData);
+		   slider.setLayoutData(horizontalFillData);
 		   
-		   Label separator3 = new Label(composite, SWT.HORIZONTAL | SWT.SEPARATOR);
+		   Label separator3 = new Label(topComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		   separator3.setLayoutData(separatorData);
 		   //--------------------------------------------------------------
 		   
-		   btnRefresh = new Button(composite, SWT.PUSH | SWT.CENTER);
+		   btnRefresh = new Button(topComposite, SWT.PUSH | SWT.CENTER);
 		   btnRefresh.setText("Refresh");
 		   GridData refreshData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		   refreshData.heightHint = 40;
-		   refreshData.widthHint = 90;
-		   btnRefresh.setLayoutData(refreshData);
 		   
-		   btnExport = new Button(composite, SWT.PUSH | SWT.CENTER);
+		   
+		   
+		   btnExport = new Button(topComposite, SWT.PUSH | SWT.CENTER);
 		   btnExport.setText("Export Results");
 		   GridData exportData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		   exportData.widthHint = 90;
+		   
+		   
+		   btnRefresh.setLayoutData(refreshData);
 		   btnExport.setLayoutData(exportData);
+		   
+		   
 		   //----------------------------------------------------------------
 		   
 		   
 		   
 		   //visual display controls ----------------------------------------
-		   comp = new Composite(composite, SWT.NONE);
-		   comp.setBounds(15, 500, 150, 90);
-		   comp.setVisible(false);
+		   GridData compositeFillData = new GridData(GridData.FILL_BOTH);
+		   GridLayout graphControlsLayout = new GridLayout();
+		   
+		   graphControlsComposite = new Composite(composite, SWT.BORDER);
+		   graphControlsComposite.setLayoutData(compositeFillData);
+		   graphControlsComposite.setLayout(graphControlsLayout);
+		   graphControlsComposite.setVisible(false);
+		   
+		   Composite navigationComposite = new Composite(graphControlsComposite, SWT.BORDER);
+		   navigationComposite.setLayout(new GridLayout(5,true));
+		   
+
+		   
 		   
 		   int y = 100;
+
+		   new Label(navigationComposite, SWT.NULL);
+		   new Label(navigationComposite, SWT.NULL);
 		   
-		   final Button btnUp = new Button(comp, SWT.PUSH);
+		   final Button btnUp = new Button(navigationComposite, SWT.PUSH);
 		   btnUp.setImage(new Image(display, this.getClass().getResourceAsStream("icons/arrowUp.png")));
 		   btnUp.setToolTipText("Pan up");
 		   btnUp.setBounds(50,y,20,20);
+
+		   new Label(navigationComposite, SWT.NULL);
+		   new Label(navigationComposite, SWT.NULL);
 		   
-		   Button btnLeft = new Button(comp, SWT.PUSH);
+		   Button btnLeft = new Button(navigationComposite, SWT.PUSH);
 		   btnLeft.setImage(new Image(display, this.getClass().getResourceAsStream("icons/arrowLeft.png")));
 		   btnLeft.setToolTipText("Pan left");
 		   btnLeft.setBounds(0,y+25,20,20);
 		   
-		   Button btnZoomOut = new Button(comp, SWT.PUSH);
+		   Button btnZoomOut = new Button(navigationComposite, SWT.PUSH);
 		   btnZoomOut.setImage(new Image(display, this.getClass().getResourceAsStream("icons/zOut.png")));
 		   btnZoomOut.setToolTipText("Zoom out");
 		   btnZoomOut.setBounds(25,y+25,20,20);
 		   
-		   Button btnZoomToFit = new Button(comp, SWT.PUSH);
+		   Button btnZoomToFit = new Button(navigationComposite, SWT.PUSH);
 		   btnZoomToFit.setImage(new Image(display, this.getClass().getResourceAsStream("icons/zFit.png")));
 		   btnZoomToFit.setToolTipText("Zoom to fit screen");
 		   btnZoomToFit.setBounds(50,y+25,20,20);
 		   
-		   Button btnZoomIn = new Button(comp, SWT.PUSH);
+		   Button btnZoomIn = new Button(navigationComposite, SWT.PUSH);
 		   btnZoomIn.setImage(new Image(display, this.getClass().getResourceAsStream("icons/zIn.png")));
 		   btnZoomIn.setToolTipText("Zoom in");
 		   btnZoomIn.setBounds(75,y+25,20,20);
 		   
-		   Button btnRight = new Button(comp, SWT.PUSH);
+		   Button btnRight = new Button(navigationComposite, SWT.PUSH);
 		   btnRight.setImage(new Image(display, this.getClass().getResourceAsStream("icons/arrowRight.png")));
 		   btnRight.setToolTipText("Pan right");
 		   btnRight.setBounds(100,y+25,20,20);
 		   
-		   Button btnDown = new Button(comp, SWT.PUSH);
+
+		   new Label(navigationComposite, SWT.NULL);
+		   new Label(navigationComposite, SWT.NULL);
+		   
+		   Button btnDown = new Button(navigationComposite, SWT.PUSH);
 		   btnDown.setImage(new Image(display, this.getClass().getResourceAsStream("icons/arrowDown.png")));
 		   btnDown.setToolTipText("Pan down");
 		   btnDown.setBounds(50,y+50,20,20);
 		   
-		   checkContainers = new Button(comp, SWT.CHECK);
+
+		   new Label(navigationComposite, SWT.NULL);
+		   new Label(navigationComposite, SWT.NULL);
+		   
+		   checkContainers = new Button(graphControlsComposite, SWT.CHECK|SWT.BORDER);
+		   checkContainers.setLayoutData(horizontalFillData);
 		   checkContainers.setText("View Containers");
 		   checkContainers.setBounds(0, y+80, 100, 20);
 		   
-		   checkPackages = new Button(comp, SWT.CHECK);
+		   checkPackages = new Button(graphControlsComposite, SWT.CHECK|SWT.BORDER);
+		   checkPackages.setLayoutData(horizontalFillData);
 		   checkPackages.setText("View Packages");
 		   checkPackages.setBounds(0, y+100, 100, 20);
 		   
-		   checkDependencyCluster = new Button(comp, SWT.CHECK);
+		   checkDependencyCluster = new Button(graphControlsComposite, SWT.CHECK|SWT.BORDER);
+		   checkDependencyCluster.setLayoutData(horizontalFillData);
 		   checkDependencyCluster.setText("View Dependency Clusters");
 		   checkDependencyCluster.setBounds(0, y+120, 150, 20);
 		   
-		   checkRemovedEdges = new Button(comp, SWT.CHECK);
+		   checkRemovedEdges = new Button(graphControlsComposite, SWT.CHECK|SWT.BORDER);
+		   checkRemovedEdges.setLayoutData(horizontalFillData);
 		   checkRemovedEdges.setText("View Removed Edges");
 		   checkRemovedEdges.setBounds(0, y+140, 150, 20);
 		   
