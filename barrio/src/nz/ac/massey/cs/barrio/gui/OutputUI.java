@@ -136,8 +136,8 @@ public class OutputUI extends Composite{
 	protected void graphFolderSelected(TabFolder tabFolder, TabItem itemGraph) 
 	{
 		if(tabFolder.getSelectionIndex()==tabFolder.indexOf(itemGraph))
-			InputUI.comp.setVisible(true);
-		else InputUI.comp.setVisible(false);
+			InputUI.graphControlsComposite.setVisible(true);
+		else InputUI.graphControlsComposite.setVisible(false);
 		
 	}
 
