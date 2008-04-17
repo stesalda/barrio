@@ -2,8 +2,8 @@
 <feature
       id="barrio.feature"
       label="Barrio Feature"
-      version="1.0.6"
-      plugin="barrio">
+      version="1.0.7"
+      plugin="nz.ac.massey.cs.barrio">
 
    <description url="http://code.google.com/p/barrio/">
       Barrio is a dependency analyzer for object-oriented programs implemented in Java. It discovers and visualizes community structures in the dependency graph which might represent opportunities to refactor the program into a more modular structure. For instance, a package containing two independent clusters could be spilt, and the new packages could be deployed in separate jar files. Barrio will also detect if there are few dependencies that destroy the modularity of programs (i.e., glue clusters together).
@@ -75,79 +75,87 @@ You may add Your own copyright statement to Your modifications and may provide a
    </license>
 
    <plugin
-         id="barrio"
+         id="nz.ac.massey.cs.barrio"
          download-size="0"
          install-size="0"
-         version="1.0.6"/>
-
-   <plugin
-         id="barrio.betweennessClusterer"
-         download-size="0"
-         install-size="0"
-         version="1.0.6"
+         version="1.0.7"
          unpack="false"/>
 
    <plugin
-         id="barrio.exceptionFilter"
+         id="nz.ac.massey.cs.barrio.betweennessClusterer"
          download-size="0"
          install-size="0"
-         version="1.0.6"
+         version="1.0.7"
          unpack="false"/>
 
    <plugin
-         id="barrio.extendsFilter"
+         id="nz.ac.massey.cs.barrio.exceptionFilter"
          download-size="0"
          install-size="0"
-         version="1.0.6"
+         version="1.0.7"
          unpack="false"/>
 
    <plugin
-         id="barrio.filterAbstract"
+         id="nz.ac.massey.cs.barrio.extendsFilter"
          download-size="0"
          install-size="0"
-         version="1.0.6"
+         version="1.0.7"
          unpack="false"/>
 
    <plugin
-         id="barrio.implementsFilter"
+         id="nz.ac.massey.cs.barrio.filterAbstract"
          download-size="0"
          install-size="0"
-         version="1.0.6"
+         version="1.0.7"
          unpack="false"/>
 
    <plugin
-         id="barrio.interfaceFilter"
+         id="nz.ac.massey.cs.barrio.implementsFilter"
          download-size="0"
          install-size="0"
-         version="1.0.6"
+         version="1.0.7"
          unpack="false"/>
 
    <plugin
-         id="barrio.nonAbstractFilter"
+         id="nz.ac.massey.cs.barrio.interfaceFilter"
          download-size="0"
          install-size="0"
-         version="1.0.6"
+         version="1.0.7"
          unpack="false"/>
 
    <plugin
-         id="barrio.nonPublicFilter"
+         id="nz.ac.massey.cs.barrio.nonAbstractFilter"
          download-size="0"
          install-size="0"
-         version="1.0.6"
+         version="1.0.7"
          unpack="false"/>
 
    <plugin
-         id="barrio.odemReader"
+         id="nz.ac.massey.cs.barrio.nonPublicFilter"
          download-size="0"
          install-size="0"
-         version="1.0.6"
+         version="1.0.7"
          unpack="false"/>
 
    <plugin
-         id="barrio.xmlExporter"
+         id="nz.ac.massey.cs.barrio.odemReader"
          download-size="0"
          install-size="0"
-         version="1.0.6"
+         version="1.0.7"
+         unpack="false"/>
+
+   <plugin
+         id="nz.ac.massey.cs.barrio.xmlExporter"
+         download-size="0"
+         install-size="0"
+         version="1.0.7"
+         unpack="false"/>
+
+   <plugin
+         id="DependencyGraphExtractor"
+         download-size="0"
+         install-size="0"
+         version="1.0.7"
          unpack="false"/>
 
 </feature>
