@@ -7,7 +7,7 @@ public class JungPrefuseBridge {
 	
 	public prefuse.data.Graph convert(edu.uci.ics.jung.graph.Graph jungGraph)
 	{
-		prefuse.data.Graph prefuseGraph = new prefuse.data.Graph();
+		prefuse.data.Graph prefuseGraph = new prefuse.data.Graph(true);
 		if(jungGraph!=null)
 		{
 			setColumns(prefuseGraph, jungGraph);
