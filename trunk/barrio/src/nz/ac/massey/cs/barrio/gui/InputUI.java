@@ -1,7 +1,6 @@
 package nz.ac.massey.cs.barrio.gui;
 
 import java.awt.Point;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -72,7 +71,7 @@ public class InputUI extends Composite{
 		   sc.setLayout(new GridLayout());
 		   
 		   
-		   Composite mainComposite = new Composite(sc, SWT.BORDER);
+		   Composite mainComposite = new Composite(sc, SWT.NONE);
 		   mainComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
 		   mainComposite.setLayout(new GridLayout());
 		   
@@ -84,7 +83,7 @@ public class InputUI extends Composite{
 		   sc.setExpandVertical(true);
 		   
 		   
-		   Composite topComposite = new Composite(mainComposite, SWT.BORDER);
+		   Composite topComposite = new Composite(mainComposite, SWT.NONE);
 		   topComposite.setLayout(new GridLayout());
 		   
 		   Label lblXML = new Label(topComposite, SWT.NONE);
@@ -96,10 +95,10 @@ public class InputUI extends Composite{
 		   separator1.setLayoutData(horizontalFillData);
 		   //-----------------------------------------------------------
 		   
-		   Label lblFilters = new Label(topComposite, SWT.BORDER);
+		   Label lblFilters = new Label(topComposite, SWT.NONE);
 		   lblFilters.setText("Filter out:");
 		   
-		   Label lblNodes = new Label(topComposite, SWT.BORDER);
+		   Label lblNodes = new Label(topComposite, SWT.NONE);
 		   lblNodes.setText("Nodes (classes)");
 		   
 		   final List<NodeFilter> nodeFilters = KnownNodeFilters.all();
@@ -110,7 +109,7 @@ public class InputUI extends Composite{
 			   knownFilters.add(nf);
 			   String label = nf.getName();
 			   
-			   final Button checkboxNode = new Button(topComposite, SWT.CHECK|SWT.BORDER);
+			   final Button checkboxNode = new Button(topComposite, SWT.CHECK);
 			   checkboxNode.setText(label);
 			   checkboxNode.addSelectionListener(new SelectionListener() {
 
@@ -122,7 +121,7 @@ public class InputUI extends Composite{
 			   });
 		   }
 		   
-		   Label lblEdges = new Label(topComposite, SWT.BORDER);
+		   Label lblEdges = new Label(topComposite, SWT.NONE);
 		   lblEdges.setText("Edges (relationships)");
 		   
 		   final List<EdgeFilter> edgeFilters = KnownEdgeFilters.all();
@@ -133,7 +132,7 @@ public class InputUI extends Composite{
 			   knownFilters.add(ef);
 			   String edgeFilterLabel = ef.getName();
 			   
-			   final Button checkboxEdge = new Button(topComposite, SWT.CHECK|SWT.BORDER);
+			   final Button checkboxEdge = new Button(topComposite, SWT.CHECK);
 			   checkboxEdge.setText(edgeFilterLabel); 
 			   checkboxEdge.addSelectionListener(new SelectionListener() {
 
@@ -150,8 +149,8 @@ public class InputUI extends Composite{
 		   separator2.setLayoutData(horizontalFillData);
 		   //-------------------------------------------------------------
 		   
-		   final Label lblSeparation = new Label(topComposite, SWT.BORDER);
-		   lblSeparation.setText("Separation level = 0");
+		   final Label lblSeparation = new Label(topComposite, SWT.NONE);
+		   lblSeparation.setText("Separation level = 0          ");
 		   
 		   final Scale slider = new Scale(topComposite, SWT.HORIZONTAL);
 		   slider.setMinimum(0);
@@ -159,7 +158,6 @@ public class InputUI extends Composite{
 		   slider.setIncrement(1);
 		   slider.setPageIncrement(1);
 		   slider.setSelection(0);
-		   slider.setLayoutData(horizontalFillData);
 		   
 		   Label separator3 = new Label(topComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		   separator3.setLayoutData(horizontalFillData);
@@ -182,7 +180,7 @@ public class InputUI extends Composite{
 		   
 		   //----------------------------------------------------------------
 		   
-		   Composite space = new Composite(mainComposite, SWT.BORDER);
+		   Composite space = new Composite(mainComposite, SWT.NONE);
 		   space.setLayout(new GridLayout());
 		   new Label(space, SWT.NULL);
 		   
@@ -190,11 +188,11 @@ public class InputUI extends Composite{
 		   //visual display controls ----------------------------------------
 		   GridLayout graphControlsLayout = new GridLayout();
 		   
-		   graphControlsComposite = new Composite(mainComposite, SWT.BORDER);
+		   graphControlsComposite = new Composite(mainComposite, SWT.NONE);
 		   graphControlsComposite.setLayout(graphControlsLayout);
 		   graphControlsComposite.setVisible(false);
 		   
-		   Composite navigationComposite = new Composite(graphControlsComposite, SWT.BORDER);
+		   Composite navigationComposite = new Composite(graphControlsComposite, SWT.NONE);
 		   navigationComposite.setLayout(new GridLayout(5,true));
 		   
 
@@ -242,16 +240,16 @@ public class InputUI extends Composite{
 		   new Label(navigationComposite, SWT.NULL);
 		   new Label(navigationComposite, SWT.NULL);
 		   
-		   checkContainers = new Button(graphControlsComposite, SWT.CHECK|SWT.BORDER);
+		   checkContainers = new Button(graphControlsComposite, SWT.CHECK|SWT.NONE);
 		   checkContainers.setText("View Containers");
 		   
-		   checkPackages = new Button(graphControlsComposite, SWT.CHECK|SWT.BORDER);
+		   checkPackages = new Button(graphControlsComposite, SWT.CHECK|SWT.NONE);
 		   checkPackages.setText("View Packages");
 		   
-		   checkDependencyCluster = new Button(graphControlsComposite, SWT.CHECK|SWT.BORDER);
+		   checkDependencyCluster = new Button(graphControlsComposite, SWT.CHECK|SWT.NONE);
 		   checkDependencyCluster.setText("View Dependency Clusters");
 		   
-		   checkRemovedEdges = new Button(graphControlsComposite, SWT.CHECK|SWT.BORDER);
+		   checkRemovedEdges = new Button(graphControlsComposite, SWT.CHECK|SWT.NONE);
 		   checkRemovedEdges.setText("View Removed Edges");
 		   
 		   //----------------------------------------------------------------
@@ -389,19 +387,12 @@ public class InputUI extends Composite{
 		   display = super.getDisplay();
 		   
 
-		   //mainComposite.setSize(mainComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
-		   //sc.setMinSize(mainComposite.computeSize(mainComposite.getBounds().width, mainComposite.getBounds().height));
 		   sc.setMinSize(mainComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 	
 		
 	public void dispose() {
 		super.dispose();
-	}
-	
-	private String getFilePath(String path)
-	{
-		return this.getClass().getResource(path).getFile().toString();
 	}
 	
 	
