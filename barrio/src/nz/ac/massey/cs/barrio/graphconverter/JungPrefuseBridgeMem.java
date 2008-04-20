@@ -3,7 +3,7 @@ package nz.ac.massey.cs.barrio.graphconverter;
 import java.util.Iterator;
 
 
-public class JungPrefuseBridge {
+public class JungPrefuseBridgeMem {
 	
 	public prefuse.data.Graph convert(edu.uci.ics.jung.graph.Graph jungGraph)
 	{
