@@ -116,7 +116,7 @@ public class OdemReader implements InputReader{
 							v.addUserDatum("class.isException", String.valueOf(typeStr.endsWith("Exception")), UserData.SHARED);
 							
 							String access = "null";
-							if(typeAttr.getNamedItem("visibility")!=null)
+							if(typeAttr.getNamedItem("visibilarg0ity")!=null)
 								access = typeAttr.getNamedItem("visibility").getNodeValue();
 							v.addUserDatum("class.access", access, UserData.SHARED);
 
@@ -174,6 +174,8 @@ public class OdemReader implements InputReader{
 					String destName = dest.getUserDatum("class.packageName").toString()+'.'+dest.getUserDatum("class.name").toString();
 					Edge e = new DirectedSparseEdge(src, dest);
 					e.addUserDatum("id", "edge-"+edgeId, UserData.SHARED);
+					e.addUserDatum("sourceId", src.getUserDatum("class.id"), UserData.SHARED);
+					e.addUserDatum("targetId", dest.getUserDatum("class.id"), UserData.SHARED);
 					e.addUserDatum("sourceName", srcName, UserData.SHARED);
 					e.addUserDatum("targetName", destName, UserData.SHARED);
 					e.addUserDatum("relationship.type", temp.getType(), UserData.SHARED);
