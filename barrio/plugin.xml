@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?eclipse version="3.2"?>
+<?eclipse version="3.3"?>
 <plugin>
    <extension-point id="nz.ac.massey.cs.barrio.nodeFilter" name="nodeFilter" schema="schema/nz.ac.massey.cs.barrio.nodeFilter.exsd"/>
    <extension-point id="nz.ac.massey.cs.barrio.edgeFilter" name="Edge Filter" schema="schema/nz.ac.massey.cs.barrio.edgeFilter.exsd"/>
