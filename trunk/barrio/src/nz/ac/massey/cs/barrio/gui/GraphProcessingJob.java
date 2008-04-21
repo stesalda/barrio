@@ -70,7 +70,7 @@ public class GraphProcessingJob extends Job {
 	
 	
 	
-	@Override
+	
 	protected void canceling() {
 //		System.out.println("[JOB]: canceling called");
 		canceled = true;
