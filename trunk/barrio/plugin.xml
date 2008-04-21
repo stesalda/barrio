@@ -19,7 +19,7 @@
          <action
                class="nz.ac.massey.cs.barrio.actions.ActionRun"
                id="barrio.action1"
-               label="Run Analysis"
+               label="Open Barrio Perspective"
                menubarPath="barrio.topMenu/barrio.action1">
          </action>
       </actionSet>
