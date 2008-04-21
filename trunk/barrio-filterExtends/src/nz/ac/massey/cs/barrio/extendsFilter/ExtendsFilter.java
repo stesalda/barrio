@@ -12,7 +12,6 @@ public class ExtendsFilter extends EdgeFilter {
 	}
 
 	public String getName() {
-		// TODO Auto-generated method stub
 		return "Extends";
 	}
 
