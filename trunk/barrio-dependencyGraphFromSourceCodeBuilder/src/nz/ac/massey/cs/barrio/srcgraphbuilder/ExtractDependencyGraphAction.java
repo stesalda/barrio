@@ -14,6 +14,8 @@ package nz.ac.massey.cs.barrio.srcgraphbuilder;
 import java.util.Iterator;
 import java.util.List;
 
+import nz.ac.massey.cs.barrio.Dialogs.ProjectSelectDialog;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.jdt.core.IJavaElement;
@@ -70,9 +72,10 @@ public class ExtractDependencyGraphAction implements IWorkbenchWindowActionDeleg
         	System.out.println("cancelled");
         	return;
         }
+//		String fileName = "tempOdem.odem";
         
         
-        //Introdusing project select dialog ...Slava
+        //Introducing project select dialog ...Slava
         ProjectSelectDialog psd = new ProjectSelectDialog(window.getShell());
         List<IJavaProject> selectedProjects = psd.open();
         for(IJavaProject p:selectedProjects)
