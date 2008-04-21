@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Barrio Betweenness Clusterer Plug-in
 Bundle-SymbolicName: nz.ac.massey.cs.barrio.betweennessClusterer;singleton:=true
-Bundle-Version: 1.0.7
+Bundle-Version: 1.0.8
 Bundle-Activator: nz.ac.massey.cs.barrio.betweennessClusterer.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
