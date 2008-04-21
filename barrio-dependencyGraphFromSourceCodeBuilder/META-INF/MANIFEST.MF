@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: DependencyGraphExtractor Plug-in
-Bundle-SymbolicName: DependencyGraphExtractor; singleton:=true
+Bundle-SymbolicName: nz.ac.massey.sc.barrio.DependencyGraphExtractor;singleton:=true
 Bundle-Version: 1.0.10
 Bundle-Activator: nz.ac.massey.cs.barrio.srcgraphbuilder.Activator
 Bundle-Vendor: Jens Dietrich, Massey University
