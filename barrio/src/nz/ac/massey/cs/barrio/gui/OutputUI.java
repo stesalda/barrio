@@ -81,6 +81,9 @@ public class OutputUI extends Composite{
 				return column==5;
 			}
 		};
+		table.setCellSelectionEnabled(false);
+		table.setRowSelectionAllowed(false);
+		table.setColumnSelectionAllowed(false);
 		table.setRowHeight( table.getRowHeight() * 3 + 5);
 		TableColumn srcColumn = table.getColumnModel().getColumn(1);
 		srcColumn.setCellRenderer(new MultiLineCellRenderer());
@@ -91,8 +94,7 @@ public class OutputUI extends Composite{
 		checkBox.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent e) {
-				JCheckBox cb = (JCheckBox) e.getSource();
-				System.out.println("click "+cb.getParent());
+				highlightEdges();
 			}
 			
 		});
@@ -225,6 +227,15 @@ public class OutputUI extends Composite{
 			dtm.addRow(edgeData);
 		}
 	}
+	
+	
+	private void highlightEdges()
+	{
+//		TableRow r = ;
+		System.out.println("click "+table.getSelectedRow());
+	}
+	
+	
 	
 	public void dispose() {
 		super.dispose();
