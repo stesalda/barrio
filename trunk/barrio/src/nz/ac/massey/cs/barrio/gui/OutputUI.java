@@ -7,11 +7,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Iterator;
 
+import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
-
+import javax.swing.table.TableColumn;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
@@ -20,7 +21,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
@@ -75,30 +75,52 @@ public class OutputUI extends Composite{
 		          return String.class;
 		      }
 		};
-		model.setDataVector(null, new Object[]{"","Source class","Relationship","Destination class","Betweenness"});
+		model.setDataVector(null, new Object[]{"","Source class","Relationship","Destination class","Betweenness",""});
 		table = new JTable(model){
 			public boolean isCellEditable(int row, int column){
-				return false;
+				return column==5;
 			}
 		};
 		table.setRowHeight( table.getRowHeight() * 3 + 5);
-		table.setDefaultRenderer(String.class, new MultiLineCellRenderer());
+		TableColumn srcColumn = table.getColumnModel().getColumn(1);
+		srcColumn.setCellRenderer(new MultiLineCellRenderer());
+		TableColumn destColumn = table.getColumnModel().getColumn(3);
+		destColumn.setCellRenderer(new MultiLineCellRenderer());
+		
+		JCheckBox checkBox = new JCheckBox();
+		checkBox.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				JCheckBox cb = (JCheckBox) e.getSource();
+				System.out.println("click "+cb.getParent());
+			}
+			
+		});
+		checkBox.setVisible(true);
+		TableColumn lastColumn = table.getColumnModel().getColumn(5);
+		lastColumn.setCellEditor(new DefaultCellEditor(checkBox));
+		lastColumn.setCellRenderer(new CheckBoxRenderer());
 		{
 			table.getTableHeader().setReorderingAllowed(false);
-			javax.swing.table.TableColumn col0 = table.getColumnModel().getColumn(0);
+			TableColumn col0 = table.getColumnModel().getColumn(0);
 		    col0.setMinWidth(10);
 		    col0.setMaxWidth(100);
 		    col0.setPreferredWidth(40);
 		    
-		    javax.swing.table.TableColumn col2 = table.getColumnModel().getColumn(2);
+		    TableColumn col2 = table.getColumnModel().getColumn(2);
 		    col2.setMinWidth(100);
 		    col2.setMaxWidth(150);
 		    col2.setPreferredWidth(125);
 		    
-		    javax.swing.table.TableColumn col4 = table.getColumnModel().getColumn(4);
+		    TableColumn col4 = table.getColumnModel().getColumn(4);
 		    col4.setMinWidth(70);
 		    col4.setMaxWidth(110);
 		    col4.setPreferredWidth(85);
+		    
+		    TableColumn col5 = table.getColumnModel().getColumn(5);
+		    col5.setMinWidth(20);
+		    col5.setMaxWidth(30);
+		    col5.setPreferredWidth(25);
 		}
 		JScrollPane scrollPane = new JScrollPane(table);
 		panelEdges.add(scrollPane);
@@ -192,14 +214,16 @@ public class OutputUI extends Composite{
 	public static void updateTable(java.util.List<String[]> list)
 	{
 		DefaultTableModel dtm = (DefaultTableModel) table.getModel();
-		
+
 		for(int i=dtm.getRowCount()-1; i>-1; i--)
 		{
 			dtm.removeRow(i);
 		}
 		
-		Iterator<String[]> iter = list.iterator();		
-		while (iter.hasNext()) dtm.addRow(iter.next());
+		for(String[] edgeData:list) 
+		{
+			dtm.addRow(edgeData);
+		}
 	}
 	
 	public void dispose() {
