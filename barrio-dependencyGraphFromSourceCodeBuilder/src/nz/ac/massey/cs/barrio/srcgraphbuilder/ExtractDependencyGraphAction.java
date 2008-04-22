@@ -14,7 +14,7 @@ package nz.ac.massey.cs.barrio.srcgraphbuilder;
 import java.util.Iterator;
 import java.util.List;
 
-import nz.ac.massey.cs.barrio.Dialogs.ProjectSelectDialog;
+import nz.ac.massey.cs.barrio.dialogs.ProjectSelectDialog;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
