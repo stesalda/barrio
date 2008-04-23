@@ -49,6 +49,7 @@ public class ProjectSelectDialog extends Dialog{
 		Shell shell = new Shell(getParent(), getStyle());
 		shell.setLayout(new FillLayout());
 	    createContents(shell);
+	    shell.setMinimumSize(300, 300);
 	    shell.pack();
 	    shell.open();
 	    Display display = getParent().getDisplay();
