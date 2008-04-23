@@ -1,6 +1,9 @@
 package nz.ac.massey.cs.barrio.visual;
 
 import java.awt.event.MouseEvent;
+import java.util.Iterator;
+
+import nz.ac.massey.cs.barrio.gui.OutputUI;
 
 import prefuse.Visualization;
 import prefuse.controls.Control;
@@ -11,49 +14,26 @@ import prefuse.data.Node;
 
 public class EdgeClickControl extends ControlAdapter implements Control {
 
-	private VisualItem lastUsedVisualItem = null;
-	private Visualization vis = null;
 	@Override
 	public void itemClicked(VisualItem item, MouseEvent e) 
 	{
-		if(item.equals(lastUsedVisualItem) && e.getButton()==MouseEvent.BUTTON1)
+		if(item.getGroup().equals("graph.edges"))
 		{
-			setSelectItem(lastUsedVisualItem, "false");
-			lastUsedVisualItem = null;
-			vis = item.getVisualization();
-			vis.run("color");
-			vis.run("layout2");
-		}else
-		if(item.getGroup().equals("graph.edges") && e.getButton()==MouseEvent.BUTTON1)
-		{
-			vis = item.getVisualization();
-			if(lastUsedVisualItem!=null) setSelectItem(lastUsedVisualItem, "false");
-			setSelectItem(item, "true");
-			lastUsedVisualItem = item;
-			vis.run("color");
-			vis.run("layout2");
+			VisualHighlightingManager mgr = new VisualHighlightingManager();
+			mgr.setSelectItem(item, String.valueOf(!item.get("edge.isSelected").equals("true")));
+			
+			int rows = OutputUI.table.getModel().getRowCount();
+			for(int i=0; i<rows; i++)
+			{
+				if(item.get("id").equals(OutputUI.table.getModel().getValueAt(i,0)))
+				{
+					String value = OutputUI.table.getModel().getValueAt(i, 6).toString();
+					if(value==null) value="false";
+					boolean newValue = !value.equals("true");
+					OutputUI.table.getModel().setValueAt(newValue, i, 6);
+				}
+			}
+			
 		}
 	}
-	
-	
-	private void setSelectItem(VisualItem item, String select)
-	{
-		item.setHighlighted(true);
-		
-		Edge edge = (Edge)item.getSourceTuple();
-		edge.set("edge.isSelected", select);
-		
-		Node srcNode = edge.getSourceNode();
-		srcNode.set("node.isSelected", select);
-		
-		Node destNode = edge.getTargetNode();
-		destNode.set("node.isSelected", select);
-		
-		boolean b = select.equals("true");
-		VisualItem vi1 = vis.getVisualItem("graph.nodes", srcNode);
-		vi1.setHighlighted(b);
-		VisualItem vi2 = vis.getVisualItem("graph.nodes", destNode);
-		vi2.setHighlighted(b);
-	}
-
 }

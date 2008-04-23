@@ -173,7 +173,7 @@ public class OutputGenerator {
 	//done generating tree of clusters with multiple packages
 	
 	
-	public void generateListRemovedEdges(List<String[]> list, List<Edge> removedEdges)
+	public void generateListRemovedEdges(List<Object[]> list, List<Edge> removedEdges)
 	{
 		int i = 1;
 		list.clear();		
@@ -182,9 +182,11 @@ public class OutputGenerator {
 			Vertex src = (Vertex) e.getEndpoints().getFirst();
 			Vertex dest = (Vertex) e.getEndpoints().getSecond();
 			
-			String[] data = new String[5];
-			
-			data[0] = ""+i;
+			Object[] data = new Object[7];
+
+			data[0] = e.getUserDatum("id").toString();
+//			System.out.println("[OG]: "+data[0]);
+			data[1] = String.valueOf(i);
 			
 			StringBuffer sourceStr = new StringBuffer();
 			sourceStr.append(src.getUserDatum("class.jar").toString());
@@ -192,9 +194,9 @@ public class OutputGenerator {
 			sourceStr.append(src.getUserDatum("class.packageName").toString());
 			sourceStr.append('\n');
 			sourceStr.append(src.getUserDatum("class.name").toString());
-			data[1] = sourceStr.toString();
+			data[2] = sourceStr.toString();
 			
-			data[2] = e.getUserDatum("relationship.type").toString();
+			data[3] = e.getUserDatum("relationship.type").toString();
 			
 			StringBuffer destStr = new StringBuffer();
 			destStr.append(dest.getUserDatum("class.jar").toString());
@@ -202,10 +204,11 @@ public class OutputGenerator {
 			destStr.append(dest.getUserDatum("class.packageName").toString());
 			destStr.append('\n');
 			destStr.append(dest.getUserDatum("class.name").toString());
-			data[3] = destStr.toString();
+			data[4] = destStr.toString();
 			
-			data[4] = e.getUserDatum("relationship.betweenness").toString();
+			data[5] = e.getUserDatum("relationship.betweenness").toString();
 			list.add(data);
+			data[6] = false;
 //			System.out.println("[OG]: list = "+ list.size());
 			i++;
 		}

@@ -186,6 +186,7 @@ public class OdemReader implements InputReader{
 					break;
 				}
 			}
+			edgeId++;
 		}		
 	}
 }

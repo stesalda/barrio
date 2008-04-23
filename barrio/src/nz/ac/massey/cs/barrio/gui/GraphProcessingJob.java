@@ -273,7 +273,7 @@ public class GraphProcessingJob extends Job {
 			        og.generatePackagesWithMultipleClusters(OutputUI.treePwMC);
 			        og.generateClustersWithMuiltiplePackages(OutputUI.treeCwMP);
 			        
-			        List<String[]> list = new ArrayList<String[]>();
+			        List<Object[]> list = new ArrayList<Object[]>();
 			        og.generateListRemovedEdges(list, removedEdges);
 			        OutputUI.updateTable(list);
 					

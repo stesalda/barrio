@@ -14,6 +14,8 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import nz.ac.massey.cs.barrio.visual.VisualHighlightingManager;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -26,6 +28,8 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
 
 import prefuse.Display;
+import prefuse.data.Edge;
+import prefuse.data.tuple.TupleSet;
 import prefuse.visual.AggregateItem;
 import prefuse.visual.AggregateTable;
 
@@ -36,7 +40,7 @@ public class OutputUI extends Composite{
 	public static Tree treeCwMP;
 	public static Panel panelGraph;
 	public static org.eclipse.swt.widgets.Display display;
-	private static JTable table;
+	public static JTable table;
 	
 	public OutputUI(Composite parent, int style) {
 		super(parent, style);
@@ -75,19 +79,19 @@ public class OutputUI extends Composite{
 		          return String.class;
 		      }
 		};
-		model.setDataVector(null, new Object[]{"","Source class","Relationship","Destination class","Betweenness",""});
+		model.setDataVector(null, new Object[]{"id","","Source class","Relationship","Destination class","Betweenness",""});
 		table = new JTable(model){
 			public boolean isCellEditable(int row, int column){
-				return column==5;
+				return column==6;
 			}
 		};
 		table.setCellSelectionEnabled(false);
 		table.setRowSelectionAllowed(false);
 		table.setColumnSelectionAllowed(false);
 		table.setRowHeight( table.getRowHeight() * 3 + 5);
-		TableColumn srcColumn = table.getColumnModel().getColumn(1);
+		TableColumn srcColumn = table.getColumnModel().getColumn(2);
 		srcColumn.setCellRenderer(new MultiLineCellRenderer());
-		TableColumn destColumn = table.getColumnModel().getColumn(3);
+		TableColumn destColumn = table.getColumnModel().getColumn(4);
 		destColumn.setCellRenderer(new MultiLineCellRenderer());
 		
 		JCheckBox checkBox = new JCheckBox();
@@ -99,30 +103,36 @@ public class OutputUI extends Composite{
 			
 		});
 		checkBox.setVisible(true);
-		TableColumn lastColumn = table.getColumnModel().getColumn(5);
+		TableColumn lastColumn = table.getColumnModel().getColumn(6);
 		lastColumn.setCellEditor(new DefaultCellEditor(checkBox));
 		lastColumn.setCellRenderer(new CheckBoxRenderer());
 		{
 			table.getTableHeader().setReorderingAllowed(false);
+			
 			TableColumn col0 = table.getColumnModel().getColumn(0);
-		    col0.setMinWidth(10);
-		    col0.setMaxWidth(100);
-		    col0.setPreferredWidth(40);
+		    col0.setMinWidth(0);
+		    col0.setMaxWidth(0);
+		    col0.setPreferredWidth(0);
+			
+			TableColumn col1 = table.getColumnModel().getColumn(1);
+		    col1.setMinWidth(10);
+		    col1.setMaxWidth(100);
+		    col1.setPreferredWidth(40);
 		    
-		    TableColumn col2 = table.getColumnModel().getColumn(2);
-		    col2.setMinWidth(100);
-		    col2.setMaxWidth(150);
-		    col2.setPreferredWidth(125);
-		    
-		    TableColumn col4 = table.getColumnModel().getColumn(4);
-		    col4.setMinWidth(70);
-		    col4.setMaxWidth(110);
-		    col4.setPreferredWidth(85);
+		    TableColumn col3 = table.getColumnModel().getColumn(3);
+		    col3.setMinWidth(100);
+		    col3.setMaxWidth(150);
+		    col3.setPreferredWidth(125);
 		    
 		    TableColumn col5 = table.getColumnModel().getColumn(5);
-		    col5.setMinWidth(20);
-		    col5.setMaxWidth(30);
-		    col5.setPreferredWidth(25);
+		    col5.setMinWidth(70);
+		    col5.setMaxWidth(110);
+		    col5.setPreferredWidth(85);
+		    
+		    TableColumn col6 = table.getColumnModel().getColumn(6);
+		    col6.setMinWidth(20);
+		    col6.setMaxWidth(30);
+		    col6.setPreferredWidth(25);
 		}
 		JScrollPane scrollPane = new JScrollPane(table);
 		panelEdges.add(scrollPane);
@@ -213,7 +223,7 @@ public class OutputUI extends Composite{
 	}
 
 
-	public static void updateTable(java.util.List<String[]> list)
+	public static void updateTable(java.util.List<Object[]> list)
 	{
 		DefaultTableModel dtm = (DefaultTableModel) table.getModel();
 
@@ -222,7 +232,7 @@ public class OutputUI extends Composite{
 			dtm.removeRow(i);
 		}
 		
-		for(String[] edgeData:list) 
+		for(Object[] edgeData:list) 
 		{
 			dtm.addRow(edgeData);
 		}
@@ -231,8 +241,35 @@ public class OutputUI extends Composite{
 	
 	private void highlightEdges()
 	{
-//		TableRow r = ;
-		System.out.println("click "+table.getSelectedRow());
+		String edgeId = table.getModel().getValueAt(table.getSelectedRow(), 0).toString();
+		String highlight = table.getModel().getValueAt(table.getSelectedRow(), 6).toString();
+		
+		setEdge(edgeId, highlight);	
+	}
+	
+	private void setEdge(String edgeId, String value)
+	{
+		Display dis = (Display) panelGraph.getComponent(0);
+		if(dis!=null){
+			TupleSet edges = dis.getVisualization().getGroup("graph.edges");
+			Iterator iter = edges.tuples();
+			while(iter.hasNext())
+			{
+				Edge edge = (Edge)iter.next();
+				if(edgeId.equals(edge.get("id")))
+				{
+					highlightVisual(dis, edge, value);
+					break;
+				}
+				
+			}
+		}
+	}
+	
+	private void highlightVisual(Display dis, Edge edge, String select)
+	{
+		VisualHighlightingManager mgr = new VisualHighlightingManager();
+		mgr.setSelectItem(dis.getVisualization().getVisualItem("graph.edges", edge), select);
 	}
 	
 	
