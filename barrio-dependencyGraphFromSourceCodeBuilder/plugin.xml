@@ -14,7 +14,6 @@
                class="nz.ac.massey.cs.barrio.srcgraphbuilder.ExtractDependencyGraphAction"
                tooltip="Extract dependency graph fromk selected Java project"
                menubarPath="barrio.topMenu/barrio.SrcCodeReadAction"
-               toolbarPath="barrio.topMenu"
                id="barrio.SrcCodeReadAction">
          </action>
       </actionSet>
