@@ -18,6 +18,7 @@
          </menu>
          <action
                class="nz.ac.massey.cs.barrio.actions.ActionRun"
+               icon="icons/releng_gears.gif"
                id="barrio.action1"
                label="Open Barrio Perspective"
                menubarPath="barrio.topMenu/barrio.action1">
