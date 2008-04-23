@@ -6,16 +6,16 @@
          point="org.eclipse.ui.actionSets">
       <actionSet
             label="Sample Action Set"
-            visible="false"
+            visible="true"
             id="DependencyGraphExtractor.actionSet">
          <action
-               label="&amp;Analyse Projects in Workspace"
-               icon="icons/sample.gif"
                class="nz.ac.massey.cs.barrio.srcgraphbuilder.ExtractDependencyGraphAction"
-               tooltip="Extract dependency graph fromk selected Java project"
+               icon="icons/sample.gif"
+               id="barrio.SrcCodeReadAction"
+               label="&amp;Analyse Projects in Workspace"
                menubarPath="barrio.topMenu/barrio.SrcCodeReadAction"
-               id="barrio.SrcCodeReadAction">
-         </action>
+               style="push"
+               tooltip="Extract dependency graph from selected Java project"/>
       </actionSet>
    </extension>
 
