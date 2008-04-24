@@ -2,10 +2,7 @@ package nz.ac.massey.cs.barrio.odemReader;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
-import java.net.ConnectException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -15,9 +12,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import nz.ac.massey.cs.barrio.inputReader.InputReader;
 import nz.ac.massey.cs.barrio.inputReader.UnknownInputException;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -33,17 +27,17 @@ import edu.uci.ics.jung.graph.impl.DirectedSparseGraph;
 import edu.uci.ics.jung.graph.impl.DirectedSparseVertex;
 import edu.uci.ics.jung.utils.UserData;
 
-public class OdemReader implements InputReader{
+public class OdemReaderMem implements InputReader{
 
 	private List<TempEdge> tempEdges;
 
-	public void read(Object input, Graph graph) throws UnknownInputException, IOException 
+	public Graph read(Object input) throws UnknownInputException, IOException 
 	{	
 		String filename = null;
 		if(input instanceof String) filename = input.toString();
 		
-		if(filename==null || filename.length()<1) return;
-		//graph = new DirectedSparseGraph();
+		if(filename==null || filename.length()<1) return null;
+		Graph graph = new DirectedSparseGraph();
 		try {
 			
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -64,7 +58,7 @@ public class OdemReader implements InputReader{
 			//e.printStackTrace();
 			throw new UnknownInputException();
 		}
-
+		return graph;
 	}
 	
 	
