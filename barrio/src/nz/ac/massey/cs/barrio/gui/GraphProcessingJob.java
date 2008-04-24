@@ -121,12 +121,14 @@ public class GraphProcessingJob extends Job {
 		List<InputReader> readers = KnownInputReader.all();
 		initGraph = new DirectedSparseGraph();
 		boolean done = false;
-		for(InputReader reader:readers)
+		InputReader reader = readers.get(0);
+		//for(InputReader reader:readers)
 		{
 			try {
-				reader.read(input, initGraph);
+				initGraph = reader.read(input);
+				System.out.println("[Job]: graph = "+initGraph.getVertices().size()+" nodes, "+initGraph.getEdges().size()+" edges");
 				done = true;
-				break;
+				//break;
 			} catch (UnknownInputException e) {
 				//e.printStackTrace();
 			} 

@@ -7,5 +7,5 @@ import edu.uci.ics.jung.graph.Graph;
 
 public interface InputReader {
 
-	public void read(Object input, Graph graph) throws UnknownInputException, IOException;
+	public Graph read(Object input) throws UnknownInputException, IOException;
 }

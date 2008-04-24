@@ -67,6 +67,7 @@ public class ExtractDependencyGraphAction implements IWorkbenchWindowActionDeleg
         fd.setText("Save");
         String[] filterExt = { "*.odem", "*.xml"};
         fd.setFilterExtensions(filterExt);
+        fd.setFileName("KiwiplanData/"+project.getElementName()+".odem");
         String fileName = fd.open();
         if (fileName==null) {
         	System.out.println("cancelled");
@@ -76,12 +77,12 @@ public class ExtractDependencyGraphAction implements IWorkbenchWindowActionDeleg
         
         
         //Introducing project select dialog ...Slava
-        ProjectSelectDialog psd = new ProjectSelectDialog(window.getShell());
-        List<IJavaProject> selectedProjects = psd.open();
-        for(IJavaProject p:selectedProjects)
-        {
-        	System.out.println(p.getElementName());
-        }
+//        ProjectSelectDialog psd = new ProjectSelectDialog(window.getShell());
+//        List<IJavaProject> selectedProjects = psd.open();
+//        for(IJavaProject p:selectedProjects)
+//        {
+//        	System.out.println(p.getElementName());
+//        }
         //project select dialog ends
         
         
