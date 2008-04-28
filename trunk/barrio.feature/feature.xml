@@ -2,7 +2,7 @@
 <feature
       id="barrio.feature"
       label="Barrio CLuster Analyser"
-      version="1.0.19"
+      version="1.0.20"
       plugin="nz.ac.massey.cs.barrio">
 
    <description url="http://code.google.com/p/barrio/">
@@ -78,84 +78,84 @@ You may add Your own copyright statement to Your modifications and may provide a
          id="nz.ac.massey.cs.barrio"
          download-size="0"
          install-size="0"
-         version="1.0.19"
+         version="1.0.20"
          unpack="false"/>
 
    <plugin
          id="nz.ac.massey.cs.barrio.betweennessClusterer"
          download-size="0"
          install-size="0"
-         version="1.0.19"
+         version="1.0.20"
          unpack="false"/>
 
    <plugin
          id="nz.ac.massey.cs.barrio.exceptionFilter"
          download-size="0"
          install-size="0"
-         version="1.0.19"
+         version="1.0.20"
          unpack="false"/>
 
    <plugin
          id="nz.ac.massey.cs.barrio.extendsFilter"
          download-size="0"
          install-size="0"
-         version="1.0.19"
+         version="1.0.20"
          unpack="false"/>
 
    <plugin
          id="nz.ac.massey.cs.barrio.filterAbstract"
          download-size="0"
          install-size="0"
-         version="1.0.19"
+         version="1.0.20"
          unpack="false"/>
 
    <plugin
          id="nz.ac.massey.cs.barrio.implementsFilter"
          download-size="0"
          install-size="0"
-         version="1.0.19"
+         version="1.0.20"
          unpack="false"/>
 
    <plugin
          id="nz.ac.massey.cs.barrio.interfaceFilter"
          download-size="0"
          install-size="0"
-         version="1.0.19"
+         version="1.0.20"
          unpack="false"/>
 
    <plugin
          id="nz.ac.massey.cs.barrio.nonAbstractFilter"
          download-size="0"
          install-size="0"
-         version="1.0.19"
+         version="1.0.20"
          unpack="false"/>
 
    <plugin
          id="nz.ac.massey.cs.barrio.nonPublicFilter"
          download-size="0"
          install-size="0"
-         version="1.0.19"
+         version="1.0.20"
          unpack="false"/>
 
    <plugin
          id="nz.ac.massey.cs.barrio.odemReader"
          download-size="0"
          install-size="0"
-         version="1.0.19"
+         version="1.0.20"
          unpack="false"/>
 
    <plugin
          id="nz.ac.massey.cs.barrio.xmlExporter"
          download-size="0"
          install-size="0"
-         version="1.0.19"
+         version="1.0.20"
          unpack="false"/>
 
    <plugin
          id="nz.ac.massey.sc.barrio.DependencyGraphExtractor"
          download-size="0"
          install-size="0"
-         version="1.0.19"
+         version="1.0.20"
          unpack="false"/>
 
 </feature>
