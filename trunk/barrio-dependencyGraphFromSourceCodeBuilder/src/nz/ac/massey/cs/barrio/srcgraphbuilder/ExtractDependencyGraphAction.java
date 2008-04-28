@@ -52,8 +52,6 @@ public class ExtractDependencyGraphAction implements IWorkbenchWindowActionDeleg
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
 	public void run(IAction action) {
-		//EclipseProjectWorkspace eProject = (EclipseProjectWorkspace)workspace;
-		//eProject.getJavaProject()
 		
 		if (project==null) {
 			MessageDialog.openError(
@@ -67,12 +65,13 @@ public class ExtractDependencyGraphAction implements IWorkbenchWindowActionDeleg
         fd.setText("Save");
         String[] filterExt = { "*.odem", "*.xml"};
         fd.setFilterExtensions(filterExt);
-        fd.setFileName("KiwiplanData/"+project.getElementName()+".odem");
+        fd.setFileName(project.getElementName()+".odem");
         String fileName = fd.open();
         if (fileName==null) {
         	System.out.println("cancelled");
         	return;
         }
+        
 //		String fileName = "tempOdem.odem";
         
         
