@@ -127,7 +127,7 @@ public class OdemReader implements InputReader {
 								out.print("true");
 							else out.print("false");
 							out.print("\" class.isException=\"");
-							out.print(typeStr.contains("Exception"));
+							out.print(typeStr.endsWith("Exception"));
 							out.print("\" class.access=\"");
 							
 							if(typeAttr.getNamedItem("visibility")!=null)
