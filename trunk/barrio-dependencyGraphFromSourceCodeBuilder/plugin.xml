@@ -16,6 +16,10 @@
                menubarPath="barrio.topMenu/barrio.SrcCodeReadAction"
                style="push"
                tooltip="Extract dependency graph from selected Java project"/>
+         <menu
+               id="barrio.topMenu"
+               label="Barrio">
+         </menu>
       </actionSet>
    </extension>
 
