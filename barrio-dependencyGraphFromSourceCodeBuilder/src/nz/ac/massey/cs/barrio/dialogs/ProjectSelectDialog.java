@@ -36,6 +36,8 @@ public class ProjectSelectDialog extends Dialog{
 	private IJavaProject[] existingProjects;
 	private Display display;
 	
+	TableItem lastSelectedItem = null; //only for single project
+	
 	public ProjectSelectDialog(Shell parent)
 	{
 		super(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
@@ -78,7 +80,7 @@ public class ProjectSelectDialog extends Dialog{
 	    compositeTable.setLayout(new FillLayout());
 	    compositeTable.setLayoutData(tableData);	  
 	    
-	    final Table table = new Table(compositeTable, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+	    final Table table = new Table(compositeTable, SWT.RADIO | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 	    populateTable(table);
 	    
 	    GridData controlsData = new GridData(GridData.FILL_HORIZONTAL);
@@ -111,6 +113,8 @@ public class ProjectSelectDialog extends Dialog{
 	    Button btnOk = new Button(controls, SWT.PUSH);
 	    btnOk.setText("Ok");
 	    btnOk.setLayoutData(btnData);
+	    
+	    
 	    btnOk.addSelectionListener(new SelectionListener(){
 
 			public void widgetDefaultSelected(SelectionEvent e) {}
@@ -122,11 +126,32 @@ public class ProjectSelectDialog extends Dialog{
 						String projectName = project.getElementName();
 						for(TableItem item:table.getItems())
 							if(item.getText().equals(projectName) && item.getChecked())
+							{
+								selectedProjects.clear(); //only for single project
 								selectedProjects.add((IJavaProject) project);
+							}
 					}
 				shell.close();
 			}
 	    });
+	    
+	    
+//	    btnOk.addSelectionListener(new SelectionListener(){
+//
+//			public void widgetDefaultSelected(SelectionEvent e) {}
+//
+//			public void widgetSelected(SelectionEvent e) {
+//				if(existingProjects != null)
+//					for(IJavaProject project:existingProjects)
+//					{
+//						String projectName = project.getElementName();
+//						for(TableItem item:table.getItems())
+//							if(item.getText().equals(projectName) && item.getChecked())
+//								selectedProjects.add((IJavaProject) project);
+//					}
+//				shell.close();
+//			}
+//	    });
 
 	    shell.setSize(400, 250);
 	    Monitor primary = display.getPrimaryMonitor();
