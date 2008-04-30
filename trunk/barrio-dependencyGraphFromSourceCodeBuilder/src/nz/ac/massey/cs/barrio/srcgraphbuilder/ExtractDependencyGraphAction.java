@@ -51,38 +51,38 @@ public class ExtractDependencyGraphAction implements IWorkbenchWindowActionDeleg
 	 * in the workbench UI.
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
-	public void run(IAction action) {
-		
-		if (project==null) {
+	public void run(IAction action) {		
+//		FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
+//        fd.setText("Save");
+//        String[] filterExt = { "*.odem", "*.xml"};
+//        fd.setFilterExtensions(filterExt);
+//        fd.setFileName(project.getElementName()+".odem");
+//        String fileName = fd.open();
+//        if (fileName==null) {
+//        	System.out.println("cancelled");
+//        	return;
+//        }
+        
+		String fileName = "tempOdem.odem";
+        
+        
+        //Introducing project select dialog ...Slava
+        ProjectSelectDialog psd = new ProjectSelectDialog(window.getShell());
+        List<IJavaProject> selectedProjects = psd.open();
+        project = selectedProjects.get(0);
+        for(IJavaProject p:selectedProjects)
+        {
+        	System.out.println(p.getElementName());
+        }
+        //project select dialog ends
+        
+        if (project==null) {
 			MessageDialog.openError(
 					window.getShell(),
 					"DependencyGraphExtractor Plug-in",
 					"No Java project selected");
 			return;
 		}
-		
-		FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
-        fd.setText("Save");
-        String[] filterExt = { "*.odem", "*.xml"};
-        fd.setFilterExtensions(filterExt);
-        fd.setFileName(project.getElementName()+".odem");
-        String fileName = fd.open();
-        if (fileName==null) {
-        	System.out.println("cancelled");
-        	return;
-        }
-        
-//		String fileName = "tempOdem.odem";
-        
-        
-        //Introducing project select dialog ...Slava
-//        ProjectSelectDialog psd = new ProjectSelectDialog(window.getShell());
-//        List<IJavaProject> selectedProjects = psd.open();
-//        for(IJavaProject p:selectedProjects)
-//        {
-//        	System.out.println(p.getElementName());
-//        }
-        //project select dialog ends
         
         
 
@@ -108,42 +108,42 @@ public class ExtractDependencyGraphAction implements IWorkbenchWindowActionDeleg
 	public void selectionChanged(IAction action, ISelection selection) {
 		
 		
-		if (selection.isEmpty()){
-			// we keep the selected project
-			action.setEnabled(false);
-		}			
-		else if (selection instanceof IStructuredSelection) {
-			project = null;
-			// a selection containing elements
-			Iterator it = ((IStructuredSelection) selection).iterator();
-			while (project==null && it.hasNext()) {
-				// we should have an IJavaProject etc here
-				Object obj = it.next();
-				if (obj instanceof IJavaProject) {
-					project = (IJavaProject) obj;
-				}
-				else if (obj instanceof IJavaElement) {
-					project = ((IJavaElement)obj).getJavaProject();
-				}
-				else if (obj instanceof IResource) {
-					// try to find associated java project
-					try {
-						IResource res = (IResource)obj;	
-						res = res.getProject();
-						IWorkspace workspace = res.getWorkspace();
-						IJavaModel jmodel = JavaCore.create(workspace.getRoot());
-						IJavaProject[] jprojects = jmodel.getJavaProjects();
-						for (int i=0;i<jprojects.length;i++) {
-							if (jprojects[i].getResource()==res)
-								project=jprojects[i];
-						}
-					}
-					catch (Exception x) {}
-				}
-			}
-		}
-		action.setEnabled(project!=null);
-		// System.out.println("Selected project is : " + project);
+//		if (selection.isEmpty()){
+//			// we keep the selected project
+//			action.setEnabled(false);
+//		}			
+//		else if (selection instanceof IStructuredSelection) {
+//			project = null;
+//			// a selection containing elements
+//			Iterator it = ((IStructuredSelection) selection).iterator();
+//			while (project==null && it.hasNext()) {
+//				// we should have an IJavaProject etc here
+//				Object obj = it.next();
+//				if (obj instanceof IJavaProject) {
+//					project = (IJavaProject) obj;
+//				}
+//				else if (obj instanceof IJavaElement) {
+//					project = ((IJavaElement)obj).getJavaProject();
+//				}
+//				else if (obj instanceof IResource) {
+//					// try to find associated java project
+//					try {
+//						IResource res = (IResource)obj;	
+//						res = res.getProject();
+//						IWorkspace workspace = res.getWorkspace();
+//						IJavaModel jmodel = JavaCore.create(workspace.getRoot());
+//						IJavaProject[] jprojects = jmodel.getJavaProjects();
+//						for (int i=0;i<jprojects.length;i++) {
+//							if (jprojects[i].getResource()==res)
+//								project=jprojects[i];
+//						}
+//					}
+//					catch (Exception x) {}
+//				}
+//			}
+//		}
+//		action.setEnabled(project!=null);
+//		// System.out.println("Selected project is : " + project);
 	}
 
 	/**

@@ -28,7 +28,7 @@
                class="nz.ac.massey.cs.barrio.srcgraphbuilder.ExtractDependencyGraphAction"
                icon="icons/sample.gif"
                id="barrio.SrcCodeReadAction"
-               label="&amp;Analyse Projects in Workspace"
+               label="&amp;Analyse project sources"
                menubarPath="barrio.topMenu/barrio.actions2"
                style="push"
                tooltip="Extract dependency graph from selected Java project">
