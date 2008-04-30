@@ -40,12 +40,14 @@
                menubarPath="barrio.topMenu/barrio.content">
          </action>
          <action
+               class="nz.ac.massey.cs.barrio.gui.ExportAction"
                icon="icons/export.gif"
                id="barrio.action2"
                label="Extract and export graph"
                menubarPath="barrio.topMenu/barrio.actions3">
          </action>
          <action
+               class="nz.ac.massey.cs.barrio.gui.ImportAction"
                icon="icons/import.gif"
                id="barrio.action3"
                label="Import graph and analyse"

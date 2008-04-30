@@ -30,7 +30,7 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 	    String filename = dlg.open();
 	    shell.close();
 	    
-	    GraphProcessingJob job = new GraphProcessingJob(filename, initGraph, finalGraph);
+	    GraphProcessingJob job = new GraphProcessingJob(filename, null, null);
 	    job.setUser(true);
 	    job.schedule();
 		
