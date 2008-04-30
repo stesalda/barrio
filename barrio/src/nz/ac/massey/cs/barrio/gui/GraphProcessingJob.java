@@ -41,17 +41,10 @@ public class GraphProcessingJob extends Job {
 	private Graph initGraph;
 	private Graph finalGraph;
 
-	
-	private boolean isInit;
 	private List<String> filters;
 	private int separation;
 	private List<Edge> removedEdges;
 	private boolean canceled;
-	
-	private boolean viewContainers;
-	private boolean viewPackages;
-	private boolean viewClusters;
-	private boolean viewEdges;
 	
 	private OutputGenerator og;
 	
@@ -62,8 +55,8 @@ public class GraphProcessingJob extends Job {
 		this.initGraph = initGraph;
 		this.finalGraph = finalGraph;
 		
-		filters = null;
-		separation = 0;		
+		filters = InputUI.getActiveFilters();
+		separation = InputUI.getSeparationLevel();		
 		canceled = false;
 		removedEdges = new ArrayList<Edge>();
 	}
@@ -72,9 +65,7 @@ public class GraphProcessingJob extends Job {
 	
 	
 	protected void canceling() {
-//		System.out.println("[JOB]: canceling called");
 		canceled = true;
-		
 	}
 	
 	
@@ -87,12 +78,7 @@ public class GraphProcessingJob extends Job {
 			int SCALE = 4+filters.size()+separation;
 			monitor.beginTask("Processing Graph", SCALE);
 			
-			if(isInit) 
-			{
-				readInput(monitor);
-			}else monitor.worked(2);
-			
-//			System.out.println("[Job]: graph = "+initGraph.getVertices().size()+ "  "+initGraph.getEdges().size());
+			if (initGraph==null) readInput(monitor);
 			
 			if(initGraph==null) return Status.CANCEL_STATUS;
 			finalGraph = (Graph) initGraph.copy();
@@ -101,7 +87,9 @@ public class GraphProcessingJob extends Job {
 			clusterGraph(monitor);
 			buildVisual(monitor);
 			
-			updateVisualElements();
+			InputUI.setInitGraph(initGraph);
+			InputUI.setFinalGraph(finalGraph);
+			
 			monitor.done();
 			
 			if(canceled) return Status.CANCEL_STATUS;
@@ -266,12 +254,9 @@ public class GraphProcessingJob extends Job {
 			OutputUI.display.asyncExec(new Runnable(){
 
 				public void run() {
-					if(isInit)
-					{
-						og = new OutputGenerator(initGraph, finalGraph);
-						og.generateProjectDescription(OutputUI.treeProject);
-					}	
-					
+					og = new OutputGenerator(initGraph, finalGraph);
+					og.generateProjectDescription(OutputUI.treeProject);
+										
 			        og.generatePackagesWithMultipleClusters(OutputUI.treePwMC);
 			        og.generateClustersWithMuiltiplePackages(OutputUI.treeCwMP);
 			        
@@ -282,157 +267,6 @@ public class GraphProcessingJob extends Job {
 				}
 			});
 		}
-	}
-	
-	
-	
-	
-	private void updateVisualElements()
-    {
-		if(canceled) return;
-        updateConatainerAggregates();
-        updatePackageAggregates();
-        updateDependencyClusterAggregates();
-        updateVisualRemovedEdges();
-    }
-    
-	
-	
-	
-    @SuppressWarnings("unchecked")
-    private void updateConatainerAggregates()
-    {
-        //System.out.println("[InputUI]: view containers = " + viewContainers);
-        if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
-        {
-            Display dis = (Display) OutputUI.panelGraph.getComponent(0);
-            Iterator<VisualItem> i = dis.getVisualization().getVisualGroup("aggregates").tuples();
-            while(i.hasNext())
-            {
-                AggregateItem ai = ((AggregateItem)i.next());
-                if (ai.get("type")!=null && ai.getString("type").equals("jar") && viewContainers) ai.setVisible(true);
-                if (ai.get("type")!=null && ai.getString("type").equals("jar") && !viewContainers) ai.setVisible(false);
-            }
-        }
-    }
-    
-    
-    
-    
-    @SuppressWarnings("unchecked")
-    private void updatePackageAggregates()
-    {
-    	//System.out.println("[InputUI]: view packages = " + viewPackages);
-        if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
-        {
-            Display dis = (Display) OutputUI.panelGraph.getComponent(0);
-            Iterator<VisualItem> i = dis.getVisualization().getVisualGroup("aggregates").tuples();
-            while(i.hasNext())
-            {
-                AggregateItem ai = ((AggregateItem)i.next());
-                if (ai.get("type")!=null && ai.getString("type").equals("package") && viewPackages) ai.setVisible(true);
-                if (ai.get("type")!=null && ai.getString("type").equals("package") && !viewPackages) ai.setVisible(false);
-            }
-        }
-    }
-    
-    
-    
-    
-    @SuppressWarnings("unchecked")
-    private void updateDependencyClusterAggregates()
-    {
-        //System.out.println("[InputUI]: view clusters = " + viewClusters);
-        if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
-        {
-            Display dis = (Display) OutputUI.panelGraph.getComponent(0);
-            Iterator<VisualItem> i = dis.getVisualization().getVisualGroup("aggregates").tuples();
-            while(i.hasNext())
-            {
-                AggregateItem ai = ((AggregateItem)i.next());
-                if (ai.get("type")!=null && ai.getString("type").equals("cluster") && viewClusters) ai.setVisible(true);
-                if (ai.get("type")!=null && ai.getString("type").equals("cluster") && !viewClusters) ai.setVisible(false);
-            }
-        }
-    }
-    
-    
-    
-    
-    @SuppressWarnings("unchecked")
-    private void updateVisualRemovedEdges()
-    {
-        //System.out.println("[InputUI]: view edges = " + viewEdges);
-        if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
-        {                       
-            Display display = (Display) OutputUI.panelGraph.getComponent(0);
-            Iterator<VisualItem> edgeIterator = display.getVisualization().getVisualGroup("graph.edges").tuples();
-            while(edgeIterator.hasNext())
-            {
-                VisualItem edge = edgeIterator.next();
-                if(!viewEdges && edge.getString("relationship.state").equals("removed")) edge.setVisible(false);
-                else edge.setVisible(true);
-            }
-                
-        }
-    }
-	
-	
-	
-	public void setInit(boolean isInit) {
-		this.isInit = isInit;
-	}
-
-
-
-	public void setFilters(List<String> filters) {
-		this.filters = filters;
-	}
-
-
-
-	public void setSeparation(int separation) {
-		this.separation = separation;
-	}
-
-
-
-	public void setViewContainers(boolean viewContainers) {
-		this.viewContainers = viewContainers;
-	}
-
-
-
-	public void setViewPackages(boolean viewPackages) {
-		this.viewPackages = viewPackages;
-	}
-
-
-
-	public void setViewClusters(boolean viewClusters) {
-		this.viewClusters = viewClusters;
-	}
-
-
-
-	public void setViewEdges(boolean viewEdges) {
-		this.viewEdges = viewEdges;
-	}
-
-
-
-	public Graph getInitGraph() {
-		return initGraph;
-	}
-
-
-	public Graph getFinalGraph() {
-		return finalGraph;
-	}
-
-
-	public List<Edge> getRemovedEdges() {
-		return removedEdges;
 	}
 
 

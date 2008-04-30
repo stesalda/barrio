@@ -41,27 +41,26 @@ import edu.uci.ics.jung.graph.filters.Filter;
 
 public class InputUI extends Composite{
 	
-	private Graph initGraph = null;
-	private Graph finalGraph = null;
-	private List<Edge> removedEdges = null;
+	private static Graph initGraph = null;
+	private static Graph finalGraph = null;
+	private static List<Edge> removedEdges = null;
 	
-	private Button btnBrowse;
 	private Button btnRefresh;
 	private Button btnExport;
 
-	private List<String> activeFilters = new ArrayList<String>();
+	private static List<String> activeFilters = new ArrayList<String>();
 	private List<String> previousFilters = new ArrayList<String>();
 	private List<Filter> knownFilters = new ArrayList<Filter>();
-	private int separationLevel = 0;
+	private static int separationLevel = 0;
 	private int lastSeparationLevel = 0;
 	protected static Composite graphControlsComposite;
-	private Button checkContainers;
-	private Button checkPackages;
-	private Button checkDependencyCluster;
-	private final Button checkRemovedEdges;
+	private static Button checkContainers;
+	private static Button checkPackages;
+	private static Button checkDependencyCluster;
+	private static Button checkRemovedEdges;
 	
 	private GraphProcessingJob job;
-	org.eclipse.swt.widgets.Display display;
+	protected static org.eclipse.swt.widgets.Display display;
 	
 	public InputUI(Composite parent, int style) {
 		   super(parent, SWT.NONE);
@@ -85,15 +84,6 @@ public class InputUI extends Composite{
 		   
 		   Composite topComposite = new Composite(mainComposite, SWT.NONE);
 		   topComposite.setLayout(new GridLayout());
-		   
-		   Label lblXML = new Label(topComposite, SWT.NONE);
-		   lblXML.setText("Browse for input file");
-		   btnBrowse = new Button(topComposite, SWT.PUSH | SWT.CENTER);
-		   btnBrowse.setText("Browse"); 
-		   
-		   Label separator1 = new Label(topComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
-		   separator1.setLayoutData(horizontalFillData);
-		   //-----------------------------------------------------------
 		   
 		   Label lblFilters = new Label(topComposite, SWT.NONE);
 		   lblFilters.setText("Filter out:");
@@ -256,15 +246,6 @@ public class InputUI extends Composite{
 		   
 		   
 		   //Events
-		   btnBrowse.addSelectionListener(new SelectionListener() {
-			      public void widgetDefaultSelected(SelectionEvent e) {}
-
-			      public void widgetSelected(SelectionEvent e) {
-			    	  btnBrowseClick();
-			    	  //btnRefreshClick(nodeFilters, edgeFilters);
-			      }  
-		   });
-		   
 		   slider.addSelectionListener(new SelectionListener() {
 			      public void widgetDefaultSelected(SelectionEvent e) {}
 
@@ -410,25 +391,11 @@ public class InputUI extends Composite{
 	{
 		if(initGraph!=null)
 		{
+			System.out.println("[InputUI]: graph != null");
 			if(previousFilters.equals(activeFilters) && lastSeparationLevel==separationLevel) 
 				btnRefresh.setEnabled(false);
 			else btnRefresh.setEnabled(true);
 		}else btnRefresh.setEnabled(false);
-	}
-	
-		
-	private void btnBrowseClick()
-	{
-		Shell shell = new Shell();
-		FileDialog dlg = new FileDialog(shell, SWT.OPEN);
-		dlg.setFilterNames(new String[] { "ODEM Files","XML Files", "All Files" });
-		dlg.setFilterExtensions(new String[] { "*.odem", "*.xml", "*.*" });
-	    String filename = dlg.open();
-	    shell.close();
-	    
-	    job = new GraphProcessingJob(filename, initGraph, finalGraph);
-	    job.setUser(true);
-	    runJob(true);
 	}
 	
 	
@@ -441,15 +408,8 @@ public class InputUI extends Composite{
 	
 	private void runJob(boolean isInit)
 	{
-		job.setInit(isInit);
-		job.setFilters(activeFilters);
-		job.setSeparation(separationLevel);
-	    job.setViewContainers(checkContainers.getSelection()); 
-	    job.setViewPackages(checkPackages.getSelection());
-	    job.setViewClusters(checkDependencyCluster.getSelection()); 
-	    job.setViewEdges(checkRemovedEdges.getSelection());
-	    
-  	  	job.schedule();
+		
+		job.schedule();
   	  	job.addJobChangeListener(new IJobChangeListener(){
 
 			public void aboutToRun(IJobChangeEvent event) {
@@ -495,16 +455,14 @@ public class InputUI extends Composite{
 	
 	
 	private void updateElements() {
+
+		//System.out.println("[InputUI]: job = "+job.getResult());
 		if(job.getResult().equals(Status.OK_STATUS))
 		{
-			initGraph = job.getInitGraph();
-			finalGraph = job.getFinalGraph();
-			removedEdges = job.getRemovedEdges();
-			
+			System.out.println("[InputUI]: job ok");
 			previousFilters.clear();
 			previousFilters.addAll(activeFilters);
 			lastSeparationLevel = separationLevel;
-
 			updateBtnRefreshEnabled();
 		}
 	}
@@ -614,6 +572,61 @@ public class InputUI extends Composite{
                 
         }
     }
+
+
+	protected static List<String> getActiveFilters() {
+		return activeFilters;
+	}
+
+
+	protected static int getSeparationLevel() {
+		return separationLevel;
+	}
+
+
+	protected static boolean getCheckContainers() {
+		return checkContainers.getSelection();
+	}
+
+
+	protected static boolean getCheckPackages() {
+		return checkPackages.getSelection();
+	}
+
+
+	protected static boolean getCheckDependencyCluster() {
+		return checkDependencyCluster.getSelection();
+	}
+
+
+	protected static List<Edge> getRemovedEdges() {
+		return removedEdges;
+	}
+
+
+	protected static boolean getCheckRemovedEdges() {
+		return checkRemovedEdges.getSelection();
+	}
+	
+	
+	protected static void setInitGraph(Graph graph) {
+		initGraph = graph;
+	}
+
+
+	protected static void setFinalGraph(Graph graph) {
+		finalGraph = graph;
+	}
+
+
+	protected static Graph getInitGraph() {
+		return initGraph;
+	}
+
+
+	protected static Graph getFinalGraph() {
+		return finalGraph;
+	}
 
 	
 	//Update visualisation methods end ============================================
