@@ -14,14 +14,42 @@
             visible="true">
          <menu
                id="barrio.topMenu"
-               label="Barrio">
+               label="Barrio"
+               path="additions">
+            <groupMarker
+                  name="barrio.content">
+            </groupMarker>
+            <separator
+                  name="additions">
+            </separator>
+            <groupMarker
+                  name="barrio.actions1">
+            </groupMarker>
+            <groupMarker
+                  name="barrio.actions2">
+            </groupMarker>
+            <groupMarker
+                  name="barrio.actions3">
+            </groupMarker>
          </menu>
          <action
                class="nz.ac.massey.cs.barrio.actions.ActionRun"
                icon="icons/releng_gears.gif"
                id="barrio.action1"
                label="Open Barrio Perspective"
-               menubarPath="barrio.topMenu/barrio.action1">
+               menubarPath="barrio.topMenu/barrio.content">
+         </action>
+         <action
+               icon="icons/export.gif"
+               id="barrio.action2"
+               label="Extract and export graph"
+               menubarPath="barrio.topMenu/barrio.actions3">
+         </action>
+         <action
+               icon="icons/import.gif"
+               id="barrio.action3"
+               label="Import graph and analyse"
+               menubarPath="barrio.topMenu/barrio.actions1">
          </action>
       </actionSet>
    </extension>
