@@ -8,18 +8,31 @@
             label="Sample Action Set"
             visible="true"
             id="DependencyGraphExtractor.actionSet">
+         <menu
+               id="barrio.topMenu"
+               label="Barrio">
+            <groupMarker
+                  name="barrio.content">
+            </groupMarker>
+            <groupMarker
+                  name="barrio.actions1">
+            </groupMarker>
+            <groupMarker
+                  name="barrio.actions2">
+            </groupMarker>
+            <groupMarker
+                  name="barrio.actions3">
+            </groupMarker>
+         </menu>
          <action
                class="nz.ac.massey.cs.barrio.srcgraphbuilder.ExtractDependencyGraphAction"
                icon="icons/sample.gif"
                id="barrio.SrcCodeReadAction"
                label="&amp;Analyse Projects in Workspace"
-               menubarPath="barrio.topMenu/barrio.SrcCodeReadAction"
+               menubarPath="barrio.topMenu/barrio.actions2"
                style="push"
-               tooltip="Extract dependency graph from selected Java project"/>
-         <menu
-               id="barrio.topMenu"
-               label="Barrio">
-         </menu>
+               tooltip="Extract dependency graph from selected Java project">
+         </action>
       </actionSet>
    </extension>
 
