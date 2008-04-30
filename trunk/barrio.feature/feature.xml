@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="barrio.feature"
+      id="nz.ac.massey.cs.barrio"
       label="Barrio CLuster Analyser"
       version="1.0.21"
       plugin="nz.ac.massey.cs.barrio">
