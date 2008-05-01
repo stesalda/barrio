@@ -1,8 +1,14 @@
 package nz.ac.massey.cs.barrio.odemReader;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -44,13 +50,20 @@ public class OdemReader implements InputReader {
 			docBuilder = docBuilderFactory.newDocumentBuilder();
 			Document doc = docBuilder.parse(new File(filename));
 			
-			PrintStream out = new PrintStream(jfilename);
+			File file = new File(jfilename);
+			file.deleteOnExit();
+			
+			//PrintStream out = new PrintStream(jfilename);
+			BufferedWriter out = new BufferedWriter(new FileWriter(file));
 	
-			out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			out.print("<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns/graphml\"");
-			out.print(" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-			out.println(" xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns/graphml\">");
-			out.println("<graph edgedefault=\"directed\">");
+			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+			out.write('\n');
+			out.write("<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns/graphml\"");
+			out.write(" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
+			out.write(" xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns/graphml\">");
+			out.write('\n');
+			out.write("<graph edgedefault=\"directed\">");
+			out.write('\n');
 	
 			nodes = new ArrayList<String>();
 			tempEdges = new ArrayList<TempEdge>();
@@ -59,15 +72,16 @@ public class OdemReader implements InputReader {
 			buildEdgeList();
 			writeEdges(out);
 	
-			out.println("</graph>");
-			out.println("</graphml>");
+			out.write("</graph>");
+			out.write('\n');
+			out.write("</graphml>");
 			out.close();
 			
+			Reader reader = new FileReader(file);
 			GraphMLFile graphml = new GraphMLFile();
-			graph = graphml.load(jfilename);
-			File file = new File(jfilename);
-			System.out.println("[OdemReader]: graph = "+graph.getVertices().size()+" nodes, "+graph.getEdges().size()+" edges");
-			file.delete();
+			graph = graphml.load(reader);
+//			System.out.println("[OdemReader]: graph = "+graph.getVertices().size()+" nodes, "+graph.getEdges().size()+" edges");
+			
 		} catch (ParserConfigurationException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -79,7 +93,7 @@ public class OdemReader implements InputReader {
 		return graph;
 	}
 	
-	private void writeNodes(Document doc, PrintStream out)
+	private void writeNodes(Document doc, BufferedWriter out)
 	{
 		int nodeId = 0;
 		NodeList containerList = doc.getElementsByTagName("container");
@@ -106,35 +120,42 @@ public class OdemReader implements InputReader {
 							String containerStr = containerAttr.getNamedItem("name").getNodeValue();
 							String namespaceStr = namespaceAttr.getNamedItem("name").getNodeValue();
 							String typeStr = typeAttr.getNamedItem("name").getNodeValue();
-							out.print("<node id=\"");
-							out.print(nodeId);
-							out.print("\" class.id=\"");
-							out.print(nodeId);
-							out.print("\" class.jar=\"");
-							out.print(containerStr.substring(containerStr.lastIndexOf('/')+1));
-							out.print("\" class.packageName=\"");
-							out.print(namespaceStr);
-							out.print("\" class.name=\"");
-							out.print(typeStr.substring(typeStr.lastIndexOf('.')+1));
-							out.print("\" class.cluster=\"null\" class.isInterface=\"");
+							try {
+								out.write("<node id=\"");
+								out.write(String.valueOf(nodeId));
+								out.write("\" class.id=\"");
+								out.write(String.valueOf(nodeId));
+								out.write("\" class.jar=\"");
+								out.write(containerStr.substring(containerStr.lastIndexOf('/')+1));
+								out.write("\" class.packageName=\"");
+								out.write(namespaceStr);
+								out.write("\" class.name=\"");
+								out.write(typeStr.substring(typeStr.lastIndexOf('.')+1));
+								out.write("\" class.cluster=\"null\" class.isInterface=\"");
+								
+								if(typeAttr.getNamedItem("classification")!=null)
+									out.write(String.valueOf(typeAttr.getNamedItem("classification").getNodeValue().equals("interface")));
+								else out.write("null");
+								
+								out.write("\" class.isAbstract=\"");
+								if(typeAttr.getNamedItem("isAbstract")!=null && typeAttr.getNamedItem("isAbstract").getNodeValue().equals("yes"))
+									out.write("true");
+								else out.write("false");
+								out.write("\" class.isException=\"");
+								out.write(String.valueOf(typeStr.endsWith("Exception")));
+								out.write("\" class.access=\"");
+								
+								if(typeAttr.getNamedItem("visibility")!=null)
+									out.write(typeAttr.getNamedItem("visibility").getNodeValue());
+								else out.write("null");
+								
+								out.write("\" node.isSelected=\"false\" />");
+								out.write('\n');
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
 							
-							if(typeAttr.getNamedItem("classification")!=null)
-								out.print(typeAttr.getNamedItem("classification").getNodeValue().equals("interface"));
-							else out.print("null");
-							
-							out.print("\" class.isAbstract=\"");
-							if(typeAttr.getNamedItem("isAbstract")!=null && typeAttr.getNamedItem("isAbstract").getNodeValue().equals("yes"))
-								out.print("true");
-							else out.print("false");
-							out.print("\" class.isException=\"");
-							out.print(typeStr.endsWith("Exception"));
-							out.print("\" class.access=\"");
-							
-							if(typeAttr.getNamedItem("visibility")!=null)
-								out.print(typeAttr.getNamedItem("visibility").getNodeValue());
-							else out.print("null");
-							
-							out.println("\" node.isSelected=\"false\" />");
 							
 							if(typeStr.contains(namespaceStr)) nodes.add(nodeId, typeStr);
 							else nodes.add(nodeId, namespaceStr+'.'+typeStr);
@@ -197,12 +218,18 @@ public class OdemReader implements InputReader {
 	}
 	
 	
-	private void writeEdges(PrintStream out)
+	private void writeEdges(BufferedWriter out)
 	{
 		Iterator<String> iter = edges.iterator();
 		while(iter.hasNext())
 		{
-			out.println(iter.next());
+			try {
+				out.write(iter.next());
+				out.write('\n');
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 }
