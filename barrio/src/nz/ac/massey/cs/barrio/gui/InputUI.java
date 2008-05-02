@@ -5,12 +5,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import nz.ac.massey.cs.barrio.exporter.Exporter;
-import nz.ac.massey.cs.barrio.exporter.KnownExporter;
 import nz.ac.massey.cs.barrio.filters.EdgeFilter;
 import nz.ac.massey.cs.barrio.filters.KnownEdgeFilters;
 import nz.ac.massey.cs.barrio.filters.KnownNodeFilters;
 import nz.ac.massey.cs.barrio.filters.NodeFilter;
+import nz.ac.massey.cs.barrio.jobs.GraphProcessingJob;
 
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -25,41 +24,30 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
-import org.eclipse.swt.widgets.Shell;
 
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.util.display.DisplayLib;
-import prefuse.visual.AggregateItem;
-import prefuse.visual.VisualItem;
-import edu.uci.ics.jung.graph.Edge;
-import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.filters.Filter;
 
 public class InputUI extends Composite{
 	
-	private static Graph initGraph = null;
-	private static Graph finalGraph = null;
-	private static List<Edge> removedEdges = null;
-	
 	private Button btnRefresh;
-	private Button btnExport;
 
-	private static List<String> activeFilters = new ArrayList<String>();
+	private List<String> activeFilters = new ArrayList<String>();
 	private List<String> previousFilters = new ArrayList<String>();
 	private List<Filter> knownFilters = new ArrayList<Filter>();
-	private static int separationLevel = 0;
+	private int separationLevel = 0;
 	private int lastSeparationLevel = 0;
-	protected static Composite graphControlsComposite;
-	private static Button checkContainers;
-	private static Button checkPackages;
-	private static Button checkDependencyCluster;
-	private static Button checkRemovedEdges;
+	
+	private Composite graphControlsComposite;
+	
+	private List<String> visualSettings;
 	
 	private GraphProcessingJob job;
+	
 	protected static org.eclipse.swt.widgets.Display display;
 	
 	public InputUI(Composite parent, int style) {
@@ -106,7 +94,7 @@ public class InputUI extends Composite{
 					public void widgetDefaultSelected(SelectionEvent e) {}
 
 					public void widgetSelected(SelectionEvent e) {
-						checkboxClick(checkboxNode);
+						filterCheckboxClick(checkboxNode);
 					}
 			   });
 		   }
@@ -129,7 +117,7 @@ public class InputUI extends Composite{
 				public void widgetDefaultSelected(SelectionEvent e) {}
 
 				public void widgetSelected(SelectionEvent e) {
-					checkboxClick(checkboxEdge);
+					filterCheckboxClick(checkboxEdge);
 				}
 				   
 			   });
@@ -156,16 +144,7 @@ public class InputUI extends Composite{
 		   btnRefresh = new Button(topComposite, SWT.PUSH | SWT.CENTER);
 		   btnRefresh.setText("Refresh");
 		   GridData refreshData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		   
-		   
-		   
-		   btnExport = new Button(topComposite, SWT.PUSH | SWT.CENTER);
-		   btnExport.setText("Export Results");
-		   GridData exportData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		   
-		   
 		   btnRefresh.setLayoutData(refreshData);
-		   btnExport.setLayoutData(exportData);
 		   
 		   
 		   //----------------------------------------------------------------
@@ -185,11 +164,6 @@ public class InputUI extends Composite{
 		   Composite navigationComposite = new Composite(graphControlsComposite, SWT.NONE);
 		   navigationComposite.setLayout(new GridLayout(5,true));
 		   
-
-		   
-		   
-		   int y = 100;
-
 		   new Label(navigationComposite, SWT.NULL);
 		   new Label(navigationComposite, SWT.NULL);
 		   
@@ -230,16 +204,16 @@ public class InputUI extends Composite{
 		   new Label(navigationComposite, SWT.NULL);
 		   new Label(navigationComposite, SWT.NULL);
 		   
-		   checkContainers = new Button(graphControlsComposite, SWT.CHECK|SWT.NONE);
+		   final Button checkContainers = new Button(graphControlsComposite, SWT.CHECK|SWT.NONE);
 		   checkContainers.setText("View Containers");
 		   
-		   checkPackages = new Button(graphControlsComposite, SWT.CHECK|SWT.NONE);
+		   final Button checkPackages = new Button(graphControlsComposite, SWT.CHECK|SWT.NONE);
 		   checkPackages.setText("View Packages");
 		   
-		   checkDependencyCluster = new Button(graphControlsComposite, SWT.CHECK|SWT.NONE);
+		   final Button checkDependencyCluster = new Button(graphControlsComposite, SWT.CHECK|SWT.NONE);
 		   checkDependencyCluster.setText("View Dependency Clusters");
 		   
-		   checkRemovedEdges = new Button(graphControlsComposite, SWT.CHECK|SWT.NONE);
+		   final Button checkRemovedEdges = new Button(graphControlsComposite, SWT.CHECK|SWT.NONE);
 		   checkRemovedEdges.setText("View Removed Edges");
 		   
 		   //----------------------------------------------------------------
@@ -261,14 +235,6 @@ public class InputUI extends Composite{
 			    	  btnRefreshClick(nodeFilters, edgeFilters);
 			      }  
 		   });
-		   
-		   btnExport.addSelectionListener(new SelectionListener() {
-			      public void widgetDefaultSelected(SelectionEvent e) {}
-
-			      public void widgetSelected(SelectionEvent e) {
-			    	  btnExportClick();
-			      }  
-		   });
 
 		   final double panValue = 100;
 		   final long duration = 1000;
@@ -276,7 +242,9 @@ public class InputUI extends Composite{
 				public void widgetDefaultSelected(SelectionEvent e) {}
 	
 				public void widgetSelected(SelectionEvent e) {
-					((Display)OutputUI.panelGraph.getComponent(0)).animatePan(0, 0-panValue, duration);
+					GuiGetter gg = new GuiGetter();
+					OutputUI output = gg.getOutputUI();
+					((Display)output.getGraphComponent()).animatePan(0, 0-panValue, duration);
 				}
 		   });
 		   
@@ -284,7 +252,9 @@ public class InputUI extends Composite{
 				public void widgetDefaultSelected(SelectionEvent e) {}
 
 				public void widgetSelected(SelectionEvent e) {
-					((Display)OutputUI.panelGraph.getComponent(0)).animatePan(0, panValue, duration);
+					GuiGetter gg = new GuiGetter();
+					OutputUI output = gg.getOutputUI();
+					((Display)output.getGraphComponent()).animatePan(0, panValue, duration);
 				}
 			});
 		   
@@ -292,7 +262,9 @@ public class InputUI extends Composite{
 				public void widgetDefaultSelected(SelectionEvent e) {}
 
 				public void widgetSelected(SelectionEvent e) {
-					((Display)OutputUI.panelGraph.getComponent(0)).animatePan(0-panValue, 0, duration);
+					GuiGetter gg = new GuiGetter();
+					OutputUI output = gg.getOutputUI();
+					((Display)output.getGraphComponent()).animatePan(0-panValue, 0, duration);
 				}
 			});
 		   
@@ -300,7 +272,9 @@ public class InputUI extends Composite{
 				public void widgetDefaultSelected(SelectionEvent e) {}
 
 				public void widgetSelected(SelectionEvent e) {
-					((Display)OutputUI.panelGraph.getComponent(0)).animatePan(panValue, 0, duration);
+					GuiGetter gg = new GuiGetter();
+					OutputUI output = gg.getOutputUI();
+					((Display)output.getGraphComponent()).animatePan(panValue, 0, duration);
 				}
 			});
 		   
@@ -308,7 +282,9 @@ public class InputUI extends Composite{
 				public void widgetDefaultSelected(SelectionEvent e) {}
 
 				public void widgetSelected(SelectionEvent e) {
-					Display display = (Display)OutputUI.panelGraph.getComponent(0);
+					GuiGetter gg = new GuiGetter();
+					OutputUI output = gg.getOutputUI();
+					Display display = (Display)output.getGraphComponent();
 					display.animateZoom(new Point(display.getWidth()/2, display.getHeight()/2), 1.2, duration);
 				}
 			});
@@ -317,7 +293,9 @@ public class InputUI extends Composite{
 				public void widgetDefaultSelected(SelectionEvent e) {}
 
 				public void widgetSelected(SelectionEvent e) {
-					Display display = (Display)OutputUI.panelGraph.getComponent(0);
+					GuiGetter gg = new GuiGetter();
+					OutputUI output = gg.getOutputUI();
+					Display display = (Display)output.getGraphComponent();
 					display.animateZoom(new Point(display.getWidth()/2, display.getHeight()/2), 0.8, duration);
 				}
 			});
@@ -326,7 +304,9 @@ public class InputUI extends Composite{
 				public void widgetDefaultSelected(SelectionEvent e) {}
 
 				public void widgetSelected(SelectionEvent e) {
-					Display display = (Display)OutputUI.panelGraph.getComponent(0);
+					GuiGetter gg = new GuiGetter();
+					OutputUI output = gg.getOutputUI();
+					Display display = (Display)output.getGraphComponent();
 	                DisplayLib.fitViewToBounds(display,display.getVisualization().getBounds(Visualization.ALL_ITEMS), duration); 
 				}
 			});
@@ -335,7 +315,7 @@ public class InputUI extends Composite{
 			   public void widgetDefaultSelected(SelectionEvent e) {}
 
 			   public void widgetSelected(SelectionEvent e) {
-				   updateDependencyClusterAggregates();
+				   visualControlCheck(checkDependencyCluster);
 			   }
 		   });
 		   
@@ -343,7 +323,7 @@ public class InputUI extends Composite{
 			   public void widgetDefaultSelected(SelectionEvent e) {}
 
 			   public void widgetSelected(SelectionEvent e) {
-				   updatePackageAggregates();
+				   visualControlCheck(checkPackages);
 			   }
 		   });
 		   
@@ -351,7 +331,7 @@ public class InputUI extends Composite{
 			   public void widgetDefaultSelected(SelectionEvent e) {}
 
 			   public void widgetSelected(SelectionEvent e) {
-				   updateConatainerAggregates();
+				   visualControlCheck(checkContainers);
 			   }
 		   });
 		   
@@ -360,7 +340,7 @@ public class InputUI extends Composite{
 				public void widgetDefaultSelected(SelectionEvent e) {}
 		
 					public void widgetSelected(SelectionEvent e) {
-						updateVisualRemovedEdges();
+						visualControlCheck(checkRemovedEdges);
 					}
 		   });
 		   
@@ -380,7 +360,7 @@ public class InputUI extends Composite{
 	
 	
 	//User Interface events==============================================================
-	private void checkboxClick(Button check)
+	private void filterCheckboxClick(Button check)
 	{
 		if(check.getSelection()) activeFilters.add(check.getText());
 		else activeFilters.remove(check.getText());
@@ -389,70 +369,44 @@ public class InputUI extends Composite{
 	
 	private void updateBtnRefreshEnabled()
 	{
-		if(initGraph!=null)
+		//if(initGraph!=null)
 		{
-			System.out.println("[InputUI]: graph != null");
+			//System.out.println("[InputUI]: graph != null");
 			if(previousFilters.equals(activeFilters) && lastSeparationLevel==separationLevel) 
 				btnRefresh.setEnabled(false);
 			else btnRefresh.setEnabled(true);
-		}else btnRefresh.setEnabled(false);
+		}//else btnRefresh.setEnabled(false);
 	}
 	
 	
 	private void btnRefreshClick(List<NodeFilter> nodeFilters, List<EdgeFilter> edgeFilters) 
 	{
-		job.setCanceled(false);
-		runJob(false);
-	}
-	
-	
-	private void runJob(boolean isInit)
-	{
-		
 		job.schedule();
   	  	job.addJobChangeListener(new IJobChangeListener(){
 
-			public void aboutToRun(IJobChangeEvent event) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void aboutToRun(IJobChangeEvent event) {}
 
-			public void awake(IJobChangeEvent event) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void awake(IJobChangeEvent event) {}
 
 			public void done(IJobChangeEvent event) {
 				display.asyncExec(new Runnable(){
 
 					public void run() {
 						updateElements();
-						
+						//updateVisualElements();
 					}
 				});
 				
 			}
 
-			public void running(IJobChangeEvent event) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void running(IJobChangeEvent event) {}
 
-			public void scheduled(IJobChangeEvent event) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void scheduled(IJobChangeEvent event) {}
 
-			public void sleeping(IJobChangeEvent event) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void sleeping(IJobChangeEvent event) {}
   	  		
   	  	});
 	}
-	
-	
-	
 	
 	private void updateElements() {
 
@@ -475,12 +429,11 @@ public class InputUI extends Composite{
 		updateBtnRefreshEnabled();
 	}
 	
-	private void btnExportClick()
+	
+	private void visualControlCheck(Button check)
 	{
-		List<Exporter> exporters = KnownExporter.all();
-		Exporter e = exporters.get(0);
-		
-		e.export(initGraph, finalGraph, separationLevel, activeFilters, removedEdges, OutputUI.treePwMC, OutputUI.treeCwMP);
+		if(check.getSelection()) visualSettings.add(check.getText());
+		else visualSettings.remove(check.getText());
 	}
 	//User Interface events end==============================================================
 	
@@ -492,140 +445,100 @@ public class InputUI extends Composite{
 	
 	//Update visualisation methods ============================================
 	
-	private void updateVisualElements()
-    {
-        updateConatainerAggregates();
-        updatePackageAggregates();
-        updateDependencyClusterAggregates();
-        updateVisualRemovedEdges();
-    }
+	
     
-    @SuppressWarnings("unchecked")
-    private void updateConatainerAggregates()
-    {
-        boolean viewContainers = checkContainers.getSelection();
-        //System.out.println("[InputUI]: view containers = " + viewContainers);
-        if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
-        {
-            Display dis = (Display) OutputUI.panelGraph.getComponent(0);
-            Iterator<VisualItem> i = dis.getVisualization().getVisualGroup("aggregates").tuples();
-            while(i.hasNext())
-            {
-                AggregateItem ai = ((AggregateItem)i.next());
-                if (ai.get("type")!=null && ai.getString("type").equals("jar") && viewContainers) ai.setVisible(true);
-                if (ai.get("type")!=null && ai.getString("type").equals("jar") && !viewContainers) ai.setVisible(false);
-            }
-        }
-    }
-    
-    @SuppressWarnings("unchecked")
-    private void updatePackageAggregates()
-    {
-        boolean viewPackages = checkPackages.getSelection();
-        //System.out.println("[InputUI]: view packages = " + viewPackages);
-        if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
-        {
-            Display dis = (Display) OutputUI.panelGraph.getComponent(0);
-            Iterator<VisualItem> i = dis.getVisualization().getVisualGroup("aggregates").tuples();
-            while(i.hasNext())
-            {
-                AggregateItem ai = ((AggregateItem)i.next());
-                if (ai.get("type")!=null && ai.getString("type").equals("package") && viewPackages) ai.setVisible(true);
-                if (ai.get("type")!=null && ai.getString("type").equals("package") && !viewPackages) ai.setVisible(false);
-            }
-        }
-    }
-    
-    @SuppressWarnings("unchecked")
-    private void updateDependencyClusterAggregates()
-    {
-        boolean viewClusters = checkDependencyCluster.getSelection();
-        //System.out.println("[InputUI]: view clusters = " + viewClusters);
-        if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
-        {
-            Display dis = (Display) OutputUI.panelGraph.getComponent(0);
-            Iterator<VisualItem> i = dis.getVisualization().getVisualGroup("aggregates").tuples();
-            while(i.hasNext())
-            {
-                AggregateItem ai = ((AggregateItem)i.next());
-                if (ai.get("type")!=null && ai.getString("type").equals("cluster") && viewClusters) ai.setVisible(true);
-                if (ai.get("type")!=null && ai.getString("type").equals("cluster") && !viewClusters) ai.setVisible(false);
-            }
-        }
-    }
-    
-    @SuppressWarnings("unchecked")
-    private void updateVisualRemovedEdges()
-    {
-        boolean viewEdges = checkRemovedEdges.getSelection();
-        //System.out.println("[InputUI]: view edges = " + viewEdges);
-        if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
-        {                       
-            Display display = (Display) OutputUI.panelGraph.getComponent(0);
-            Iterator<VisualItem> edgeIterator = display.getVisualization().getVisualGroup("graph.edges").tuples();
-            while(edgeIterator.hasNext())
-            {
-                VisualItem edge = edgeIterator.next();
-                if(!viewEdges && edge.getString("relationship.state").equals("removed")) edge.setVisible(false);
-                else edge.setVisible(true);
-            }
-                
-        }
-    }
+//    @SuppressWarnings("unchecked")
+//    private void updateConatainerAggregates()
+//    {
+//        boolean viewContainers = checkContainers.getSelection();
+//        //System.out.println("[InputUI]: view containers = " + viewContainers);
+//        if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
+//        {
+//            Display dis = (Display) OutputUI.panelGraph.getComponent(0);
+//            Iterator<VisualItem> i = dis.getVisualization().getVisualGroup("aggregates").tuples();
+//            while(i.hasNext())
+//            {
+//                AggregateItem ai = ((AggregateItem)i.next());
+//                if (ai.get("type")!=null && ai.getString("type").equals("jar") && viewContainers) ai.setVisible(true);
+//                if (ai.get("type")!=null && ai.getString("type").equals("jar") && !viewContainers) ai.setVisible(false);
+//            }
+//        }
+//    }
+//    
+//    @SuppressWarnings("unchecked")
+//    private void updatePackageAggregates()
+//    {
+//        boolean viewPackages = checkPackages.getSelection();
+//        //System.out.println("[InputUI]: view packages = " + viewPackages);
+//        if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
+//        {
+//            Display dis = (Display) OutputUI.panelGraph.getComponent(0);
+//            Iterator<VisualItem> i = dis.getVisualization().getVisualGroup("aggregates").tuples();
+//            while(i.hasNext())
+//            {
+//                AggregateItem ai = ((AggregateItem)i.next());
+//                if (ai.get("type")!=null && ai.getString("type").equals("package") && viewPackages) ai.setVisible(true);
+//                if (ai.get("type")!=null && ai.getString("type").equals("package") && !viewPackages) ai.setVisible(false);
+//            }
+//        }
+//    }
+//    
+//    @SuppressWarnings("unchecked")
+//    private void updateDependencyClusterAggregates()
+//    {
+//        boolean viewClusters = checkDependencyCluster.getSelection();
+//        //System.out.println("[InputUI]: view clusters = " + viewClusters);
+//        if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
+//        {
+//            Display dis = (Display) OutputUI.panelGraph.getComponent(0);
+//            Iterator<VisualItem> i = dis.getVisualization().getVisualGroup("aggregates").tuples();
+//            while(i.hasNext())
+//            {
+//                AggregateItem ai = ((AggregateItem)i.next());
+//                if (ai.get("type")!=null && ai.getString("type").equals("cluster") && viewClusters) ai.setVisible(true);
+//                if (ai.get("type")!=null && ai.getString("type").equals("cluster") && !viewClusters) ai.setVisible(false);
+//            }
+//        }
+//    }
+//    
+//    @SuppressWarnings("unchecked")
+//    private void updateVisualRemovedEdges()
+//    {
+//        boolean viewEdges = checkRemovedEdges.getSelection();
+//        //System.out.println("[InputUI]: view edges = " + viewEdges);
+//        if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
+//        {                       
+//            Display display = (Display) OutputUI.panelGraph.getComponent(0);
+//            Iterator<VisualItem> edgeIterator = display.getVisualization().getVisualGroup("graph.edges").tuples();
+//            while(edgeIterator.hasNext())
+//            {
+//                VisualItem edge = edgeIterator.next();
+//                if(!viewEdges && edge.getString("relationship.state").equals("removed")) edge.setVisible(false);
+//                else edge.setVisible(true);
+//            }
+//                
+//        }
+//    }
 
 
-	protected static List<String> getActiveFilters() {
+	public List<String> getActiveFilters() {
 		return activeFilters;
 	}
 
 
-	protected static int getSeparationLevel() {
+	public int getSeparationLevel() {
 		return separationLevel;
 	}
 
 
-	protected static boolean getCheckContainers() {
-		return checkContainers.getSelection();
+	protected List<String> getVisualSettings()
+	{
+		return visualSettings;
 	}
 
 
-	protected static boolean getCheckPackages() {
-		return checkPackages.getSelection();
-	}
-
-
-	protected static boolean getCheckDependencyCluster() {
-		return checkDependencyCluster.getSelection();
-	}
-
-
-	protected static List<Edge> getRemovedEdges() {
-		return removedEdges;
-	}
-
-
-	protected static boolean getCheckRemovedEdges() {
-		return checkRemovedEdges.getSelection();
-	}
-	
-	
-	protected static void setInitGraph(Graph graph) {
-		initGraph = graph;
-	}
-
-
-	protected static void setFinalGraph(Graph graph) {
-		finalGraph = graph;
-	}
-
-
-	protected static Graph getInitGraph() {
-		return initGraph;
-	}
-
-
-	protected static Graph getFinalGraph() {
-		return finalGraph;
+	protected void setGraphControlsCompositeVisible(boolean isVisible) {
+		this.graphControlsComposite.setVisible(isVisible);
 	}
 
 	

@@ -1,11 +1,14 @@
 package nz.ac.massey.cs.barrio.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Frame;
 import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.swing.DefaultCellEditor;
 import javax.swing.JCheckBox;
@@ -30,21 +33,17 @@ import org.eclipse.swt.widgets.Tree;
 import prefuse.Display;
 import prefuse.data.Edge;
 import prefuse.data.tuple.TupleSet;
-import prefuse.visual.AggregateItem;
-import prefuse.visual.AggregateTable;
 
 public class OutputUI extends Composite{
 	
-	public static Tree treeProject;
-	public static Tree treePwMC;
-	public static Tree treeCwMP;
-	public static Panel panelGraph;
-	public static org.eclipse.swt.widgets.Display display;
-	public static JTable table;
+	private Tree treeProject;
+	private Tree treePwMC;
+	private Tree treeCwMP;
+	private Panel panelGraph;
+	private JTable table;
 	
 	public OutputUI(Composite parent, int style) {
 		super(parent, style);
-		display = super.getDisplay();
 		this.setLayout(new GridLayout());
 		GridData tabData = new GridData(GridData.FILL_BOTH);
 		
@@ -75,12 +74,16 @@ public class OutputUI extends Composite{
 		Panel panelEdges = new Panel(new BorderLayout());
 		frameEdges.add(panelEdges);
 		DefaultTableModel model = new DefaultTableModel(){
-		      public Class getColumnClass(int columnIndex) {
+			private static final long serialVersionUID = 1L;
+
+			public Class<String> getColumnClass(int columnIndex) {
 		          return String.class;
 		      }
 		};
 		model.setDataVector(null, new Object[]{"id","","Source class","Relationship","Destination class","Betweenness",""});
 		table = new JTable(model){
+			private static final long serialVersionUID = 1L;
+
 			public boolean isCellEditable(int row, int column){
 				return column==6;
 			}
@@ -169,73 +172,20 @@ public class OutputUI extends Composite{
 	
 	protected void graphFolderSelected(TabFolder tabFolder, TabItem itemGraph) 
 	{
+		GuiGetter gg = new GuiGetter();
+		InputUI input = gg.getInputUI();
 		if(tabFolder.getSelectionIndex()==tabFolder.indexOf(itemGraph))
-			InputUI.graphControlsComposite.setVisible(true);
-		else InputUI.graphControlsComposite.setVisible(false);
+			input.setGraphControlsCompositeVisible(true);
+		else input.setGraphControlsCompositeVisible(false);
 		
 	}
 
 
-	protected void checkPacksActionPerformed(ActionEvent evt, boolean b) {
-		Display dis = (Display) panelGraph.getComponent(0);
-		if(dis!=null)
-		{
-			Iterator i = dis.getVisualization().getVisualGroup("aggregates").tuples();
-			while(i.hasNext())
-			{
-				AggregateItem ai = ((AggregateItem)i.next());
-				if (ai.get("type")!=null && ai.getString("type").equals("package") && b) ai.setVisible(true);
-				if (ai.get("type")!=null && ai.getString("type").equals("package") && !b) ai.setVisible(false);
-			}
-		}
-	}
-
-
-	protected void checkClustersActionPerformed(ActionEvent evt, boolean b) {
-		Display dis = (Display) panelGraph.getComponent(0);
-		if(dis!=null)
-		{
-			AggregateTable at = (AggregateTable) dis.getVisualization().getVisualGroup("aggregates");
-			Iterator i = at.tuples();
-			while(i.hasNext())
-			{
-				AggregateItem ai = ((AggregateItem)i.next());
-				if (ai.get("type")!=null && ai.getString("type").equals("cluster") && b) ai.setVisible(true);
-				if (ai.get("type")!=null && ai.getString("type").equals("cluster") && !b) ai.setVisible(false);
-			}
-		}		
-	}
-
-
-	protected void checkJarActionPerformed(ActionEvent evt, boolean b) 
-	{
-		Display dis = (Display) panelGraph.getComponent(0);
-		if(dis!=null)
-		{
-			Iterator i = dis.getVisualization().getVisualGroup("aggregates").tuples();
-			while(i.hasNext())
-			{
-				AggregateItem ai = ((AggregateItem)i.next());
-				if (ai.get("type")!=null && ai.getString("type").equals("jar") && b) ai.setVisible(true);
-				if (ai.get("type")!=null && ai.getString("type").equals("jar") && !b) ai.setVisible(false);
-			}
-		}
-	}
-
-
-	public static void updateTable(java.util.List<Object[]> list)
+	private void updateTable(java.util.List<Object[]> list)
 	{
 		DefaultTableModel dtm = (DefaultTableModel) table.getModel();
-
-		for(int i=dtm.getRowCount()-1; i>-1; i--)
-		{
-			dtm.removeRow(i);
-		}
-		
-		for(Object[] edgeData:list) 
-		{
-			dtm.addRow(edgeData);
-		}
+		for(int i=dtm.getRowCount()-1; i>-1; i--) dtm.removeRow(i);
+		for(Object[] edgeData:list) dtm.addRow(edgeData);
 	}
 	
 	
@@ -276,6 +226,33 @@ public class OutputUI extends Composite{
 	
 	public void dispose() {
 		super.dispose();
+	}
+	
+	public void paintGraph(Component comp)
+	{
+		panelGraph.removeAll();
+		panelGraph.add(comp, 0);
+		panelGraph.doLayout();
+		panelGraph.repaint();
+	}
+	
+	public Component getGraphComponent()
+	{
+		return panelGraph.getComponent(0);
+	}
+
+
+	@SuppressWarnings("unchecked")
+	public void updateOutputs(OutputGenerator og, List edges) 
+	{
+		System.out.println("[OutputUI]: updateOutputs called");
+		og.generateProjectDescription(treeProject);
+		og.generatePackagesWithMultipleClusters(treePwMC);
+        og.generateClustersWithMuiltiplePackages(treeCwMP);
+        
+        List<Object[]> list = new ArrayList<Object[]>();
+        og.generateListRemovedEdges(list, edges);
+        updateTable(list);
 	}
 
 }

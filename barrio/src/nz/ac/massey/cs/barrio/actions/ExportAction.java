@@ -1,9 +1,11 @@
-package nz.ac.massey.cs.barrio.gui;
+package nz.ac.massey.cs.barrio.actions;
 
 import java.util.List;
 
 import nz.ac.massey.cs.barrio.exporter.Exporter;
 import nz.ac.massey.cs.barrio.exporter.KnownExporter;
+import nz.ac.massey.cs.barrio.gui.InputUI;
+import nz.ac.massey.cs.barrio.gui.OutputUI;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
