@@ -58,4 +58,9 @@ public class OutputView extends ViewPart {
 	public void setFocus() {
 		searchSashForm.setFocus();
 	}
+
+
+	public OutputUI getOutputUI() {
+		return OutputWidget;
+	}
 }

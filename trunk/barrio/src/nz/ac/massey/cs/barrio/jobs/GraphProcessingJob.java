@@ -1,9 +1,8 @@
-package nz.ac.massey.cs.barrio.gui;
+package nz.ac.massey.cs.barrio.jobs;
 
 import java.awt.BorderLayout;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -12,6 +11,9 @@ import nz.ac.massey.cs.barrio.clusterer.KnownClusterer;
 import nz.ac.massey.cs.barrio.filters.KnownEdgeFilters;
 import nz.ac.massey.cs.barrio.filters.KnownNodeFilters;
 import nz.ac.massey.cs.barrio.graphconverter.JungPrefuseBridge;
+import nz.ac.massey.cs.barrio.gui.GuiGetter;
+import nz.ac.massey.cs.barrio.gui.OutputGenerator;
+import nz.ac.massey.cs.barrio.gui.OutputUI;
 import nz.ac.massey.cs.barrio.inputReader.InputReader;
 import nz.ac.massey.cs.barrio.inputReader.KnownInputReader;
 import nz.ac.massey.cs.barrio.inputReader.UnknownInputException;
@@ -26,13 +28,10 @@ import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
 import prefuse.Display;
-import prefuse.visual.AggregateItem;
-import prefuse.visual.VisualItem;
 import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.filters.Filter;
 import edu.uci.ics.jung.graph.impl.DirectedSparseGraph;
-import edu.uci.ics.jung.io.GraphMLFile;
 import edu.uci.ics.jung.utils.UserData;
 
 public class GraphProcessingJob extends Job {
@@ -46,19 +45,21 @@ public class GraphProcessingJob extends Job {
 	private List<Edge> removedEdges;
 	private boolean canceled;
 	
-	private OutputGenerator og;
+	private Display display;
 	
-	public GraphProcessingJob(Object input, Graph initGraph, Graph finalGraph) {
+	public GraphProcessingJob(Object input, Graph initGraph, List<String> filters, int separation) 
+	{
 		super("Processing graph");
 		this.input = input;
 		
 		this.initGraph = initGraph;
-		this.finalGraph = finalGraph;
+		this.finalGraph = null;
 		
-		filters = InputUI.getActiveFilters();
-		separation = InputUI.getSeparationLevel();		
-		canceled = false;
+		this.filters = filters;
+		this.separation = separation;		
 		removedEdges = new ArrayList<Edge>();
+		canceled = false;
+		
 	}
 	
 	
@@ -87,16 +88,27 @@ public class GraphProcessingJob extends Job {
 			clusterGraph(monitor);
 			buildVisual(monitor);
 			
-			InputUI.setInitGraph(initGraph);
-			InputUI.setFinalGraph(finalGraph);
+			monitor.done();
+			
+			if(canceled) return Status.CANCEL_STATUS;
+			return Status.OK_STATUS;
+		}else
+		{
+			int SCALE = 3+filters.size()+separation;
+			monitor.beginTask("Processing Graph", SCALE);
+			
+			if(initGraph==null) return Status.CANCEL_STATUS;
+			finalGraph = (Graph) initGraph.copy();
+			
+			filterGraph(monitor);
+			clusterGraph(monitor);
+			buildVisual(monitor);
 			
 			monitor.done();
 			
 			if(canceled) return Status.CANCEL_STATUS;
 			return Status.OK_STATUS;
 		}
-		
-		return Status.CANCEL_STATUS;
 	}
 
 
@@ -135,32 +147,36 @@ public class GraphProcessingJob extends Job {
 	
 	private void showUnknownInputMessage()
 	{
-		OutputUI.display.asyncExec(new Runnable(){
-
-			public void run() {
-				Shell s = new Shell();
-				MessageBox mb = new MessageBox(s, SWT.ICON_ERROR);
-				mb.setText("Barrio Error: Unknown Input");
-				mb.setMessage("Cannot build graph from this input type!!!\n Refer to user manual.");
-				int rc = mb.open();
-				if(rc==SWT.OK) s.dispose();
-			}
-		});
+//		GuiGetter gg = new GuiGetter();
+//		OutputUI output = gg.getOutputUI();
+//		output.getDisplay().asyncExec(new Runnable()
+//		{
+//			public void run() {
+//				Shell s = new Shell();
+//				MessageBox mb = new MessageBox(s, SWT.ICON_ERROR);
+//				mb.setText("Barrio Error: Unknown Input");
+//				mb.setMessage("Cannot build graph from this input type!!!\n Refer to user manual.");
+//				int rc = mb.open();
+//				if(rc==SWT.OK) s.dispose();
+//			}
+//		});
 	}
 	
 	private void showConnectionErrorMessage()
 	{
-		OutputUI.display.asyncExec(new Runnable(){
-
-			public void run() {
-				Shell s = new Shell();
-				MessageBox mb = new MessageBox(s, SWT.ICON_ERROR);
-				mb.setText("Barrio Network Connection Error");
-				mb.setMessage("Could not connect to DTD file!!!\n Check your network settings.");
-				int rc = mb.open();
-				if(rc==SWT.OK) s.dispose();
-			}
-		});
+//		GuiGetter gg = new GuiGetter();
+//		OutputUI output = gg.getOutputUI();
+//		output.getDisplay().asyncExec(new Runnable()
+//		{
+//			public void run() {
+//				Shell s = new Shell();
+//				MessageBox mb = new MessageBox(s, SWT.ICON_ERROR);
+//				mb.setText("Barrio Network Connection Error");
+//				mb.setMessage("Could not connect to DTD file!!!\n Check your network settings.");
+//				int rc = mb.open();
+//				if(rc==SWT.OK) s.dispose();
+//			}
+//		});
 	}
 
 
@@ -225,59 +241,33 @@ public class GraphProcessingJob extends Job {
 
 		if(canceled) return;
 		monitor.subTask("Producing Visualisation");
-
-		updateOutputs();
 		monitor.worked(1);
 		
 		JungPrefuseBridge bridge = new JungPrefuseBridge();
 		DisplayBuilder disBuilder = new DisplayBuilder();
-		Display dis = disBuilder.getDisplay(bridge.convert(finalGraph));
-		dis.setLayout(new BorderLayout());
+		display = disBuilder.getDisplay(bridge.convert(finalGraph));
+		display.setLayout(new BorderLayout());
 		
-		OutputUI.panelGraph.removeAll();
-		OutputUI.panelGraph.add(dis, 0);
-		OutputUI.panelGraph.doLayout();
-		OutputUI.panelGraph.repaint();
 		
 		monitor.worked(1);
 		
 	}
-	
-	
-	
-	
-	private void updateOutputs()
-    {
-		if(canceled) return;
-		if(OutputUI.display !=null && OutputUI.display instanceof org.eclipse.swt.widgets.Display) 
-		{
-			OutputUI.display.asyncExec(new Runnable(){
 
-				public void run() {
-					og = new OutputGenerator(initGraph, finalGraph);
-					og.generateProjectDescription(OutputUI.treeProject);
-										
-			        og.generatePackagesWithMultipleClusters(OutputUI.treePwMC);
-			        og.generateClustersWithMuiltiplePackages(OutputUI.treeCwMP);
-			        
-			        List<Object[]> list = new ArrayList<Object[]>();
-			        og.generateListRemovedEdges(list, removedEdges);
-			        OutputUI.updateTable(list);
-					
-				}
-			});
-		}
+
+	public Graph getInitGraph() {
+		return initGraph;
 	}
 
-
-
-	public boolean isCanceled() {
-		return canceled;
+	public Graph getFinalGraph() {
+		return finalGraph;
+	}
+	
+	public Display getDispaly()
+	{
+		return display;
 	}
 
-
-
-	public void setCanceled(boolean canceled) {
-		this.canceled = canceled;
+	public List<Edge> getRemovedEdges() {
+		return removedEdges;
 	}
 }
