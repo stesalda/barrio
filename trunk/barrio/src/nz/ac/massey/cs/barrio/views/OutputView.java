@@ -4,7 +4,6 @@ package nz.ac.massey.cs.barrio.views;
 import nz.ac.massey.cs.barrio.gui.OutputUI;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.part.ViewPart;
@@ -30,7 +29,6 @@ import org.eclipse.ui.part.ViewPart;
 
 public class OutputView extends ViewPart {
 
-	private SashForm searchSashForm;
 	private OutputUI OutputWidget;
 	
 	/**
@@ -46,21 +44,19 @@ public class OutputView extends ViewPart {
 	 * to create the viewer and initialize it.
 	 */
 	public void createPartControl(Composite parent) {
-		searchSashForm = new SashForm(parent, SWT.HORIZONTAL);
 		GridData gridData = new GridData(GridData.FILL_BOTH | GridData.GRAB_HORIZONTAL);
-		gridData.horizontalSpan = 2;
-		searchSashForm.setLayoutData(gridData);
-		
-		OutputWidget = new OutputUI(searchSashForm, SWT.NONE);
-	}
-
-
-	public void setFocus() {
-		searchSashForm.setFocus();
+		OutputWidget = new OutputUI(parent, SWT.NONE);
+		OutputWidget.setLayoutData(gridData);
 	}
 
 
 	public OutputUI getOutputUI() {
 		return OutputWidget;
+	}
+
+
+	@Override
+	public void setFocus() {
+		OutputWidget.setFocus();
 	}
 }

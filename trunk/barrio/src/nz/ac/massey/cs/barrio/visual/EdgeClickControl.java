@@ -14,6 +14,13 @@ import prefuse.data.Node;
 
 public class EdgeClickControl extends ControlAdapter implements Control {
 
+	private OutputUI output;
+	
+	public EdgeClickControl(OutputUI output) 
+	{
+		this.output = output;
+	}
+
 	@Override
 	public void itemClicked(VisualItem item, MouseEvent e) 
 	{
@@ -22,15 +29,15 @@ public class EdgeClickControl extends ControlAdapter implements Control {
 			VisualHighlightingManager mgr = new VisualHighlightingManager();
 			mgr.setSelectItem(item, String.valueOf(!item.get("edge.isSelected").equals("true")));
 			
-			int rows = OutputUI.table.getModel().getRowCount();
+			int rows = output.getTable().getModel().getRowCount();
 			for(int i=0; i<rows; i++)
 			{
-				if(item.get("id").equals(OutputUI.table.getModel().getValueAt(i,0)))
+				if(item.get("id").equals(output.getTable().getModel().getValueAt(i,0)))
 				{
-					String value = OutputUI.table.getModel().getValueAt(i, 6).toString();
+					String value = output.getTable().getModel().getValueAt(i, 6).toString();
 					if(value==null) value="false";
 					boolean newValue = !value.equals("true");
-					OutputUI.table.getModel().setValueAt(newValue, i, 6);
+					output.getTable().getModel().setValueAt(newValue, i, 6);
 				}
 			}
 			

@@ -11,8 +11,6 @@ import nz.ac.massey.cs.barrio.clusterer.KnownClusterer;
 import nz.ac.massey.cs.barrio.filters.KnownEdgeFilters;
 import nz.ac.massey.cs.barrio.filters.KnownNodeFilters;
 import nz.ac.massey.cs.barrio.graphconverter.JungPrefuseBridge;
-import nz.ac.massey.cs.barrio.gui.GuiGetter;
-import nz.ac.massey.cs.barrio.gui.OutputGenerator;
 import nz.ac.massey.cs.barrio.gui.OutputUI;
 import nz.ac.massey.cs.barrio.inputReader.InputReader;
 import nz.ac.massey.cs.barrio.inputReader.KnownInputReader;
@@ -23,9 +21,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
 
 import prefuse.Display;
 import edu.uci.ics.jung.graph.Edge;
@@ -46,7 +41,16 @@ public class GraphProcessingJob extends Job {
 	private boolean canceled;
 	
 	private Display display;
+	private OutputUI output;
 	
+	
+	public void setOutput(OutputUI output) {
+		this.output = output;
+	}
+
+
+
+
 	public GraphProcessingJob(Object input, Graph initGraph, List<String> filters, int separation) 
 	{
 		super("Processing graph");
@@ -245,9 +249,9 @@ public class GraphProcessingJob extends Job {
 		
 		JungPrefuseBridge bridge = new JungPrefuseBridge();
 		DisplayBuilder disBuilder = new DisplayBuilder();
+		disBuilder.setOutput(output);
 		display = disBuilder.getDisplay(bridge.convert(finalGraph));
 		display.setLayout(new BorderLayout());
-		
 		
 		monitor.worked(1);
 		
@@ -269,5 +273,19 @@ public class GraphProcessingJob extends Job {
 
 	public List<Edge> getRemovedEdges() {
 		return removedEdges;
+	}
+
+
+
+
+	public List<String> getFilters() {
+		return filters;
+	}
+
+
+
+
+	public int getSeparation() {
+		return separation;
 	}
 }

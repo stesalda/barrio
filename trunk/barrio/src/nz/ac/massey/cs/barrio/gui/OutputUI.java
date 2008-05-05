@@ -197,6 +197,8 @@ public class OutputUI extends Composite{
 		setEdge(edgeId, highlight);	
 	}
 	
+	
+	@SuppressWarnings("unchecked")
 	private void setEdge(String edgeId, String value)
 	{
 		Display dis = (Display) panelGraph.getComponent(0);
@@ -215,6 +217,7 @@ public class OutputUI extends Composite{
 			}
 		}
 	}
+	
 	
 	private void highlightVisual(Display dis, Edge edge, String select)
 	{
@@ -253,6 +256,21 @@ public class OutputUI extends Composite{
         List<Object[]> list = new ArrayList<Object[]>();
         og.generateListRemovedEdges(list, edges);
         updateTable(list);
+	}
+
+
+	public JTable getTable() {
+		return table;
+	}
+
+
+	public Tree getTreePwMC() {
+		return treePwMC;
+	}
+
+
+	public Tree getTreeCwMP() {
+		return treeCwMP;
 	}
 
 }
