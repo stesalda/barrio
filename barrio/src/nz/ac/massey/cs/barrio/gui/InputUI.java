@@ -216,6 +216,8 @@ public class InputUI extends Composite{
 		   final Button checkRemovedEdges = new Button(graphControlsComposite, SWT.CHECK|SWT.NONE);
 		   checkRemovedEdges.setText("View Removed Edges");
 		   
+		   
+		   visualSettings = new ArrayList<String>();
 		   //----------------------------------------------------------------
 		   
 		   
@@ -382,8 +384,9 @@ public class InputUI extends Composite{
 	private void btnRefreshClick(List<NodeFilter> nodeFilters, List<EdgeFilter> edgeFilters) 
 	{
 		GuiGetter gg = new GuiGetter();
+		final OutputUI output = gg.getOutputUI();
 		job = new GraphProcessingJob(null, job.getInitGraph(), activeFilters, separationLevel);
-		job.setOutput(gg.getOutputUI());
+		job.setOutput(output);
 		job.setUser(true);
   	  	job.addJobChangeListener(new IJobChangeListener(){
 
@@ -396,10 +399,9 @@ public class InputUI extends Composite{
 
 					public void run() {
 						updateElements();
-						updateOutputs();
+						output.updateVisualElements(visualSettings);
 					}
 				});
-				
 			}
 
 			public void running(IJobChangeEvent event) {}
@@ -425,11 +427,6 @@ public class InputUI extends Composite{
 			updateBtnRefreshEnabled();
 		}
 	}
-	
-	private void updateOutputs()
-	{
-		
-	}
 
 
 	private void sliderMove(Label label, int value)
@@ -442,95 +439,16 @@ public class InputUI extends Composite{
 	
 	private void visualControlCheck(Button check)
 	{
+		GuiGetter gg = new GuiGetter();
+		OutputUI output = gg.getOutputUI();
 		if(check.getSelection()) visualSettings.add(check.getText());
 		else visualSettings.remove(check.getText());
+		output.updateVisualElements(visualSettings);
 	}
 	//User Interface events end==============================================================
 	
 	
 	
-	
-	
-	
-	
-	//Update visualisation methods ============================================
-	
-	
-    
-//    @SuppressWarnings("unchecked")
-//    private void updateConatainerAggregates()
-//    {
-//        boolean viewContainers = checkContainers.getSelection();
-//        //System.out.println("[InputUI]: view containers = " + viewContainers);
-//        if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
-//        {
-//            Display dis = (Display) OutputUI.panelGraph.getComponent(0);
-//            Iterator<VisualItem> i = dis.getVisualization().getVisualGroup("aggregates").tuples();
-//            while(i.hasNext())
-//            {
-//                AggregateItem ai = ((AggregateItem)i.next());
-//                if (ai.get("type")!=null && ai.getString("type").equals("jar") && viewContainers) ai.setVisible(true);
-//                if (ai.get("type")!=null && ai.getString("type").equals("jar") && !viewContainers) ai.setVisible(false);
-//            }
-//        }
-//    }
-//    
-//    @SuppressWarnings("unchecked")
-//    private void updatePackageAggregates()
-//    {
-//        boolean viewPackages = checkPackages.getSelection();
-//        //System.out.println("[InputUI]: view packages = " + viewPackages);
-//        if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
-//        {
-//            Display dis = (Display) OutputUI.panelGraph.getComponent(0);
-//            Iterator<VisualItem> i = dis.getVisualization().getVisualGroup("aggregates").tuples();
-//            while(i.hasNext())
-//            {
-//                AggregateItem ai = ((AggregateItem)i.next());
-//                if (ai.get("type")!=null && ai.getString("type").equals("package") && viewPackages) ai.setVisible(true);
-//                if (ai.get("type")!=null && ai.getString("type").equals("package") && !viewPackages) ai.setVisible(false);
-//            }
-//        }
-//    }
-//    
-//    @SuppressWarnings("unchecked")
-//    private void updateDependencyClusterAggregates()
-//    {
-//        boolean viewClusters = checkDependencyCluster.getSelection();
-//        //System.out.println("[InputUI]: view clusters = " + viewClusters);
-//        if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
-//        {
-//            Display dis = (Display) OutputUI.panelGraph.getComponent(0);
-//            Iterator<VisualItem> i = dis.getVisualization().getVisualGroup("aggregates").tuples();
-//            while(i.hasNext())
-//            {
-//                AggregateItem ai = ((AggregateItem)i.next());
-//                if (ai.get("type")!=null && ai.getString("type").equals("cluster") && viewClusters) ai.setVisible(true);
-//                if (ai.get("type")!=null && ai.getString("type").equals("cluster") && !viewClusters) ai.setVisible(false);
-//            }
-//        }
-//    }
-//    
-//    @SuppressWarnings("unchecked")
-//    private void updateVisualRemovedEdges()
-//    {
-//        boolean viewEdges = checkRemovedEdges.getSelection();
-//        //System.out.println("[InputUI]: view edges = " + viewEdges);
-//        if(OutputUI.panelGraph.getComponent(0)!=null && OutputUI.panelGraph.getComponent(0) instanceof Display)
-//        {                       
-//            Display display = (Display) OutputUI.panelGraph.getComponent(0);
-//            Iterator<VisualItem> edgeIterator = display.getVisualization().getVisualGroup("graph.edges").tuples();
-//            while(edgeIterator.hasNext())
-//            {
-//                VisualItem edge = edgeIterator.next();
-//                if(!viewEdges && edge.getString("relationship.state").equals("removed")) edge.setVisible(false);
-//                else edge.setVisible(true);
-//            }
-//                
-//        }
-//    }
-
-
 	public List<String> getActiveFilters() {
 		return activeFilters;
 	}
@@ -541,7 +459,7 @@ public class InputUI extends Composite{
 	}
 
 
-	protected List<String> getVisualSettings()
+	public List<String> getVisualSettings()
 	{
 		return visualSettings;
 	}
@@ -560,7 +478,4 @@ public class InputUI extends Composite{
 	public void setJob(GraphProcessingJob job) {
 		this.job = job;
 	}
-
-	
-	//Update visualisation methods end ============================================
 }
