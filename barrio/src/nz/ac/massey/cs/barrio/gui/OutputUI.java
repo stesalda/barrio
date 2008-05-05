@@ -80,7 +80,7 @@ public class OutputUI extends Composite{
 		          return String.class;
 		      }
 		};
-		model.setDataVector(null, new Object[]{"id","","Source class","Relationship","Destination class","Betweenness",""});
+		model.setDataVector(null, new Object[]{"id","","Source class","Relationship","Destination class","Betweenness","Highlight"});
 		table = new JTable(model){
 			private static final long serialVersionUID = 1L;
 
@@ -133,9 +133,9 @@ public class OutputUI extends Composite{
 		    col5.setPreferredWidth(85);
 		    
 		    TableColumn col6 = table.getColumnModel().getColumn(6);
-		    col6.setMinWidth(20);
-		    col6.setMaxWidth(30);
-		    col6.setPreferredWidth(25);
+		    col6.setMinWidth(60);
+		    col6.setMaxWidth(80);
+		    col6.setPreferredWidth(60);
 		}
 		JScrollPane scrollPane = new JScrollPane(table);
 		panelEdges.add(scrollPane);
