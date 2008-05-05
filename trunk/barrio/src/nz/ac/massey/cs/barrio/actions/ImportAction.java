@@ -56,9 +56,8 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 			public void sleeping(IJobChangeEvent event) {}
 
 			public synchronized void done(IJobChangeEvent event) {
-				System.out.println("[ImportAction]: job done");
-				//updateOutputs(job);
 				paintDisplay(job);
+				output.updateVisualElements(input.getVisualSettings());
 			}
 	    	
 	    });

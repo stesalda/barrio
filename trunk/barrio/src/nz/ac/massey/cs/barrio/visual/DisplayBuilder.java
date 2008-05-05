@@ -62,6 +62,7 @@ public class DisplayBuilder {
 		AggregateTable at = vis.addAggregates("aggregates");
         at.addColumn(VisualItem.POLYGON, float[].class);
         at.addColumn("type", String.class);
+		at.addColumn("aggregate.name", String.class);
         
 
 		
@@ -72,6 +73,7 @@ public class DisplayBuilder {
         while(jarIter.hasNext())
         {
         	AggregateItem aitem = (AggregateItem)at.addItem();
+        	aitem.set("aggregate.name", "View Containers");
         	String aJar =  jarIter.next();
         	aitem.setString("type", "jar");
         	Iterator<Node> nodes = vg.nodes();
@@ -88,6 +90,7 @@ public class DisplayBuilder {
         while(clusterIter.hasNext())
         {
         	AggregateItem aitem = (AggregateItem)at.addItem();
+        	aitem.set("aggregate.name", "View Dependency Clusters");
         	String aCluster =  clusterIter.next();
         	aitem.setString("type", "cluster");
         	Iterator<Node> nodes = vg.nodes();
@@ -104,6 +107,7 @@ public class DisplayBuilder {
         while(packs.hasNext())
         {
         	AggregateItem aitem = (AggregateItem)at.addItem();
+        	aitem.set("aggregate.name", "View Packages");
         	String aPack =  packs.next();
         	aitem.setString("type", "package");
         	Iterator<Node> nodes = vg.nodes();

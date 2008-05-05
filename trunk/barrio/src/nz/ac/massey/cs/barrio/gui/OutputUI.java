@@ -31,8 +31,10 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Tree;
 
 import prefuse.Display;
+import prefuse.Visualization;
 import prefuse.data.Edge;
 import prefuse.data.tuple.TupleSet;
+import prefuse.visual.VisualItem;
 
 public class OutputUI extends Composite{
 	
@@ -156,10 +158,7 @@ public class OutputUI extends Composite{
 		itemGraph.setControl(graphVis);
 		tabFolder.addSelectionListener(new SelectionListener(){
 
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
+			public void widgetDefaultSelected(SelectionEvent e) {}
 
 			public void widgetSelected(SelectionEvent e) {
 				graphFolderSelected(tabFolder, itemGraph);
@@ -271,6 +270,34 @@ public class OutputUI extends Composite{
 
 	public Tree getTreeCwMP() {
 		return treeCwMP;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	public void updateVisualElements(List<String> visualSettings) 
+	{
+		if(panelGraph.getComponentCount()>0)
+		{
+			Visualization vis = ((Display)panelGraph.getComponent(0)).getVisualization();
+			TupleSet aggregates = vis.getGroup("aggregates");
+			Iterator<VisualItem> iter = aggregates.tuples();
+			while(iter.hasNext())
+			{
+				VisualItem item = iter.next();
+				String name = item.get("aggregate.name").toString();
+				if(visualSettings.contains(name)) item.setVisible(true);
+				else item.setVisible(false);
+			}
+			
+			TupleSet edges = vis.getVisualGroup("graph.edges");
+			Iterator<VisualItem> edgeIter = edges.tuples();
+			while(edgeIter.hasNext())
+			{
+				VisualItem edge = edgeIter.next();
+                if(!visualSettings.contains("View Removed Edges") && edge.getString("relationship.state").equals("removed")) edge.setVisible(false);
+                else edge.setVisible(true);
+			}
+		}		
 	}
 
 }
