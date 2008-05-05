@@ -6,6 +6,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import nz.ac.massey.cs.barrio.gui.OutputUI;
+
 
 import prefuse.Constants;
 import prefuse.Display;
@@ -40,6 +42,7 @@ public class DisplayBuilder {
 	private List<String> packages;
 	private List<String> jars;
 	private List<String> clusters;
+	private OutputUI output;
 	
 	public DisplayBuilder() 
 	{
@@ -244,7 +247,7 @@ public class DisplayBuilder {
 		dis.setHighQuality(true);
 		dis.addControlListener(new PanControl());
 		dis.addControlListener(new ZoomToFitControl());
-		dis.addControlListener(new EdgeClickControl());
+		dis.addControlListener(new EdgeClickControl(output));
 		dis.addControlListener(new ZoomControl());
 		dis.addControlListener(new AggregateDragControl());
 		
@@ -268,5 +271,11 @@ public class DisplayBuilder {
 			if(!clusters.contains(cluster)) clusters.add(cluster);
 		}
 		
+	}
+
+
+
+	public void setOutput(OutputUI output) {
+		this.output = output;
 	}
 }

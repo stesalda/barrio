@@ -40,7 +40,9 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 	    output = gg.getOutputUI();
 	    
 	    final GraphProcessingJob job = new GraphProcessingJob(filename, null, input.getActiveFilters(), input.getSeparationLevel());
+	    job.setOutput(output);
 	    job.setUser(true);
+	    input.setJob(job);
 	    job.addJobChangeListener(new IJobChangeListener(){
 
 			public void aboutToRun(IJobChangeEvent event) {}

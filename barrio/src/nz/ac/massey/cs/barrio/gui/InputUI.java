@@ -541,6 +541,16 @@ public class InputUI extends Composite{
 		this.graphControlsComposite.setVisible(isVisible);
 	}
 
+
+	public GraphProcessingJob getJob() {
+		return job;
+	}
+
+
+	public void setJob(GraphProcessingJob job) {
+		this.job = job;
+	}
+
 	
 	//Update visualisation methods end ============================================
 }

@@ -4,6 +4,7 @@ import java.util.List;
 
 import nz.ac.massey.cs.barrio.exporter.Exporter;
 import nz.ac.massey.cs.barrio.exporter.KnownExporter;
+import nz.ac.massey.cs.barrio.gui.GuiGetter;
 import nz.ac.massey.cs.barrio.gui.InputUI;
 import nz.ac.massey.cs.barrio.gui.OutputUI;
 
@@ -28,7 +29,13 @@ public class ExportAction implements IWorkbenchWindowActionDelegate {
 		List<Exporter> exporters = KnownExporter.all();
 		Exporter e = exporters.get(0);
 		
-		e.export(InputUI.getInitGraph(), InputUI.getFinalGraph(), InputUI.getSeparationLevel(), InputUI.getActiveFilters(), InputUI.getRemovedEdges(), OutputUI.treePwMC, OutputUI.treeCwMP);
+		GuiGetter gg = new GuiGetter();
+		InputUI input = gg.getInputUI();
+		OutputUI output = gg.getOutputUI();
+		e.export(input.getJob().getInitGraph(), input.getJob().getFinalGraph(), 
+				input.getJob().getSeparation(), input.getJob().getFilters(), 
+				input.getJob().getRemovedEdges(), 
+				output.getTreePwMC(), output.getTreeCwMP());
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
