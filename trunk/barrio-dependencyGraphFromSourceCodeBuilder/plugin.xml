@@ -14,6 +14,9 @@
             <groupMarker
                   name="barrio.content">
             </groupMarker>
+            <separator
+                  name="additions">
+            </separator>
             <groupMarker
                   name="barrio.actions1">
             </groupMarker>
