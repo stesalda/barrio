@@ -369,19 +369,22 @@ public class InputUI extends Composite{
 	
 	private void updateBtnRefreshEnabled()
 	{
-		//if(initGraph!=null)
+		if(job!=null && job.getInitGraph()!=null)
 		{
 			//System.out.println("[InputUI]: graph != null");
 			if(previousFilters.equals(activeFilters) && lastSeparationLevel==separationLevel) 
 				btnRefresh.setEnabled(false);
 			else btnRefresh.setEnabled(true);
-		}//else btnRefresh.setEnabled(false);
+		}else btnRefresh.setEnabled(false);
 	}
 	
 	
 	private void btnRefreshClick(List<NodeFilter> nodeFilters, List<EdgeFilter> edgeFilters) 
 	{
-		job.schedule();
+		GuiGetter gg = new GuiGetter();
+		job = new GraphProcessingJob(null, job.getInitGraph(), activeFilters, separationLevel);
+		job.setOutput(gg.getOutputUI());
+		job.setUser(true);
   	  	job.addJobChangeListener(new IJobChangeListener(){
 
 			public void aboutToRun(IJobChangeEvent event) {}
@@ -393,7 +396,7 @@ public class InputUI extends Composite{
 
 					public void run() {
 						updateElements();
-						//updateVisualElements();
+						updateOutputs();
 					}
 				});
 				
@@ -406,6 +409,8 @@ public class InputUI extends Composite{
 			public void sleeping(IJobChangeEvent event) {}
   	  		
   	  	});
+
+		job.schedule();
 	}
 	
 	private void updateElements() {
@@ -419,6 +424,11 @@ public class InputUI extends Composite{
 			lastSeparationLevel = separationLevel;
 			updateBtnRefreshEnabled();
 		}
+	}
+	
+	private void updateOutputs()
+	{
+		
 	}
 
 
