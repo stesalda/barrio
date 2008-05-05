@@ -11,6 +11,7 @@ import nz.ac.massey.cs.barrio.clusterer.KnownClusterer;
 import nz.ac.massey.cs.barrio.filters.KnownEdgeFilters;
 import nz.ac.massey.cs.barrio.filters.KnownNodeFilters;
 import nz.ac.massey.cs.barrio.graphconverter.JungPrefuseBridge;
+import nz.ac.massey.cs.barrio.gui.OutputGenerator;
 import nz.ac.massey.cs.barrio.gui.OutputUI;
 import nz.ac.massey.cs.barrio.inputReader.InputReader;
 import nz.ac.massey.cs.barrio.inputReader.KnownInputReader;
@@ -21,6 +22,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
 
 import prefuse.Display;
 import edu.uci.ics.jung.graph.Edge;
@@ -151,36 +155,32 @@ public class GraphProcessingJob extends Job {
 	
 	private void showUnknownInputMessage()
 	{
-//		GuiGetter gg = new GuiGetter();
-//		OutputUI output = gg.getOutputUI();
-//		output.getDisplay().asyncExec(new Runnable()
-//		{
-//			public void run() {
-//				Shell s = new Shell();
-//				MessageBox mb = new MessageBox(s, SWT.ICON_ERROR);
-//				mb.setText("Barrio Error: Unknown Input");
-//				mb.setMessage("Cannot build graph from this input type!!!\n Refer to user manual.");
-//				int rc = mb.open();
-//				if(rc==SWT.OK) s.dispose();
-//			}
-//		});
+		output.getDisplay().asyncExec(new Runnable()
+		{
+			public void run() {
+				Shell s = new Shell();
+				MessageBox mb = new MessageBox(s, SWT.ICON_ERROR);
+				mb.setText("Barrio Error: Unknown Input");
+				mb.setMessage("Cannot build graph from this input type!!!\n Refer to user manual.");
+				int rc = mb.open();
+				if(rc==SWT.OK) s.dispose();
+			}
+		});
 	}
 	
 	private void showConnectionErrorMessage()
 	{
-//		GuiGetter gg = new GuiGetter();
-//		OutputUI output = gg.getOutputUI();
-//		output.getDisplay().asyncExec(new Runnable()
-//		{
-//			public void run() {
-//				Shell s = new Shell();
-//				MessageBox mb = new MessageBox(s, SWT.ICON_ERROR);
-//				mb.setText("Barrio Network Connection Error");
-//				mb.setMessage("Could not connect to DTD file!!!\n Check your network settings.");
-//				int rc = mb.open();
-//				if(rc==SWT.OK) s.dispose();
-//			}
-//		});
+		output.getDisplay().asyncExec(new Runnable()
+		{
+			public void run() {
+				Shell s = new Shell();
+				MessageBox mb = new MessageBox(s, SWT.ICON_ERROR);
+				mb.setText("Barrio Network Connection Error");
+				mb.setMessage("Could not connect to DTD file!!!\n Check your network settings.");
+				int rc = mb.open();
+				if(rc==SWT.OK) s.dispose();
+			}
+		});
 	}
 
 
@@ -239,20 +239,32 @@ public class GraphProcessingJob extends Job {
 	}
 
 
+	 
 
 
 	private void buildVisual(IProgressMonitor monitor) {
 
 		if(canceled) return;
 		monitor.subTask("Producing Visualisation");
-		monitor.worked(1);
 		
 		JungPrefuseBridge bridge = new JungPrefuseBridge();
 		DisplayBuilder disBuilder = new DisplayBuilder();
 		disBuilder.setOutput(output);
 		display = disBuilder.getDisplay(bridge.convert(finalGraph));
 		display.setLayout(new BorderLayout());
+		monitor.worked(1);
 		
+		
+		output.getDisplay().asyncExec(new Runnable()
+		{
+			public void run() 
+			{
+				OutputGenerator og = new OutputGenerator(initGraph, finalGraph);
+				output.updateOutputs(og, removedEdges);	
+				output.paintGraph(display);
+			}
+			
+		});
 		monitor.worked(1);
 		
 	}
@@ -275,15 +287,9 @@ public class GraphProcessingJob extends Job {
 		return removedEdges;
 	}
 
-
-
-
 	public List<String> getFilters() {
 		return filters;
 	}
-
-
-
 
 	public int getSeparation() {
 		return separation;
