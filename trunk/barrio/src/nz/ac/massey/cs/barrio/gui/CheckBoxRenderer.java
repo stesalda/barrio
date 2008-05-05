@@ -9,7 +9,7 @@ import javax.swing.table.TableCellRenderer;
 
 public class CheckBoxRenderer extends JCheckBox implements TableCellRenderer {
 
-
+	private static final long serialVersionUID = 1L;
 
 	CheckBoxRenderer() {
 	    setHorizontalAlignment(JLabel.CENTER);
@@ -25,6 +25,7 @@ public class CheckBoxRenderer extends JCheckBox implements TableCellRenderer {
 	    }
 	    setSelected((value != null && ((Boolean) value).booleanValue()));
 	    this.setName(String.valueOf(row));
+	    this.setToolTipText("Highlight edge in visual dependency graph");
 	    return this;
 	  }
 }
