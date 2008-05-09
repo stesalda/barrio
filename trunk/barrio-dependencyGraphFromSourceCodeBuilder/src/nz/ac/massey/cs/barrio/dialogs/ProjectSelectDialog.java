@@ -80,7 +80,7 @@ public class ProjectSelectDialog extends Dialog{
 	    compositeTable.setLayout(new FillLayout());
 	    compositeTable.setLayoutData(tableData);	  
 	    
-	    final Table table = new Table(compositeTable, SWT.RADIO | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+	    final Table table = new Table(compositeTable, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
 	    populateTable(table);
 	    
 	    GridData controlsData = new GridData(GridData.FILL_HORIZONTAL);
