@@ -2,8 +2,6 @@ package nz.ac.massey.cs.barrio.odemReader;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -38,20 +36,16 @@ public class OdemReader implements InputReader {
 	{	
 		Graph graph = new DirectedSparseGraph();
 		String filename = input.toString();
-		String jfilename = ".jungGraph.xml";
 		if(filename==null || filename.length()<1) return null;
-		try {
-			
+		try 
+		{			
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 	        DocumentBuilder docBuilder;
 			docBuilder = docBuilderFactory.newDocumentBuilder();
 			Document doc = docBuilder.parse(new File(filename));
 			
-			File file = new File(jfilename);
-			file.deleteOnExit();
-			
-			//PrintStream out = new PrintStream(jfilename);
-			BufferedWriter out = new BufferedWriter(new FileWriter(file));
+			java.io.StringWriter buffer = new java.io.StringWriter();
+			BufferedWriter out = new BufferedWriter(buffer);
 	
 			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 			out.write('\n');
@@ -74,7 +68,7 @@ public class OdemReader implements InputReader {
 			out.write("</graphml>");
 			out.close();
 			
-			Reader reader = new FileReader(file);
+			Reader reader = new java.io.StringReader(buffer.toString());
 			GraphMLFile graphml = new GraphMLFile();
 			graph = graphml.load(reader);
 //			System.out.println("[OdemReader]: graph = "+graph.getVertices().size()+" nodes, "+graph.getEdges().size()+" edges");
@@ -205,7 +199,7 @@ public class OdemReader implements InputReader {
 					buffer.append(j);
 					buffer.append("\" relationship.type=\"");
 					buffer.append(te.getType());
-					buffer.append("\" edge.isSelected=\"false\" relationship.state=\"");
+					buffer.append("\" edge.isSelected=\"false\" relationship.state=\"null");
 					buffer.append("\" relationship.betweenness=\"null\" />");
 					edges.add(buffer.toString());
 					break;
