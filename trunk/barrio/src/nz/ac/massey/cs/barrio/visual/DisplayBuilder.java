@@ -68,6 +68,7 @@ public class DisplayBuilder {
 		
 		//vis.addGraph("graph", prefuseGraph);
 		VisualGraph vg = vis.addGraph("graph", prefuseGraph); 
+		System.out.println("[DispalayBuilder]: prefuse graph = "+ vg.getNodeCount()+" "+vg.getEdgeCount());
 		
 		Iterator<String> jarIter = jars.iterator();
         while(jarIter.hasNext())

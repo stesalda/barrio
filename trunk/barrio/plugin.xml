@@ -53,6 +53,15 @@
                label="Import graph and analyse"
                menubarPath="barrio.topMenu/barrio.actions1">
          </action>
+         <action
+               class="nz.ac.massey.cs.barrio.actions.SrcCodeReadAction"
+               icon="icons/sample.gif"
+               id="barrio.SrcCodeReadAction"
+               label="&amp;Analyse project sources"
+               menubarPath="barrio.topMenu/barrio.actions2"
+               style="push"
+               tooltip="Extract dependency graph from selected Java project">
+         </action>
       </actionSet>
    </extension>
    <extension

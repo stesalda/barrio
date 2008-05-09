@@ -43,6 +43,7 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 	    job.setOutput(output);
 	    job.setUser(true);
 	    input.setJob(job);
+	    final Long start = System.currentTimeMillis();
 	    job.addJobChangeListener(new IJobChangeListener(){
 
 			public void aboutToRun(IJobChangeEvent event) {}
@@ -58,6 +59,8 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 			public synchronized void done(IJobChangeEvent event) {
 				paintDisplay(job);
 				output.updateVisualElements(input.getVisualSettings());
+				Long stop = System.currentTimeMillis();
+				System.out.println("[ImportAction]: Time taken = "+(stop-start)/1000+" seconds");
 			}
 	    	
 	    });

@@ -7,7 +7,9 @@ Bundle-Activator: nz.ac.massey.cs.barrio.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.ui.console,
- org.eclipse.jdt.ui
+ org.eclipse.jdt.ui,
+ org.eclipse.jdt.core,
+ org.eclipse.core.resources
 Eclipse-LazyStart: true
 Export-Package: edu.uci.ics.jung.algorithms,
  edu.uci.ics.jung.algorithms.blockmodel,
@@ -75,3 +77,4 @@ Bundle-ClassPath: lib/jung-1.7.6.jar,
  .,
  lib/commons-collections-3.2.jar,
  lib/prefuse.jar
+Bundle-Vendor: Massey University
