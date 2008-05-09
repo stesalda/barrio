@@ -2,6 +2,7 @@ package nz.ac.massey.cs.barrio.srcgraphbuilder;
 
 import java.io.IOException;
 import java.io.PrintStream;
+import java.io.StringWriter;
 /**
  * Copyright 2008 Jens Dietrich Licensed under the Apache License, Version 2.0 (the "License"); 
  * you may not use this file except in compliance with the License. 
@@ -24,30 +25,30 @@ import org.eclipse.jdt.core.IJavaProject;
 
 public class OdemXMLEncoder {
 	
-	private PrintStream out = null;
+	private StringWriter out = null;
 	
-	public OdemXMLEncoder(PrintStream out) {
+	public OdemXMLEncoder(StringWriter out) {
 		super();
 		this.out = out;
 	}
 	
 	public void encode(IJavaProject project,Collection<ContainerRef> containers) throws IOException {
-		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
-		out.println("<!DOCTYPE ODEM PUBLIC \"-//PFSW//DTD ODEM 1.1\" \"http://pfsw.org/ODEM/schema/dtd/odem-1.1.dtd\">"); 
-		out.println("<ODEM version=\"1\">");
-		out.println("<header>");
-		out.println("<created-by>");
-		out.println("<exporter version=\"1.1\">");
-		out.println(this.getClass().getName());
-		out.println("</exporter>");
-		out.println("<provider>Jens Dietrich, Massey University</provider>");
-		out.println("</created-by>");
-		out.println("</header>");
+		out.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
+		out.write("<!DOCTYPE ODEM PUBLIC \"-//PFSW//DTD ODEM 1.1\" \"http://pfsw.org/ODEM/schema/dtd/odem-1.1.dtd\">"); 
+		out.write("<ODEM version=\"1\">");
+		out.write("<header>");
+		out.write("<created-by>");
+		out.write("<exporter version=\"1.1\">");
+		out.write(this.getClass().getName());
+		out.write("</exporter>");
+		out.write("<provider>Jens Dietrich, Massey University</provider>");
+		out.write("</created-by>");
+		out.write("</header>");
 		
-		out.print("<context name=\"");
-		out.print("Eclipse Project ");
-		out.print(project.getElementName());
-		out.println("\">");
+		out.write("<context name=\"");
+		out.write("Eclipse Project ");
+		out.write(project.getElementName());
+		out.write("\">");
 		
 		for (ContainerRef c:containers) {
 			// do only export source containers, skip referenced jars etc
@@ -56,65 +57,65 @@ public class OdemXMLEncoder {
 			}
 		}
 		
-		out.println("</context>");
-		out.println("</ODEM>");
+		out.write("</context>");
+		out.write("</ODEM>");
 	}
 	private void encode(ContainerRef container) {
-		out.print("<container classification=\"");
-		out.print(container.isArchive()?"jar":"dir");
-		out.print("\" name=\"");
-		out.print(container.getName());
-		out.println("\">");
+		out.write("<container classification=\"");
+		out.write(container.isArchive()?"jar":"dir");
+		out.write("\" name=\"");
+		out.write(container.getName());
+		out.write("\">");
 		for (PackageRef p:container.getPackages()) {
 			// skip empty packages (this are folders like "com" or "nz" )
 			if (p.getClassCount()>0) {
 				encode(p);
 			}
 		}
-		out.println("</container>");
+		out.write("</container>");
 	}
 	
 	private void encode(PackageRef container) {
-		out.print("<namespace name=\"");
-		out.print(container.getName());
-		out.println("\">");
+		out.write("<namespace name=\"");
+		out.write(container.getName());
+		out.write("\">");
 		for (ClassRef c:container.getClasses()) {
 			encode((SourceRef)c); 
 		}
-		out.println("</namespace>");
+		out.write("</namespace>");
 	}
 	
 	private void encode(SourceRef src) {
 		// <type visibility="default" classification="class" name="junit.extensions.ActiveTestSuite$1">
-		out.print("<type name=\"");
-		out.print(src.getFullName());
+		out.write("<type name=\"");
+		out.write(src.getFullName());
 		
-		out.print("\" visibility=\"");
-		out.print(src.getVisibility());
+		out.write("\" visibility=\"");
+		out.write(src.getVisibility());
 		
-		out.print("\" classification=\"");
+		out.write("\" classification=\"");
 		if (src.getType()==JavaType.ANNOTATION)
-			out.print("annotation");
+			out.write("annotation");
 		else if (src.getType()==JavaType.INTERFACE)
-			out.print("interface");
+			out.write("interface");
 		else if (src.getType()==JavaType.ENUMERATION)
-			out.print("enum");
+			out.write("enum");
 		else if (src.getType()==JavaType.CLASS)
-			out.print("class");
+			out.write("class");
 		else
-			out.print("unknown");
+			out.write("unknown");
 		
-		out.print("\" isAbstract=\"");
-		out.print(src.isAbstract()?"yes":"no");
+		out.write("\" isAbstract=\"");
+		out.write(src.isAbstract()?"yes":"no");
 		
-		out.print("\" isFinal=\"");
-		out.print(src.isFinal()?"yes":"no");
+		out.write("\" isFinal=\"");
+		out.write(src.isFinal()?"yes":"no");
 		
-		out.println("\">");
+		out.write("\">");
 		
-		out.print("<dependencies count=\"");
-		out.print(getDependencyCount(src));
-		out.println("\">");
+		out.write("<dependencies count=\"");
+		out.write(getDependencyCount(src));
+		out.write("\">");
 		
 		for (ClassRef target:src.getSuperTypes()) {
 			encode(target,"extends");
@@ -126,19 +127,19 @@ public class OdemXMLEncoder {
 			encode(target,"uses");
 		}
 		
-		out.println("</dependencies>");
-		out.println("</type>");
+		out.write("</dependencies>");
+		out.write("</type>");
 	}
 	private void encode(ClassRef target,String classification) {
 		if (target==null)
 			return;
 		
 		// <depends-on classification="extends" name="java.util.ArrayList" />
-		out.print("<depends-on classification=\"");
-		out.print(classification);
-		out.print("\" name=\"");
-		out.print(target.getFullName());
-		out.println("\" />");
+		out.write("<depends-on classification=\"");
+		out.write(classification);
+		out.write("\" name=\"");
+		out.write(target.getFullName());
+		out.write("\" />");
 	}
 
 	private int getDependencyCount(SourceRef src) {

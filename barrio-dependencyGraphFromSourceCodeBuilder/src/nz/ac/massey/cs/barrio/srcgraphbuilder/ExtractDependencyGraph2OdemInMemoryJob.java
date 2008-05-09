@@ -12,8 +12,8 @@
 package nz.ac.massey.cs.barrio.srcgraphbuilder;
 
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
+import java.io.StringWriter;
+
 import org.eclipse.jdt.core.IJavaProject;
 
 /**
@@ -31,11 +31,10 @@ public class ExtractDependencyGraph2OdemInMemoryJob extends ExtractDependencyGra
 	}
 
 	protected void exportGraph() {
-		ByteArrayOutputStream bao = new ByteArrayOutputStream();
-		PrintStream out = new PrintStream(bao);
+		StringWriter out = new StringWriter();
 		try {
 			new OdemXMLEncoder(out).encode(this.project,this.containers);
-			this.buffer = bao.toString();
+			this.buffer = out.toString();
 		}
 		catch (Exception x) {
 			// TODO better exception handling (return IStatus)

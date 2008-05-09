@@ -15,6 +15,8 @@ package nz.ac.massey.cs.barrio.srcgraphbuilder;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.io.StringWriter;
+
 import org.eclipse.jdt.core.IJavaProject;
 
 /**
@@ -29,10 +31,10 @@ public class ExtractDependencyGraph2OdemFileJob extends ExtractDependencyGraphJo
 	}
 
 	protected void exportGraph() {
-		PrintStream out = null;
+		StringWriter out = null;
 		try {
 			File file = new File(fileName);
-			out = new PrintStream(new FileOutputStream(file));
+			out = new StringWriter();
 			new OdemXMLEncoder(out).encode(this.project,this.containers);
 		}
 		catch (Exception x) {
