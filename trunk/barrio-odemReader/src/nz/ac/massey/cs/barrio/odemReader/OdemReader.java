@@ -1,8 +1,13 @@
 package nz.ac.massey.cs.barrio.odemReader;
 
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -34,52 +39,63 @@ public class OdemReader implements InputReader {
 
 	public Graph read(Object input) throws UnknownInputException, IOException
 	{	
+		InputStream stream = null;
 		Graph graph = new DirectedSparseGraph();
-		String filename = input.toString();
-		if(filename==null || filename.length()<1) return null;
-		try 
-		{			
-			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-	        DocumentBuilder docBuilder;
-			docBuilder = docBuilderFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(new File(filename));
-			
-			java.io.StringWriter buffer = new java.io.StringWriter();
-			BufferedWriter out = new BufferedWriter(buffer);
-	
-			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
-			out.write('\n');
-			out.write("<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns/graphml\"");
-			out.write(" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
-			out.write(" xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns/graphml\">");
-			out.write('\n');
-			out.write("<graph edgedefault=\"directed\">");
-			out.write('\n');
-	
-			nodes = new ArrayList<String>();
-			tempEdges = new ArrayList<TempEdge>();
-			edges = new ArrayList<String>();
-			writeNodes(doc, out);
-			buildEdgeList();
-			writeEdges(out);
-	
-			out.write("</graph>");
-			out.write('\n');
-			out.write("</graphml>");
-			out.close();
-			
-			Reader reader = new java.io.StringReader(buffer.toString());
-			GraphMLFile graphml = new GraphMLFile();
-			graph = graphml.load(reader);
-//			System.out.println("[OdemReader]: graph = "+graph.getVertices().size()+" nodes, "+graph.getEdges().size()+" edges");
-			
-		} catch (ParserConfigurationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-		} catch (SAXException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		if(input == null) return graph;
+		
+		if(input instanceof File && input!=null) 
+			stream = new FileInputStream((File)input);
+		
+		if(input instanceof String) 
+			stream = new ByteArrayInputStream(input.toString().getBytes("UTF-8"));
+		
+		
+		System.out.println("[OdemReader]: stream = "+stream.toString());
+		
+//		if(stream!=null) try 
+//		{			
+//			System.out.println("[OdemReader]: stream not null");
+//			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+//	        DocumentBuilder docBuilder;
+//			docBuilder = docBuilderFactory.newDocumentBuilder();
+//			Document doc = docBuilder.parse(stream);
+//			
+//			java.io.StringWriter buffer = new java.io.StringWriter();
+//			BufferedWriter out = new BufferedWriter(buffer);
+//	
+//			out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+//			out.write('\n');
+//			out.write("<graphml xmlns=\"http://graphml.graphdrawing.org/xmlns/graphml\"");
+//			out.write(" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
+//			out.write(" xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns/graphml\">");
+//			out.write('\n');
+//			out.write("<graph edgedefault=\"directed\">");
+//			out.write('\n');
+//	
+//			nodes = new ArrayList<String>();
+//			tempEdges = new ArrayList<TempEdge>();
+//			edges = new ArrayList<String>();
+//			writeNodes(doc, out);
+//			buildEdgeList();
+//			writeEdges(out);
+//	
+//			out.write("</graph>");
+//			out.write('\n');
+//			out.write("</graphml>");
+//			out.close();
+//			
+//			Reader reader = new java.io.StringReader(buffer.toString());
+//			GraphMLFile graphml = new GraphMLFile();
+//			graph = graphml.load(reader);
+////			System.out.println("[OdemReader]: graph = "+graph.getVertices().size()+" nodes, "+graph.getEdges().size()+" edges");
+//			
+//		} catch (ParserConfigurationException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//		} catch (SAXException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 
 		return graph;
 	}
