@@ -30,35 +30,19 @@ public class JungPrefuseBridge {
 		if(jungGraph!=null)
 		{
 			java.io.StringWriter out = new java.io.StringWriter();
-			//buffer.append("sdsdfa");
-			//BufferedWriter out = new BufferedWriter(buffer);
 			writePrefuseGraphMl(out, jungGraph);
 			try {
 				byte[] stringBytes = out.toString().getBytes("UTF-8"); 
 				InputStream stream = new ByteArrayInputStream(stringBytes);
-
-				File f = new File("test.xml");
-				BufferedWriter writer = new BufferedWriter(new FileWriter(f));
-				
-				int c;
-				//for(int i=0; i<stringBytes.length; i++)
-				{
-					writer.write(out.toString());
-				}
 				
 				GraphMLReader reader = new GraphMLReader();
 				prefuseGraph = reader.readGraph(stream);
 				prefuseGraph.addColumn("class.expression", new LabelExpression("class.jar","class.packageName","class.name"));
 				prefuseGraph.addColumn("class.icon", new ImageExpression("class.isInterface", "class.isException", "class.isAbstract", "class.access"));
 			} catch (DataIOException e) {
-				// TODO Auto-generated catch block
 				//e.printStackTrace();
 				prefuseGraph = new Graph();
 			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}				
 		}
