@@ -1,8 +1,9 @@
 package nz.ac.massey.cs.barrio.actions;
 
+import java.io.File;
+
 import nz.ac.massey.cs.barrio.gui.GuiGetter;
 import nz.ac.massey.cs.barrio.gui.InputUI;
-import nz.ac.massey.cs.barrio.gui.OutputGenerator;
 import nz.ac.massey.cs.barrio.gui.OutputUI;
 import nz.ac.massey.cs.barrio.jobs.GraphProcessingJob;
 
@@ -23,7 +24,11 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 
 	public void dispose() {}
 
-	public void init(IWorkbenchWindow window) {}
+	public void init(IWorkbenchWindow window) {
+		GuiGetter gg = new GuiGetter();
+	    input = gg.getInputUI();
+	    output = gg.getOutputUI();
+	}
 
 	public void selectionChanged(IAction action, ISelection selection) {}
 
@@ -35,11 +40,9 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 	    String filename = dlg.open();
 	    shell.close();
 	    
-	    GuiGetter gg = new GuiGetter();
-	    input = gg.getInputUI();
-	    output = gg.getOutputUI();
 	    
-	    final GraphProcessingJob job = new GraphProcessingJob(filename, null, input.getActiveFilters(), input.getSeparationLevel());
+	    
+	    final GraphProcessingJob job = new GraphProcessingJob(new File(filename), null, input.getActiveFilters(), input.getSeparationLevel());
 	    job.setOutput(output);
 	    job.setUser(true);
 	    input.setJob(job);
@@ -77,20 +80,5 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 				output.paintGraph(job.getDispaly());	
 			}			
 		});
-	}
-	
-	
-	private void updateOutputs(final GraphProcessingJob job)
-	{
-		output.getDisplay().asyncExec(new Runnable()
-		{
-			public void run() 
-			{
-				OutputGenerator og = new OutputGenerator(job.getInitGraph(), job.getFinalGraph());
-				output.updateOutputs(og, job.getRemovedEdges());	
-			}
-			
-		});
-		
 	}
 }

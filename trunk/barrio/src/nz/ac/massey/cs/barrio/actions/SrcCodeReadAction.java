@@ -1,49 +1,113 @@
 package nz.ac.massey.cs.barrio.actions;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import nz.ac.massey.cs.barrio.gui.GuiGetter;
+import nz.ac.massey.cs.barrio.gui.InputUI;
+import nz.ac.massey.cs.barrio.gui.OutputUI;
+import nz.ac.massey.cs.barrio.jobs.GraphProcessingJob;
+import nz.ac.massey.cs.barrio.srcReader.KnownSourceReader;
+import nz.ac.massey.cs.barrio.srcReader.SourceReader;
+
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
-public class SrcCodeReadAction {
-	
-	protected IJavaProject project = null;
-	private IWorkbenchWindow window;
-	
+public class SrcCodeReadAction implements IWorkbenchWindowActionDelegate {
 
-	/**
-	 * The action has been activated. The argument of the
-	 * method represents the 'real' action sitting
-	 * in the workbench UI.
-	 * @see IWorkbenchWindowActionDelegate#run
-	 */
-	public void run(IAction action) {
-		
-        ProjectSelectDialog psd = new ProjectSelectDialog(window.getShell());
-        List<IJavaProject> selectedProjects = psd.open();
-        project = selectedProjects.get(0);
+	private InputUI input;
+	private OutputUI output;
+	private String projectOdem;
+	
+	
+	public void run(IAction action) 
+	{		
+        ProjectSelectDialog psd = new ProjectSelectDialog(new Shell());
+        List<IJavaProject> projects = psd.open();
         
-        if (project==null) {
-			MessageDialog.openError(
-					window.getShell(),
-					"DependencyGraphExtractor Plug-in",
-					"No Java project selected");
-			return;
-		}
+        List<SourceReader> readers = KnownSourceReader.all();
+        final SourceReader reader = readers.get(0);
+        final CustomJob srcReadingJob = (CustomJob) reader.getProjectReadingJob(projects);
+        srcReadingJob.addJobChangeListener(new IJobChangeListener(){
+        	public void aboutToRun(IJobChangeEvent event) {}
+			public void awake(IJobChangeEvent event) {}
+			public void running(IJobChangeEvent event) {}
+			public void scheduled(IJobChangeEvent event) {}
+			public void sleeping(IJobChangeEvent event) {}
+			
+			public void done(IJobChangeEvent event) 
+			{
+				projectOdem = srcReadingJob.getBuffer();
+				try {
+					FileWriter writer = new FileWriter(new File("test.xml"));
+					writer.write(projectOdem);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				setNextJob();
+			}
+        	
+        });
+        srcReadingJob.schedule();
+    }
+	
+	
+	protected void setNextJob() {
+		final GraphProcessingJob job = new GraphProcessingJob(projectOdem, null, input.getActiveFilters(), input.getSeparationLevel());
+	    job.setOutput(output);
+	    job.setUser(true);
+	    input.setJob(job);
+	    
+	    final Long start = System.currentTimeMillis();
+	    job.addJobChangeListener(new IJobChangeListener(){
+
+			public void aboutToRun(IJobChangeEvent event) {}
+
+			public void awake(IJobChangeEvent event) {}
+
+			public void running(IJobChangeEvent event) {}
+
+			public void scheduled(IJobChangeEvent event) {}
+
+			public void sleeping(IJobChangeEvent event) {}
+
+			public synchronized void done(IJobChangeEvent event) {
+				paintDisplay(job);
+				output.updateVisualElements(input.getVisualSettings());
+				Long stop = System.currentTimeMillis();
+				System.out.println("[ImportAction]: Time taken = "+(stop-start)/1000+" seconds");
+			}
+	    	
+	    });
+	    job.schedule();
+		
 	}
 
 
-	/**
-	 * Selection in the workbench has been changed. We 
-	 * can change the state of the 'real' action here
-	 * if we want, but this can only happen after 
-	 * the delegate has been created.
-	 * @see IWorkbenchWindowActionDelegate#selectionChanged
-	 */
+	private void paintDisplay(final GraphProcessingJob job)
+	{
+		output.getDisplay().asyncExec(new Runnable()
+		{
+			public void run() 
+			{
+				output.paintGraph(job.getDispaly());	
+			}			
+		});
+	}
+	
+
+
 	public void selectionChanged(IAction action, ISelection selection) {
 		
 	}
@@ -52,13 +116,12 @@ public class SrcCodeReadAction {
 	
 	}
 
-	/**
-	 * We will cache window object in order to
-	 * be able to provide parent shell for the message dialog.
-	 * @see IWorkbenchWindowActionDelegate#init
-	 */
+
+	@Override
 	public void init(IWorkbenchWindow window) {
-		this.window = window;
+		GuiGetter gg = new GuiGetter();
+		input = gg.getInputUI();
+	    output = gg.getOutputUI();
 	}
 
 }
