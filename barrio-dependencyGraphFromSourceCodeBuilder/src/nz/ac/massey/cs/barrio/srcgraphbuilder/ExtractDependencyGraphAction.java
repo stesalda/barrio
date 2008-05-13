@@ -11,25 +11,14 @@
 
 package nz.ac.massey.cs.barrio.srcgraphbuilder;
 
-import java.util.Iterator;
-import java.util.List;
-
-import nz.ac.massey.cs.barrio.dialogs.ProjectSelectDialog;
-
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
-import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.jface.dialogs.MessageDialog;
 
 /**
  * Action to extract the dependency graph from a Java project.
@@ -52,28 +41,28 @@ public class ExtractDependencyGraphAction implements IWorkbenchWindowActionDeleg
 	 * @see IWorkbenchWindowActionDelegate#run
 	 */
 	public void run(IAction action) {		
-//		FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
-//        fd.setText("Save");
-//        String[] filterExt = { "*.odem", "*.xml"};
-//        fd.setFilterExtensions(filterExt);
-//        fd.setFileName(project.getElementName()+".odem");
-//        String fileName = fd.open();
-//        if (fileName==null) {
-//        	System.out.println("cancelled");
-//        	return;
-//        }
-        
-		String fileName = "tempOdem.odem";
-        
-        
-        //Introducing project select dialog ...Slava
-        ProjectSelectDialog psd = new ProjectSelectDialog(window.getShell());
-        List<IJavaProject> selectedProjects = psd.open();
-        project = selectedProjects.get(0);
-        for(IJavaProject p:selectedProjects)
-        {
-        	System.out.println(p.getElementName());
+		FileDialog fd = new FileDialog(window.getShell(), SWT.SAVE);
+        fd.setText("Save");
+        String[] filterExt = { "*.odem", "*.xml"};
+        fd.setFilterExtensions(filterExt);
+        fd.setFileName(project.getElementName()+".odem");
+        String fileName = fd.open();
+        if (fileName==null) {
+        	System.out.println("cancelled");
+        	return;
         }
+        
+//		String fileName = "tempOdem.odem";
+//        
+//        
+//        //Introducing project select dialog ...Slava
+//        ProjectSelectDialog psd = new ProjectSelectDialog(window.getShell());
+//        List<IJavaProject> selectedProjects = psd.open();
+//        project = selectedProjects.get(0);
+//        for(IJavaProject p:selectedProjects)
+//        {
+//        	System.out.println(p.getElementName());
+//        }
         //project select dialog ends
         
         if (project==null) {

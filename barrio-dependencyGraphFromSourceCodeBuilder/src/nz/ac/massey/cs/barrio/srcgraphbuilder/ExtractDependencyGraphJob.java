@@ -13,6 +13,7 @@ package nz.ac.massey.cs.barrio.srcgraphbuilder;
 
 import java.util.*;
 
+import nz.ac.massey.cs.barrio.actions.CustomJob;
 import nz.ac.massey.cs.barrio.srcgraphbuilder.odem.ExplorationContext;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -34,7 +35,7 @@ import org.eclipse.jdt.core.dom.ASTParser;
  * @author <a href="http://www-ist.massey.ac.nz/JBDietrich/">Jens Dietrich</a>
  */
 
-public abstract class ExtractDependencyGraphJob  extends Job {
+public abstract class ExtractDependencyGraphJob  extends CustomJob {
 
 	protected IJavaProject project = null;
 	protected Collection<ContainerRef> containers = new ArrayList<ContainerRef> ();
