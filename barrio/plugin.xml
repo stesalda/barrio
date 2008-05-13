@@ -6,6 +6,7 @@
    <extension-point id="nz.ac.massey.cs.barrio.clusterer" name="Clusterer" schema="schema/nz.ac.massey.cs.barrio.clusterer.exsd"/>
    <extension-point id="nz.ac.massey.cs.barrio.exporter" name="Exporter" schema="schema/nz.ac.massey.cs.barrio.expoter.exsd"/>
    <extension-point id="nz.ac.massey.cs.barrio.inputReader" name="Input Reader" schema="schema/nz.ac.massey.cs.barrio.inputReader.exsd"/>
+   <extension-point id="nz.ac.massey.cs.barrio.srcReader" name="Source Code Reader" schema="schema/nz.ac.massey.cs.barrio.srcReader.exsd"/>
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet
@@ -40,18 +41,25 @@
                menubarPath="barrio.topMenu/barrio.content">
          </action>
          <action
-               class="nz.ac.massey.cs.barrio.actions.ExportAction"
-               icon="icons/export.gif"
-               id="barrio.action2"
-               label="Extract and export graph"
-               menubarPath="barrio.topMenu/barrio.actions3">
-         </action>
-         <action
                class="nz.ac.massey.cs.barrio.actions.ImportAction"
                icon="icons/import.gif"
-               id="barrio.action3"
-               label="Import graph and analyse"
+               id="barrio.action2"
+               label="Import Graph and Analyse"
                menubarPath="barrio.topMenu/barrio.actions1">
+         </action>
+         <action
+               class="nz.ac.massey.cs.barrio.actions.SrcCodeReadAction"
+               icon="icons/sample.gif"
+               id="barrio.action3"
+               label="Analyse Project Sources"
+               menubarPath="barrio.topMenu/barrio.actions2">
+         </action>
+         <action
+               class="nz.ac.massey.cs.barrio.actions.ExportAction"
+               icon="icons/export.gif"
+               id="barrio.action4"
+               label="Extract and Export Graph"
+               menubarPath="barrio.topMenu/barrio.actions3">
          </action>
          <action
                class="nz.ac.massey.cs.barrio.actions.SrcCodeReadAction"
