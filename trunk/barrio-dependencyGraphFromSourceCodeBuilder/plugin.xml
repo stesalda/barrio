@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
-
    <extension
-         id="nz.ac.massey.cs.barrio.srcReader"
+   id="nz.ac.massey.cs.barrio.srcReader"
          name="Source Code Reader"
-         point="nz.ac.massey.cs.barrio.inputReader">
-         <implementations inputReaderClass="nz.ac.massey.cs.barrio.srcgraphbuilder.SrcCodeReader" />
-   </extension>
+         point="nz.ac.massey.cs.barrio.srcReader">
+         <implementations sourceReaderClass="nz.ac.massey.cs.barrio.srcReader.SourceCodeReader" />
+	</extension>
+
 
 </plugin>
