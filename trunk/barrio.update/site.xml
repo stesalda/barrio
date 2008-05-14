@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/barrio.feature_1.0.21.jar" id="barrio.feature" version="1.0.21"/>
+   <feature url="features/nz.ac.massey.cs.barrio_1.0.22.jar" id="nz.ac.massey.cs.barrio" version="1.0.22"/>
 </site>
