@@ -9,5 +9,5 @@ public interface SourceReader {
 	
 	public Job getProjectReadingJob(List<IJavaProject> projects);
 
-	public String getBuffer();
+	public byte[] getBuffer();
 }

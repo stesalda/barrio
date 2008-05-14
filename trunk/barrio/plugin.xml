@@ -52,7 +52,8 @@
                icon="icons/sample.gif"
                id="barrio.action3"
                label="Analyse Project Sources"
-               menubarPath="barrio.topMenu/barrio.actions2">
+               menubarPath="barrio.topMenu/barrio.actions2"
+               tooltip="Extract dependency graph from selected Java project">
          </action>
          <action
                class="nz.ac.massey.cs.barrio.actions.ExportAction"
@@ -60,15 +61,6 @@
                id="barrio.action4"
                label="Extract and Export Graph"
                menubarPath="barrio.topMenu/barrio.actions3">
-         </action>
-         <action
-               class="nz.ac.massey.cs.barrio.actions.SrcCodeReadAction"
-               icon="icons/sample.gif"
-               id="barrio.SrcCodeReadAction"
-               label="&amp;Analyse project sources"
-               menubarPath="barrio.topMenu/barrio.actions2"
-               style="push"
-               tooltip="Extract dependency graph from selected Java project">
          </action>
       </actionSet>
    </extension>

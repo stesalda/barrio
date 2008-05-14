@@ -11,6 +11,7 @@ public class GuiGetter {
 	{
 		String id = "nz.ac.massey.cs.barrio.views.InputView";
 		InputView view = (InputView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().findView(id);
+		System.out.println("[GuiGetter]: InputUI="+view.getTitle());
 		return view.getInputUI();
 	}
 	
