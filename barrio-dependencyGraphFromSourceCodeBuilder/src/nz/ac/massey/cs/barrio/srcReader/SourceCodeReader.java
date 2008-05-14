@@ -12,19 +12,18 @@ import nz.ac.massey.cs.barrio.srcgraphbuilder.ExtractDependencyGraph2OdemInMemor
 
 public class SourceCodeReader implements SourceReader{
 
-	private String  buffer; 
-	@Override
+	private byte[]  buffer; 
 	public ExtractDependencyGraph2OdemInMemoryJob getProjectReadingJob(List<IJavaProject> projects) 
 	{
 		if(projects.size()<1) return null;
 		IJavaProject project = projects.get(0);
 		ExtractDependencyGraph2OdemInMemoryJob job = new ExtractDependencyGraph2OdemInMemoryJob(project);
+		
 		buffer = job.getBuffer();
 		return job;
 	}
 
-	@Override
-	public String getBuffer() {
+	public byte[] getBuffer() {
 		return buffer;
 	}
 
