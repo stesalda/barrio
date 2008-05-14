@@ -41,7 +41,6 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 	    shell.close();
 	    
 	    
-	    
 	    final GraphProcessingJob job = new GraphProcessingJob(new File(filename), null, input.getActiveFilters(), input.getSeparationLevel());
 	    job.setOutput(output);
 	    job.setUser(true);

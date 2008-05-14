@@ -27,7 +27,7 @@ public class SrcCodeReadAction implements IWorkbenchWindowActionDelegate {
 
 	private InputUI input;
 	private OutputUI output;
-	private String projectOdem;
+	private byte[] projectOdem;
 	
 	
 	public void run(IAction action) 
@@ -50,7 +50,7 @@ public class SrcCodeReadAction implements IWorkbenchWindowActionDelegate {
 				projectOdem = srcReadingJob.getBuffer();
 				try {
 					FileWriter writer = new FileWriter(new File("test.xml"));
-					writer.write(projectOdem);
+					//writer.write(projectOdem);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -117,7 +117,7 @@ public class SrcCodeReadAction implements IWorkbenchWindowActionDelegate {
 	}
 
 
-	@Override
+	
 	public void init(IWorkbenchWindow window) {
 		GuiGetter gg = new GuiGetter();
 		input = gg.getInputUI();

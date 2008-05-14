@@ -17,7 +17,7 @@ public class CustomJob extends Job {
 		return null;
 	}
 	
-	public String getBuffer()
+	public byte[] getBuffer()
 	{
 		return null;
 	}
