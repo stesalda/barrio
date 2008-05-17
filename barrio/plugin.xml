@@ -103,5 +103,25 @@
          </view>
       </perspectiveExtension>
    </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="nz.ac.massey.cs.barrio.preferences.BarrioPreferencePage"
+            id="nz.ac.massey.cs.barrio.preferences.BarrioPreferencePage"
+            name="Barrio">
+      </page>
+      <page
+            category="nz.ac.massey.cs.barrio.preferences.BarrioPreferencePage"
+            class="nz.ac.massey.cs.barrio.preferences.BarrioPreferenceRulesPage"
+            id="barrio.rulesPage"
+            name="Rules">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="nz.ac.massey.cs.barrio.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
 
 </plugin>
