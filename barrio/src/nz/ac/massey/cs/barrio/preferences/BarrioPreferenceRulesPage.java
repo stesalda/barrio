@@ -4,6 +4,8 @@ import nz.ac.massey.cs.barrio.Activator;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -11,19 +13,20 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 
 public class BarrioPreferenceRulesPage 
 extends FieldEditorPreferencePage
 implements IWorkbenchPreferencePage {
+	
+	private List ruleListSWT;
+	private java.util.List<RuleDescriptor> ruleList;
 
 	public BarrioPreferenceRulesPage() {
 		super(GRID);
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		setDescription("A demonstration of a preference page implementation");
+		//setDescription("A demonstration of a preference page implementation");
 	}
 	
 	/**
@@ -41,7 +44,7 @@ implements IWorkbenchPreferencePage {
 	}
 	
 	protected Control createContents(Composite parent) {
-		Composite top = new Composite(parent, SWT.LEFT|SWT.BORDER);
+		final Composite top = new Composite(parent, SWT.LEFT);
 		top.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		top.setLayout(new GridLayout(2,false));
 				
@@ -50,12 +53,13 @@ implements IWorkbenchPreferencePage {
 
 		new Label(top, SWT.NULL);
 
-		String[] s = {"1","2","3","4","5","6","7","8","9","0 Extension point found nz.ac.massey.cs.barrio.edgeFilter",
-					  "1","2","3","4","5","6","7","8","9","0"};
-
-		List ruleListSWT = new List(top, SWT.V_SCROLL|SWT.BORDER);
-		ruleListSWT.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL));
-		ruleListSWT.setItems(s);
+		ruleListSWT = new List(top, SWT.V_SCROLL|SWT.H_SCROLL|SWT.BORDER);
+		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
+		gd.heightHint = 250;
+		gd.widthHint = 200;
+		ruleListSWT.setLayoutData(gd);
+		
+		for(int i=0; i<100; i++) ruleListSWT.add("list item "+ i);
 				
 		Composite buttonsComposite = new Composite(top, SWT.NONE);
 		buttonsComposite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
@@ -64,21 +68,52 @@ implements IWorkbenchPreferencePage {
 		Button addRuleButton = new Button(buttonsComposite, SWT.PUSH);
 		addRuleButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		addRuleButton.setText("Add Rule");
+		addRuleButton.addSelectionListener(new SelectionListener(){
+
+			public void widgetDefaultSelected(SelectionEvent e) {}
+
+			public void widgetSelected(SelectionEvent e) {
+				buttonAddRuleClick(top);
+			}
+			
+		});
 		
 		Button editRuleButton = new Button(buttonsComposite, SWT.PUSH);
 		editRuleButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		editRuleButton.setText("Edit Rule");
+		editRuleButton.addSelectionListener(new SelectionListener(){
+
+			public void widgetDefaultSelected(SelectionEvent e) {}
+
+			public void widgetSelected(SelectionEvent e) {
+				AddRuleDialog dialog = new AddRuleDialog(top.getShell());
+				
+				ruleListSWT.setItem(ruleListSWT.getSelectionIndex(), "test");
+				
+			}
+			
+		});
 		
 		Button removeRuleButton = new Button(buttonsComposite, SWT.PUSH);
 		removeRuleButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		removeRuleButton.setText("Remove");
+		removeRuleButton.addSelectionListener(new SelectionListener(){
+
+			public void widgetDefaultSelected(SelectionEvent e) {}
+
+			public void widgetSelected(SelectionEvent e) {
+				ruleListSWT.remove(ruleListSWT.getSelectionIndex());
+			}
+		});
 		
-
-		new Label(top, SWT.NULL).setLayoutData(new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING)); 
-
-		new Label(top, SWT.NULL).setLayoutData(new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_BEGINNING)); 
-
 		return top;
+	}
+	
+
+	protected void buttonAddRuleClick(Composite top) {
+		AddRuleDialog dialog = new AddRuleDialog(top.getShell());
+		String rule = dialog.open();
+		if(rule.length()>0)	ruleListSWT.add(rule);
 	}
 
 }
