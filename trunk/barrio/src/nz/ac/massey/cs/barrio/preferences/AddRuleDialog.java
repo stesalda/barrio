@@ -1,5 +1,7 @@
 package nz.ac.massey.cs.barrio.preferences;
 
+import nz.ac.massey.cs.barrio.rules.ReferenceRule;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -20,7 +22,7 @@ import org.eclipse.swt.widgets.Text;
 public class AddRuleDialog extends Dialog{
 	
 	private Display display;
-	private StringBuffer buffer;
+	private ReferenceRule rule;
 
 	private String referee;
 	private String result;
@@ -30,12 +32,12 @@ public class AddRuleDialog extends Dialog{
 		super(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		this.display = parent.getDisplay();
 
-	    buffer = new StringBuffer();
+	    rule = null;
 	    referee = null;
 	    result = null;
 	}
 	
-	public String open()
+	public ReferenceRule open()
 	{
 		Shell shell = new Shell(getParent(), getStyle());
 		shell.setLayout(new FillLayout());
@@ -50,7 +52,7 @@ public class AddRuleDialog extends Dialog{
 	      }
 	    }
 	    
-		return buffer.toString();
+		return rule;
 	}
 	
 	
@@ -116,15 +118,10 @@ public class AddRuleDialog extends Dialog{
 					shell.close();
 					return;
 				}				
-				
-				buffer.append("IF ");
-				if(checkNot.getSelection()) buffer.append("NOT ");
-				buffer.append("references");
-				buffer.append(" \"");
-				buffer.append(refereeElementTxt.getText());
-				buffer.append("\" THEN it is \"");
-				buffer.append(resultTxt.getText());
-				buffer.append('\"');
+				rule = new ReferenceRule();
+				rule.setNegation(checkNot.getSelection());
+				rule.setReference(refereeElementTxt.getText());
+				rule.setResult(resultTxt.getText());
 				
 				shell.close();
 			}

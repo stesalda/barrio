@@ -1,6 +1,9 @@
 package nz.ac.massey.cs.barrio.preferences;
 
+import java.util.ArrayList;
+
 import nz.ac.massey.cs.barrio.Activator;
+import nz.ac.massey.cs.barrio.rules.ReferenceRule;
 
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.swt.SWT;
@@ -21,12 +24,14 @@ extends FieldEditorPreferencePage
 implements IWorkbenchPreferencePage {
 	
 	private List ruleListSWT;
-	private java.util.List<RuleDescriptor> ruleList;
+	private java.util.List<ReferenceRule> ruleList;
 
 	public BarrioPreferenceRulesPage() {
 		super(GRID);
 		setPreferenceStore(Activator.getDefault().getPreferenceStore());
 		//setDescription("A demonstration of a preference page implementation");
+		ruleList = new ArrayList<ReferenceRule>();
+		
 	}
 	
 	/**
@@ -112,8 +117,12 @@ implements IWorkbenchPreferencePage {
 
 	protected void buttonAddRuleClick(Composite top) {
 		AddRuleDialog dialog = new AddRuleDialog(top.getShell());
-		String rule = dialog.open();
-		if(rule.length()>0)	ruleListSWT.add(rule);
+		ReferenceRule rule = dialog.open();
+		if(rule!=null)	
+		{
+			ruleList.add(rule);
+			ruleListSWT.add(rule.toString());
+		}
 	}
 
 }
