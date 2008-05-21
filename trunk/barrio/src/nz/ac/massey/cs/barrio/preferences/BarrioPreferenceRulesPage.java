@@ -64,7 +64,7 @@ implements IWorkbenchPreferencePage {
 		gd.widthHint = 200;
 		ruleListSWT.setLayoutData(gd);
 		
-		for(int i=0; i<100; i++) ruleListSWT.add("list item "+ i);
+		//for(int i=0; i<10; i++) ruleListSWT.add("list item "+ i);
 				
 		Composite buttonsComposite = new Composite(top, SWT.NONE);
 		buttonsComposite.setLayoutData(new GridData(GridData.FILL_VERTICAL));
@@ -91,10 +91,11 @@ implements IWorkbenchPreferencePage {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 
 			public void widgetSelected(SelectionEvent e) {
-				AddRuleDialog dialog = new AddRuleDialog(top.getShell());
-				
-				ruleListSWT.setItem(ruleListSWT.getSelectionIndex(), "test");
-				
+				ReferenceRule oldRule = ruleList.get(ruleListSWT.getSelectionIndex());
+				AddRuleDialog dialog = new AddRuleDialog(top.getShell(), oldRule);
+				ReferenceRule newRule = dialog.open();
+				ruleList.set(ruleListSWT.getSelectionIndex(), newRule);
+				ruleListSWT.setItem(ruleListSWT.getSelectionIndex(), newRule.toString());				
 			}
 			
 		});
@@ -116,8 +117,9 @@ implements IWorkbenchPreferencePage {
 	
 
 	protected void buttonAddRuleClick(Composite top) {
-		AddRuleDialog dialog = new AddRuleDialog(top.getShell());
+		AddRuleDialog dialog = new AddRuleDialog(top.getShell(), null);
 		ReferenceRule rule = dialog.open();
+		System.out.println("rule = "+rule);
 		if(rule!=null)	
 		{
 			ruleList.add(rule);
