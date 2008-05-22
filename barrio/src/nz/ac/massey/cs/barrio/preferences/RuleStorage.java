@@ -1,45 +1,63 @@
 package nz.ac.massey.cs.barrio.preferences;
 
-import java.io.File;
+import java.beans.XMLDecoder;
+import java.beans.XMLEncoder;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import nz.ac.massey.cs.barrio.rules.ReferenceRule;
 
 public class RuleStorage {
 	
-	private String filename = "rules.xml";
+	private String filename;
 	
-	public void storeRules(List<?> rules)
+	public RuleStorage(String filename) {
+		if(filename!=null && filename.length()>0) this.filename = filename;
+		else filename = "rules.xml";
+	}
+
+	public void store(List<ReferenceRule> rules)
 	{
 		if(rules==null) return;
-		try 
-		{
-			File file = new File(filename);
-			PrintStream out = new PrintStream(new FileOutputStream(file));
-			out.println("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
-			out.println("<rule-set>");
-			for(Object obj:rules)
+		try {
+			XMLEncoder encoder = new XMLEncoder(new BufferedOutputStream(new FileOutputStream(filename)));
+			for(ReferenceRule rule:rules)
 			{
-				out.println("<rule>");
-				if(obj instanceof ReferenceRule)
-				{
-					ReferenceRule rule = (ReferenceRule) obj;
-					out.print("<if-references not=\"");
-					out.print(rule.isNegated());
-					out.println("\">");
-				}
-				out.println("</rule>");
+				encoder.writeObject(rule);
 			}
-			out.println("</rule-set>");
-			out.close();
+			encoder.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+			
 		}
 		
+	}
+
+	public List<ReferenceRule> load() {
+		List<ReferenceRule> result = new ArrayList<ReferenceRule>();
+		XMLDecoder decoder = null;
+		boolean isNext = true;
+		try {
+			decoder = new XMLDecoder(new BufferedInputStream(new FileInputStream(filename)));
+			
+			while(isNext)
+			{
+				Object rule = decoder.readObject();
+				if(rule instanceof ReferenceRule) result.add((ReferenceRule)rule);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (ArrayIndexOutOfBoundsException e){
+			isNext = false;
+		}finally{
+			decoder.close();
+		}
+		return result;
 	}
 
 }

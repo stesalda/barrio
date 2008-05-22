@@ -1,9 +1,9 @@
 package nz.ac.massey.cs.barrio.rules;
 
-public class RuleCondition {
+public class RuleCondition{
 	
 	private String reference;
-	private boolean negation;
+	private boolean negated;
 	
 	public String getReference() {
 		return reference;
@@ -14,11 +14,11 @@ public class RuleCondition {
 	}
 	
 	public boolean isNegated() {
-		return negation;
+		return negated;
 	}
 	
-	public void setNegation(boolean negation) {
-		this.negation = negation;
+	public void setNegated(boolean negation) {
+		this.negated = negation;
 	}
 
 }

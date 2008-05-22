@@ -14,6 +14,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.IWorkbench;
@@ -95,7 +96,7 @@ implements IWorkbenchPreferencePage {
 				AddRuleDialog dialog = new AddRuleDialog(top.getShell(), oldRule);
 				ReferenceRule newRule = dialog.open();
 				ruleList.set(ruleListSWT.getSelectionIndex(), newRule);
-				ruleListSWT.setItem(ruleListSWT.getSelectionIndex(), newRule.toString());				
+				updateSWTList();
 			}
 			
 		});
@@ -108,7 +109,41 @@ implements IWorkbenchPreferencePage {
 			public void widgetDefaultSelected(SelectionEvent e) {}
 
 			public void widgetSelected(SelectionEvent e) {
-				ruleListSWT.remove(ruleListSWT.getSelectionIndex());
+				ruleList.remove(ruleListSWT.getSelectionIndex());
+				updateSWTList();
+			}
+		});
+		
+		new Label(buttonsComposite, SWT.NULL);
+		
+		Button saveRulesButton = new Button(buttonsComposite, SWT.PUSH);
+		saveRulesButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		saveRulesButton.setText("Save");
+		saveRulesButton.addSelectionListener(new SelectionListener(){
+
+			public void widgetDefaultSelected(SelectionEvent e) {}
+
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog dialog = new FileDialog(top.getShell(), SWT.SAVE);
+				dialog.open();
+				RuleStorage storage = new RuleStorage(dialog.getFileName());
+				storage.store(ruleList);
+			}
+		});
+		
+		Button loadRulesButton = new Button(buttonsComposite, SWT.PUSH);
+		loadRulesButton.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		loadRulesButton.setText("Load");
+		loadRulesButton.addSelectionListener(new SelectionListener(){
+
+			public void widgetDefaultSelected(SelectionEvent e) {}
+
+			public void widgetSelected(SelectionEvent e) {
+				FileDialog dialog = new FileDialog(top.getShell(), SWT.OPEN);
+				dialog.open();
+				RuleStorage storage = new RuleStorage(dialog.getFileName());
+				ruleList = storage.load();
+				updateSWTList();
 			}
 		});
 		
@@ -119,10 +154,18 @@ implements IWorkbenchPreferencePage {
 	protected void buttonAddRuleClick(Composite top) {
 		AddRuleDialog dialog = new AddRuleDialog(top.getShell(), null);
 		ReferenceRule rule = dialog.open();
-		System.out.println("rule = "+rule);
 		if(rule!=null)	
 		{
 			ruleList.add(rule);
+			updateSWTList();
+		}
+	}
+	
+	private void updateSWTList()
+	{
+		ruleListSWT.removeAll();
+		for(ReferenceRule rule:ruleList)
+		{
 			ruleListSWT.add(rule.toString());
 		}
 	}

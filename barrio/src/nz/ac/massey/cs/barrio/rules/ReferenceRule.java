@@ -4,19 +4,19 @@ import java.util.List;
 
 public class ReferenceRule{
 	
-	private List<RuleCondition> ruleConditions;
+	private List<RuleCondition> conditionValues;
 	private String result;
 
-	public List<RuleCondition> getConditionValue() {
-		return ruleConditions;
+	public List<RuleCondition> getConditionValues() {
+		return conditionValues;
+	}
+
+	public void setConditionValues(List<RuleCondition> conditionValues) {
+		this.conditionValues = conditionValues;
 	}
 
 	public String getResult() {
 		return result;
-	}
-
-	public void setConditionValues(List<RuleCondition> conditionValues) {
-		this.ruleConditions = conditionValues;
 	}
 
 	public void setResult(String result) {
@@ -28,7 +28,7 @@ public class ReferenceRule{
 		boolean isFirst = true;
 		StringBuffer buffer = new StringBuffer();
 		buffer.append("IF");
-		for(RuleCondition condition:ruleConditions)
+		for(RuleCondition condition:conditionValues)
 		{
 			if(!isFirst) buffer.append(" AND");
 			if(condition.isNegated()) buffer.append(" DOES NOT reference \"");
