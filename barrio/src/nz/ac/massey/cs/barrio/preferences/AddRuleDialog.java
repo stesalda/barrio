@@ -137,15 +137,15 @@ public class AddRuleDialog extends Dialog{
 	    
 	    if(rule!=null)
 	    {
-	    	conditionTxt1.setText(rule.getConditionValues().get(0).getReference());
-	    	checkNot1.setSelection(rule.getConditionValues().get(0).isNegated());
-	    	if(rule.getConditionValues().size()>1)
+	    	conditionTxt1.setText(rule.getCondition1().getReference());
+	    	checkNot1.setSelection(rule.getCondition1().isNegated());
+	    	if(rule.getCondition2()!=null)
 	    	{
 	    		checkAnd.setSelection(true);
 	    		conditionTxt2.setEnabled(true);
 	    		checkNot2.setEnabled(true);
-	    		conditionTxt2.setText(rule.getConditionValues().get(1).getReference());
-	    		checkNot2.setSelection(rule.getConditionValues().get(1).isNegated());
+	    		conditionTxt2.setText(rule.getCondition2().getReference());
+	    		checkNot2.setSelection(rule.getCondition2().isNegated());
 	    	}
 	    	resultTxt.setText(rule.getResult());
 	    }
@@ -182,19 +182,19 @@ public class AddRuleDialog extends Dialog{
 			public void widgetSelected(SelectionEvent e) {
 				
 				rule = new ReferenceRule();
-				List<RuleCondition> conds = new ArrayList<RuleCondition>();
 				RuleCondition cond1 = new RuleCondition();
 				cond1.setNegated(checkNot1.getSelection());
 				cond1.setReference(conditionTxt1.getText());
-				conds.add(cond1);
+				
+				RuleCondition cond2 = null;
 				if(checkAnd.getSelection())
 				{
-					RuleCondition cond2 = new RuleCondition();
+					cond2 = new RuleCondition();
 					cond2.setNegated(checkNot2.getSelection());
 					cond2.setReference(conditionTxt2.getText());
-					conds.add(cond2);
 				}
-				rule.setConditionValues(conds);
+				rule.setCondition1(cond1);
+				rule.setCondition2(cond2);
 				rule.setResult(resultTxt.getText());
 				
 				shell.close();

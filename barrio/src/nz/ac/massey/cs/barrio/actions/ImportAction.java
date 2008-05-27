@@ -2,6 +2,7 @@ package nz.ac.massey.cs.barrio.actions;
 
 import java.io.File;
 
+import nz.ac.massey.cs.barrio.Activator;
 import nz.ac.massey.cs.barrio.gui.GuiGetter;
 import nz.ac.massey.cs.barrio.gui.InputUI;
 import nz.ac.massey.cs.barrio.gui.OutputUI;
@@ -33,12 +34,15 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 	public void selectionChanged(IAction action, ISelection selection) {}
 
 	public void run(IAction action) {
+		init(null);
 		Shell shell = new Shell();
 		FileDialog dlg = new FileDialog(shell, SWT.OPEN);
 		dlg.setFilterNames(new String[] { "ODEM Files","XML Files", "All Files" });
 		dlg.setFilterExtensions(new String[] { "*.odem", "*.xml", "*.*" });
 	    String filename = dlg.open();
 	    shell.close();
+	    
+//	    Activator.getDefault().getPreferenceStore().
 	    
 	    
 	    final GraphProcessingJob job = new GraphProcessingJob(new File(filename), null, input.getActiveFilters(), input.getSeparationLevel());

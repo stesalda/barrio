@@ -29,8 +29,11 @@ import org.eclipse.swt.widgets.Shell;
 import prefuse.Display;
 import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.graph.filters.Filter;
 import edu.uci.ics.jung.graph.impl.DirectedSparseGraph;
+import edu.uci.ics.jung.graph.impl.DirectedSparseVertex;
+import edu.uci.ics.jung.io.GraphMLFile;
 import edu.uci.ics.jung.utils.UserData;
 
 public class GraphProcessingJob extends Job {
