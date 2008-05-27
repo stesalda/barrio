@@ -52,7 +52,7 @@ public class OdemReader implements InputReader {
 		
 		if(stream!=null) try 
 		{			
-			System.out.println("[OdemReader]: stream not null");
+//			System.out.println("[OdemReader]: stream not null");
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 	        DocumentBuilder docBuilder;
 			docBuilder = docBuilderFactory.newDocumentBuilder();
@@ -154,35 +154,43 @@ public class OdemReader implements InputReader {
 									out.write(typeAttr.getNamedItem("visibility").getNodeValue());
 								else out.write("null");
 								
-								out.write("\" node.isSelected=\"false\" />");
-								out.write('\n');
+								out.write("\" node.isSelected=\"false\" ");
+							
+														
+								if(typeStr.contains(namespaceStr)) nodes.add(nodeId, typeStr);
+								else nodes.add(nodeId, namespaceStr+'.'+typeStr);
+								
+								StringBuffer buffer = new StringBuffer();
+								if(type.getNodeType()==Node.ELEMENT_NODE)
+								{
+									Element typeElement = (Element) type;
+									NodeList relationships = typeElement.getElementsByTagName("depends-on");
+									for(int e=0; e<relationships.getLength(); e++)
+									{
+										Node relationship = relationships.item(e);
+										NamedNodeMap relationshipAttr = relationship.getAttributes();
+										
+										TempEdge tempEdge = new TempEdge();
+										tempEdge.setSource(String.valueOf(nodeId));
+										tempEdge.setType(relationshipAttr.getNamedItem("classification").getNodeValue());
+										tempEdge.setTarget(relationshipAttr.getNamedItem("name").getNodeValue());
+										
+										tempEdges.add(tempEdge);
+									}
+								}
+								if(buffer.length()>0)
+								{
+									out.write("reference=\"");
+									out.write(buffer.toString());
+									out.write("\" ");
+								}
+								out.write("/>");
+								nodeId++;
+							
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
 							}
-							
-							
-							if(typeStr.contains(namespaceStr)) nodes.add(nodeId, typeStr);
-							else nodes.add(nodeId, namespaceStr+'.'+typeStr);
-							
-							if(type.getNodeType()==Node.ELEMENT_NODE)
-							{
-								Element typeElement = (Element) type;
-								NodeList relationships = typeElement.getElementsByTagName("depends-on");
-								for(int e=0; e<relationships.getLength(); e++)
-								{
-									Node relationship = relationships.item(e);
-									NamedNodeMap relationshipAttr = relationship.getAttributes();
-									
-									TempEdge tempEdge = new TempEdge();
-									tempEdge.setSource(String.valueOf(nodeId));
-									tempEdge.setType(relationshipAttr.getNamedItem("classification").getNodeValue());
-									tempEdge.setTarget(relationshipAttr.getNamedItem("name").getNodeValue());
-									
-									tempEdges.add(tempEdge);
-								}
-							}
-							nodeId++;
 						}
 					}
 				}
