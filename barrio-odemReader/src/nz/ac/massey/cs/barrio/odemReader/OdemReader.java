@@ -175,6 +175,9 @@ public class OdemReader implements InputReader {
 										tempEdge.setType(relationshipAttr.getNamedItem("classification").getNodeValue());
 										tempEdge.setTarget(relationshipAttr.getNamedItem("name").getNodeValue());
 										
+										buffer.append(relationshipAttr.getNamedItem("name").getNodeValue());
+										buffer.append('|');
+										
 										tempEdges.add(tempEdge);
 									}
 								}
@@ -184,6 +187,7 @@ public class OdemReader implements InputReader {
 									out.write(buffer.toString());
 									out.write("\" ");
 								}
+								out.write("classification=\"null\" ");
 								out.write("/>");
 								nodeId++;
 							
