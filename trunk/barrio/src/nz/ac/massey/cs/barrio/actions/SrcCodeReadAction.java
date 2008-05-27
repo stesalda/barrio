@@ -32,6 +32,7 @@ public class SrcCodeReadAction implements IWorkbenchWindowActionDelegate {
 	
 	public void run(IAction action) 
 	{		
+		init(null);
         ProjectSelectDialog psd = new ProjectSelectDialog(new Shell());
         List<IJavaProject> projects = psd.open();
         
