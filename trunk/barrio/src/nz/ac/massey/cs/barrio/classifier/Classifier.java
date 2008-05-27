@@ -8,6 +8,6 @@ import nz.ac.massey.cs.barrio.rules.ReferenceRule;
 
 public interface Classifier {
 	
-	public List<String> classify(Vertex v, List<ReferenceRule> rules);
+	public void classify(Vertex v, List<ReferenceRule> rules);
 
 }
