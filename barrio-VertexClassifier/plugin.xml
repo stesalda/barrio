@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension
+         id="nz.ac.massey.cs.barrio.vertexclassifier"
+         name="VertexClassifier"
+         point="nz.ac.massey.barrio.classifier">
+         <implementations
+               classifierClass="nz.ac.massey.cs.barrio.vertexclassifier.VertextClassifier"/>
+   </extension>
+
+</plugin>
