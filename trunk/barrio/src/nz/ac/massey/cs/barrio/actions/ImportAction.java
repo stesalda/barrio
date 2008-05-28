@@ -42,8 +42,8 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 	    String filename = dlg.open();
 	    shell.close();
 	    
-//	    Activator.getDefault().getPreferenceStore().
-	    
+	    String str=Activator.getDefault().getPreferenceStore().getString("ruleListEditor");
+	    System.out.println("[ImportAction]: rules = "+str);
 	    
 	    final GraphProcessingJob job = new GraphProcessingJob(new File(filename), null, input.getActiveFilters(), input.getSeparationLevel());
 	    job.setOutput(output);
