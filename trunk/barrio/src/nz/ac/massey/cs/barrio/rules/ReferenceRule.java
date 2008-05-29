@@ -1,17 +1,17 @@
 package nz.ac.massey.cs.barrio.rules;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class ReferenceRule{
 	
-	private RuleCondition condition1;
-	private RuleCondition condition2;
+	private List<RuleCondition> conditions;
 	private String result;
 	
 	public ReferenceRule()
 	{
-		super();
-		condition1 = null;
-		condition2 = null;
+		conditions = new ArrayList<RuleCondition>();
 		result = null;
 	}
 	
@@ -35,42 +35,33 @@ public class ReferenceRule{
 	}
 
 
-	public RuleCondition getCondition1() {
-		return condition1;
+	public List<RuleCondition> getConditions() {
+		return conditions;
 	}
 
-	public void setCondition1(RuleCondition condition1) {
-		this.condition1 = condition1;
-	}
-
-	public RuleCondition getCondition2() {
-		return condition2;
-	}
-
-	public void setCondition2(RuleCondition condition2) {
-		this.condition2 = condition2;
+	public void setConditions(List<RuleCondition> conditions) {
+		this.conditions = conditions;
 	}
 	
 	@Override
 	public String toString() {
-		if(condition1==null || result.length()<1) return null;
+		if(conditions.size()<1 || result.length()<1) return null;
 		
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("IF");
-		if(condition1.isNegated()) buffer.append(" DOES NOT reference \"");
-		else buffer.append(" references \"");
-		buffer.append(condition1.getReference());
-		buffer.append("\"");
-		if(condition2!=null){
-			buffer.append(" AND");
-			if(condition2.isNegated()) buffer.append(" DOES NOT reference \"");
-			else buffer.append(" references \"");
-			buffer.append(condition2.getReference());
-			buffer.append("\"");
+		buffer.append("IF ");
+		boolean isFirst = true;
+		for(RuleCondition cond:conditions)
+		{
+			if(!isFirst) buffer.append("AND ");
+			if(cond.isNegated()) buffer.append("DOES NOT ");
+			buffer.append(cond.getConditionType());
+			buffer.append(" \"");
+			buffer.append(cond.getValue());
+			buffer.append("\" ");
+			if(isFirst) isFirst = false;
 		}
 			
-				
-		buffer.append(" THEN it is \"");
+		buffer.append("THEN it is \"");
 		buffer.append(result);
 		buffer.append("\"");
 		return buffer.toString();

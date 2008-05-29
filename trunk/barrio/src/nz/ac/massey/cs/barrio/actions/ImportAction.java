@@ -14,6 +14,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -35,7 +36,14 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 
 	public void run(IAction action) {
 		init(null);
+				
 		Shell shell = new Shell();
+		//testing
+		MessageBox mb = new MessageBox(shell, SWT.OK);
+        mb.setText("Message from SWT");
+        mb.setMessage("new version");
+        mb.open();
+		//testing ends
 		FileDialog dlg = new FileDialog(shell, SWT.OPEN);
 		dlg.setFilterNames(new String[] { "ODEM Files","XML Files", "All Files" });
 		dlg.setFilterExtensions(new String[] { "*.odem", "*.xml", "*.*" });
