@@ -15,20 +15,20 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Dialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
 public class AddRuleDialog extends Dialog{
 	
-	private Text conditionTxt1;
-	private Button checkNot1;
-	private Button checkAnd;
-	private Text conditionTxt2;
-	private Button checkNot2;
+	private List<WidgetContainer> container;
 	private Text resultTxt;
 	private Button btnCancel;
 	private Button btnOk;
@@ -39,6 +39,7 @@ public class AddRuleDialog extends Dialog{
 	{
 		super(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
 		this.rule = rule;
+		container = new ArrayList<WidgetContainer>();
 	}
 	
 	public ReferenceRule open()
@@ -64,116 +65,101 @@ public class AddRuleDialog extends Dialog{
 	    shell.setText("Add Rule:");
 	    
 	    Composite parent = new Composite(shell, SWT.NONE);
-	    parent.setLayout(new GridLayout(3, true));
+	    parent.setLayout(new GridLayout());
 	    
-	    //row 1 of elements starts
-	    final Label label1 = new Label(parent, SWT.NONE);
-	    label1.setText("IF references");
-	    label1.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
+	    //row
+	    Label label = new Label(parent, SWT.NONE);
+	    label.setText("IF");
+	    //row ends
+
+	    String[] titles = {"negation", "condition", "value", "remove"};
+	    final Table table = new Table(parent, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+	    table.setHeaderVisible(true);
+	    for(String title:titles)
+	    {
+	    	TableColumn column = new TableColumn(table, SWT.RIGHT);
+	        column.setText(title);
+	    }
+	    addCondition(table);
 	    
-	    conditionTxt1 = new Text(parent, SWT.BORDER);
-	    conditionTxt1.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	    for (int i=0; i<titles.length; i++) {
+	        table.getColumn (i).pack ();
+	      } 
+	    GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
+		gd.heightHint = 150;
+		gd.widthHint = 250;
+		table.setLayoutData(gd);
 	    
-	    checkNot1 = new Button(parent, SWT.CHECK);
-	    checkNot1.setText("NOT");
+	    Button addConditionButton = new Button(parent, SWT.PUSH);
+	    addConditionButton.setText("Add Condition");	
+	    addConditionButton.addSelectionListener(new SelectionListener(){
+
+			public void widgetDefaultSelected(SelectionEvent e) {}
+
+			public void widgetSelected(SelectionEvent e) {
+				addCondition(table);
+			}
+	    	
+	    });
 	    
-	    //row 1 ends
-	    
-	    
-	    //row 2 starts
-	    new Label(parent, SWT.NULL);
-	    
-	    checkAnd = new Button(parent, SWT.CHECK);
-	    checkAnd.setText("AND");
-	    checkAnd.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_CENTER));
-	    	    
-	    new Label(parent, SWT.NULL);
-	    //row 2 ends
-	    
-	    
-	    //row 3 starts
-	    new Label(parent, SWT.NULL);
-	    
-	    conditionTxt2 = new Text(parent, SWT.BORDER);
-	    conditionTxt2.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    conditionTxt2.setEnabled(false);
-	    
-	    checkNot2 = new Button(parent, SWT.CHECK);
-	    checkNot2.setText("NOT");
-	    checkNot2.setEnabled(false);
-	    //row 3 ends
-	    
-	    
-	    //row 4 starts
-	    new Label(parent, SWT.NULL);
-	    new Label(parent, SWT.NULL);
-	    new Label(parent, SWT.NULL);
-	    //row 4 ends
+	    Composite resultComposite = new Composite(parent, SWT.BORDER);
+	    resultComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	    resultComposite.setLayout(new GridLayout(2,false));
 	    
 	    
-	    //row 5 starts
-	    Label label2 = new Label(parent, SWT.NONE);
+	    Label label2 = new Label(resultComposite, SWT.NONE);
 	    label2.setText("THEN");
-	    label2.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 	    
-	    resultTxt = new Text(parent, SWT.BORDER);
+	    resultTxt = new Text(resultComposite, SWT.BORDER);
 	    resultTxt.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    
-	    new Label(parent, SWT.NULL);
-	    //row 5 ends
 	    
-
-	    //row 6 starts 
-	    new Label(parent, SWT.NULL);
+	    Composite buttonComposite = new Composite(parent, SWT.BORDER);
+	    buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	    buttonComposite.setLayout(new GridLayout(2,true));
 	    
-	    btnCancel = new Button(parent, SWT.PUSH);
+	    btnCancel = new Button(buttonComposite, SWT.PUSH);
 	    btnCancel.setText("Cancel");
 	    btnCancel.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	    
-	    btnOk = new Button(parent, SWT.PUSH);
+	    btnOk = new Button(buttonComposite, SWT.PUSH);
 	    btnOk.setText("Ok");
 	    btnOk.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    //row 6 ends
-	    
-	    if(rule!=null)
-	    {
-	    	conditionTxt1.setText(rule.getCondition1().getReference());
-	    	checkNot1.setSelection(rule.getCondition1().isNegated());
-	    	if(rule.getCondition2()!=null)
-	    	{
-	    		checkAnd.setSelection(true);
-	    		conditionTxt2.setEnabled(true);
-	    		checkNot2.setEnabled(true);
-	    		conditionTxt2.setText(rule.getCondition2().getReference());
-	    		checkNot2.setSelection(rule.getCondition2().isNegated());
-	    	}
-	    	resultTxt.setText(rule.getResult());
-	    }
-	    
 	    setButtonOk();
+	}
+	
+	
+	private void addCondition(Table table)
+	{
+		TableItem item = new TableItem(table, SWT.NONE);
+		item.setText(0, "not");
+		item.setText(1, "conditionType");
+		item.setText(2, "value");
+		item.setText(3, "remove");
+		
+
+	    final String[] types = new String[]{"references"};
+//		Button checkNot = new Button(conditionsComposite, SWT.CHECK);
+//	    checkNot.setText("not");
+//	    Combo conditionType = new Combo(conditionsComposite, SWT.NULL);
+//	    for(String s:types) conditionType.add(s);
+//	    Text condition = new Text(conditionsComposite, SWT.BORDER);
+//	    condition.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+//	    Button remove = new Button(conditionsComposite, SWT.NULL);
+//	    remove.setText("X");
+//	    
+//	    WidgetContainer wc = new WidgetContainer();
+//	    wc.setNegation(checkNot);
+//	    wc.setType(conditionType);
+//	    wc.setValue(condition);
+//	    
+//	    container.add(wc);
 	}
 	
 	
 	private void setEvents(final Shell shell)
 	{
-		checkAnd.addSelectionListener(new SelectionListener(){
-
-			public void widgetDefaultSelected(SelectionEvent e) {}
-
-			public void widgetSelected(SelectionEvent e) {
-				if(checkAnd.getSelection())
-				{
-					conditionTxt2.setEnabled(true);
-					checkNot2.setEnabled(true);
-				}else
-				{
-					conditionTxt2.setEnabled(false);
-					checkNot2.setEnabled(false);
-				}
-				setButtonOk();
-			}
-	    	
-	    });
+		
 	    
 	    btnOk.addSelectionListener(new SelectionListener(){
 
@@ -182,19 +168,7 @@ public class AddRuleDialog extends Dialog{
 			public void widgetSelected(SelectionEvent e) {
 				
 				rule = new ReferenceRule();
-				RuleCondition cond1 = new RuleCondition();
-				cond1.setNegated(checkNot1.getSelection());
-				cond1.setReference(conditionTxt1.getText());
 				
-				RuleCondition cond2 = null;
-				if(checkAnd.getSelection())
-				{
-					cond2 = new RuleCondition();
-					cond2.setNegated(checkNot2.getSelection());
-					cond2.setReference(conditionTxt2.getText());
-				}
-				rule.setCondition1(cond1);
-				rule.setCondition2(cond2);
 				rule.setResult(resultTxt.getText());
 				
 				shell.close();
@@ -210,24 +184,7 @@ public class AddRuleDialog extends Dialog{
 			}	    	
 	    });
 	    
-	    conditionTxt1.addKeyListener(new KeyListener(){
-
-			public void keyPressed(KeyEvent e) {}
-
-			public void keyReleased(KeyEvent e) {
-				setButtonOk();
-			}	    	
-	    });
-	    
-	    conditionTxt2.addKeyListener(new KeyListener(){
-
-			public void keyPressed(KeyEvent e) {}
-
-			public void keyReleased(KeyEvent e) {
-				setButtonOk();
-			}	    	
-	    });
-	    
+	      
 	    resultTxt.addKeyListener(new KeyListener(){
 
 			public void keyPressed(KeyEvent e) {}
@@ -249,16 +206,7 @@ public class AddRuleDialog extends Dialog{
 	private boolean isGrammarComplete()
 	{
 		boolean result = false;
-		if(checkAnd.getSelection())
-		{
-			if(conditionTxt1.getText().length()>0 && 
-				conditionTxt2.getText().length()>0 &&
-				resultTxt.getText().length()>0) result = true;
-		}else
-		{
-			if(conditionTxt1.getText().length()>0 && 
-				resultTxt.getText().length()>0) result = true;
-		}
+		
 		
 		return result;
 	}
