@@ -13,6 +13,7 @@ import nz.ac.massey.cs.barrio.srcgraphbuilder.ExtractDependencyGraph2OdemInMemor
 public class SourceCodeReader implements SourceReader{
 
 	private byte[]  buffer; 
+	
 	public ExtractDependencyGraph2OdemInMemoryJob getProjectReadingJob(List<IJavaProject> projects) 
 	{
 		if(projects.size()<1) return null;
@@ -20,6 +21,15 @@ public class SourceCodeReader implements SourceReader{
 		ExtractDependencyGraph2OdemInMemoryJob job = new ExtractDependencyGraph2OdemInMemoryJob(project);
 		
 		buffer = job.getBuffer();
+		return job;
+	}
+	
+	public ExtractDependencyGraph2OdemFileJob getProjectReadingJob(List<IJavaProject> projects, String filepath) 
+	{
+		if(projects.size()<1) return null;
+		IJavaProject project = projects.get(0);
+		ExtractDependencyGraph2OdemFileJob job = new ExtractDependencyGraph2OdemFileJob(project);
+		job.setFileName(filepath);
 		return job;
 	}
 
