@@ -17,21 +17,21 @@ public class VertexClassifier implements Classifier{
 		
 		for(ReferenceRule rule:rules)
 		{
-			boolean negate1 = rule.getCondition1().isNegated();
-			String cond1 = rule.getCondition1().getReference();
-			
-			if(rule.getCondition2()==null)
-			{
-				if(isSattisfying(negate1, cond1, references, classifications))
-					classifications.add(rule.getResult());
-			}
-			else
-			{//
-				boolean negate2 = rule.getCondition2().isNegated();
-				String cond2 = rule.getCondition2().getReference();
-				if(isSattisfying(negate1, cond1, references, classifications) && isSattisfying(negate2, cond2, references, classifications))
-					classifications.add(rule.getResult());
-			}
+//			//boolean negate1 = rule.getCondition1().isNegated();
+//			//String cond1 = rule.getCondition1().getReference();
+//			
+//			if(rule.getCondition2()==null)
+//			{
+//				if(isSattisfying(negate1, cond1, references, classifications))
+//					classifications.add(rule.getResult());
+//			}
+//			else
+//			{//
+//				boolean negate2 = rule.getCondition2().isNegated();
+//				String cond2 = rule.getCondition2().getReference();
+//				if(isSattisfying(negate1, cond1, references, classifications) && isSattisfying(negate2, cond2, references, classifications))
+//					classifications.add(rule.getResult());
+//			}
 		}
 		
 		StringBuffer buffer = new StringBuffer();
