@@ -33,6 +33,12 @@
             <groupMarker
                   name="barrio.actions3">
             </groupMarker>
+            <separator
+                  name="barrio.separator1">
+            </separator>
+            <groupMarker
+                  name="barrio.actionExportResults">
+            </groupMarker>
          </menu>
          <action
                class="nz.ac.massey.cs.barrio.actions.ActionRun"
@@ -62,6 +68,14 @@
                id="barrio.action4"
                label="Extract and Export Graph"
                menubarPath="barrio.topMenu/barrio.actions3">
+         </action>
+         <action
+               class="nz.ac.massey.cs.barrio.actions.ExportResultsAction"
+               icon="icons/export.gif"
+               id="barrio.exportResultsAction"
+               label="Export Results"
+               menubarPath="barrio.topMenu/barrio.actionExportResults"
+               tooltip="Export produced output to xml file">
          </action>
       </actionSet>
    </extension>

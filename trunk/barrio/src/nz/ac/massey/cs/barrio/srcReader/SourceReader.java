@@ -6,8 +6,10 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jdt.core.IJavaProject;
 
 public interface SourceReader {
-	
+
 	public Job getProjectReadingJob(List<IJavaProject> projects);
+	
+	public Job getProjectReadingJob(List<IJavaProject> projects, String filepath);
 
 	public byte[] getBuffer();
 }
