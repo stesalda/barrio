@@ -14,17 +14,6 @@ public class ReferenceRule{
 		conditions = new ArrayList<RuleCondition>();
 		result = null;
 	}
-	
-	public ReferenceRule(String str)
-	{
-		StringBuffer buffer = new StringBuffer();
-		for(int i=(str.lastIndexOf("\"")-1); i>0; i--)
-		{
-			if(str.charAt(i)=='\"') break;
-			buffer.append(str.charAt(i));
-		}
-		result = buffer.reverse().toString();
-	}
 
 	public String getResult() {
 		return result;
@@ -53,7 +42,7 @@ public class ReferenceRule{
 		for(RuleCondition cond:conditions)
 		{
 			if(!isFirst) buffer.append("AND ");
-			if(cond.isNegated()) buffer.append("DOES NOT ");
+			if(cond.isNegated()) buffer.append("NOT ");
 			buffer.append(cond.getConditionType());
 			buffer.append(" \"");
 			buffer.append(cond.getValue());

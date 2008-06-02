@@ -6,11 +6,20 @@ import java.util.List;
 import nz.ac.massey.cs.barrio.rules.ReferenceRule;
 import nz.ac.massey.cs.barrio.rules.RuleCondition;
 
+import org.eclipse.jface.layout.TableColumnLayout;
+import org.eclipse.jface.viewers.ColumnPixelData;
+import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CCombo;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -32,14 +41,17 @@ public class AddRuleDialog extends Dialog{
 	private Text resultTxt;
 	private Button btnCancel;
 	private Button btnOk;
+	private Table table;
 	
 	private ReferenceRule rule;
 	
 	public AddRuleDialog(Shell parent, ReferenceRule rule)
 	{
 		super(parent, SWT.DIALOG_TRIM | SWT.APPLICATION_MODAL);
-		this.rule = rule;
+		
 		container = new ArrayList<WidgetContainer>();
+		if(rule!=null) this.rule = rule;
+		else this.rule = new ReferenceRule();
 	}
 	
 	public ReferenceRule open()
@@ -72,23 +84,14 @@ public class AddRuleDialog extends Dialog{
 	    label.setText("IF");
 	    //row ends
 
-	    String[] titles = {"negation", "condition", "value", "remove"};
-	    final Table table = new Table(parent, SWT.CHECK | SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
-	    table.setHeaderVisible(true);
-	    for(String title:titles)
+	    Composite tableComposite = new Composite(parent, SWT.NONE);
+	    table = buildTable(tableComposite);
+	    if(rule.getConditions()!=null && rule.getConditions().size()>0)
 	    {
-	    	TableColumn column = new TableColumn(table, SWT.RIGHT);
-	        column.setText(title);
+	    	for(RuleCondition c:rule.getConditions())
+	    		addCondition(c);
 	    }
-	    addCondition(table);
-	    
-	    for (int i=0; i<titles.length; i++) {
-	        table.getColumn (i).pack ();
-	      } 
-	    GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
-		gd.heightHint = 150;
-		gd.widthHint = 250;
-		table.setLayoutData(gd);
+	    else addCondition(null);
 	    
 	    Button addConditionButton = new Button(parent, SWT.PUSH);
 	    addConditionButton.setText("Add Condition");	
@@ -97,9 +100,10 @@ public class AddRuleDialog extends Dialog{
 			public void widgetDefaultSelected(SelectionEvent e) {}
 
 			public void widgetSelected(SelectionEvent e) {
-				addCondition(table);
-			}
-	    	
+				addCondition(null);
+				setButtonRemove();
+			    setButtonOk();
+			}	    	
 	    });
 	    
 	    Composite resultComposite = new Composite(parent, SWT.BORDER);
@@ -112,7 +116,7 @@ public class AddRuleDialog extends Dialog{
 	    
 	    resultTxt = new Text(resultComposite, SWT.BORDER);
 	    resultTxt.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-	    
+	    if(rule.getResult()!=null) resultTxt.setText(rule.getResult());
 	    
 	    Composite buttonComposite = new Composite(parent, SWT.BORDER);
 	    buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -125,50 +129,160 @@ public class AddRuleDialog extends Dialog{
 	    btnOk = new Button(buttonComposite, SWT.PUSH);
 	    btnOk.setText("Ok");
 	    btnOk.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+	    setButtonRemove();
 	    setButtonOk();
 	}
 	
-	
-	private void addCondition(Table table)
+	private Table buildTable(Composite parent)
 	{
-		TableItem item = new TableItem(table, SWT.NONE);
-		item.setText(0, "not");
-		item.setText(1, "conditionType");
-		item.setText(2, "value");
-		item.setText(3, "remove");
-		
+	    Table table = new Table(parent, SWT.MULTI|SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
+	    table.setHeaderVisible(false);
+	    table.setLinesVisible(true);
+	    table.setSize(360,150);
 
-	    final String[] types = new String[]{"references"};
-//		Button checkNot = new Button(conditionsComposite, SWT.CHECK);
-//	    checkNot.setText("not");
-//	    Combo conditionType = new Combo(conditionsComposite, SWT.NULL);
-//	    for(String s:types) conditionType.add(s);
-//	    Text condition = new Text(conditionsComposite, SWT.BORDER);
-//	    condition.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-//	    Button remove = new Button(conditionsComposite, SWT.NULL);
-//	    remove.setText("X");
-//	    
-//	    WidgetContainer wc = new WidgetContainer();
-//	    wc.setNegation(checkNot);
-//	    wc.setType(conditionType);
-//	    wc.setValue(condition);
-//	    
-//	    container.add(wc);
-	}
-	
-	
-	private void setEvents(final Shell shell)
-	{
+	    new TableColumn(table, SWT.RIGHT);
+	    new TableColumn(table, SWT.RIGHT);
+	    new TableColumn(table, SWT.RIGHT);
+	    new TableColumn(table, SWT.RIGHT);
 		
+	    for (int i=0; i<table.getColumnCount(); i++) {
+	        table.getColumn (i).pack ();
+	        if(i==0) table.getColumn(i).setWidth(50);
+	        if(i==1) table.getColumn(i).setWidth(100);
+	        if(i==2) table.getColumn(i).setWidth(150);
+	        if(i==3) table.getColumn(i).setWidth(30);
+	        	
+	        
+	    }
+	    return table;
+	}
+
+	private void addCondition(RuleCondition condition)
+	{
+		final TableItem item = new TableItem(table, SWT.NONE);
+		final String[] types = new String[]{"references"};
+		TableEditor editor;
 	    
-	    btnOk.addSelectionListener(new SelectionListener(){
+	    editor = new TableEditor(table);
+	    Button buttonNot = new Button(table, SWT.CHECK);
+	    buttonNot.setText("not");
+	    buttonNot.pack();
+	    if(condition!=null) buttonNot.setSelection(condition.isNegated());
+	    editor.horizontalAlignment = SWT.CENTER;
+	    editor.minimumWidth = buttonNot.getSize ().x;
+	    editor.setEditor(buttonNot, item, 0);
+	    
+	    editor = new TableEditor(table);
+	    CCombo conditionType = new CCombo(table, SWT.NONE);
+	    conditionType.setItems(types);
+	    if(condition!=null) conditionType.select(getIndex(types, condition.getConditionType()));
+	    else conditionType.select(0);
+	    editor.grabHorizontal = true;
+	    editor.minimumWidth = 50;
+	    editor.setEditor(conditionType, item, 1);
+
+	    editor = new TableEditor(table);
+	    Text value = new Text(table, SWT.NONE);
+	    if(condition!=null) value.setText(condition.getValue());
+	    value.addKeyListener(new KeyListener(){
+
+			public void keyPressed(KeyEvent e) {}
+
+			public void keyReleased(KeyEvent e) {
+				setButtonOk();
+				
+			}
+	    	
+	    });
+	    editor.grabHorizontal = true;
+	    editor.minimumWidth = 50;
+	    editor.setEditor(value, item, 2);
+	    
+	    editor = new TableEditor(table);
+	    final Button buttonRemove = new Button(table, SWT.PUSH);
+	    buttonRemove.setText("x");
+	    buttonRemove.setData("index", table.getItemCount()-1);
+	    buttonRemove.setToolTipText("Remove condition");
+	    buttonRemove.pack();
+	    editor.horizontalAlignment = SWT.CENTER;
+	    editor.minimumWidth = buttonRemove.getSize().x;
+	    editor.setEditor(buttonRemove, item, 3);
+	    	    
+	    WidgetContainer wc = new WidgetContainer();
+	    wc.setNegation(buttonNot);
+	    wc.setType(conditionType);
+	    wc.setValue(value);
+	    wc.setBtnRemove(buttonRemove);
+	    
+	    container.add(wc);
+	    
+	    buttonRemove.addSelectionListener(new SelectionListener(){
 
 			public void widgetDefaultSelected(SelectionEvent e) {}
 
 			public void widgetSelected(SelectionEvent e) {
-				
+				buttonRemoveClick(table.getParent(), buttonRemove.getData("index"));
+			}
+	    	
+	    });
+	}
+	
+	
+	private int getIndex(String[] types, String conditionType) {
+		for(int i=0; i<types.length; i++)
+		{
+			if(types[i].equals(conditionType)) return i;
+		}
+		return 0;
+	}
+	
+	
+
+	protected void buttonRemoveClick(Composite parent, Object data) {
+
+		int removed = Integer.parseInt(data.toString());
+		container.remove(removed);
+		List<RuleCondition> temp = new ArrayList<RuleCondition>();
+		for(WidgetContainer wc : container)
+		{
+			RuleCondition rc = new RuleCondition();
+			rc.setNegated(wc.getNegation().getSelection());
+			rc.setConditionType(wc.getType().getItem(wc.getType().getSelectionIndex()));
+			rc.setValue(wc.getValue().getText());
+			temp.add(rc);
+		}
+		container = new ArrayList<WidgetContainer>();		
+		table.dispose();
+		
+		table = buildTable(parent);
+		for(RuleCondition rc : temp)
+		{
+			addCondition(rc);
+		}
+		setButtonRemove();
+	    setButtonOk();
+		
+	}
+
+	private void setEvents(final Shell shell)
+	{	    
+	    btnOk.addSelectionListener(new SelectionListener(){
+
+			public void widgetDefaultSelected(SelectionEvent e) {}
+
+			public void widgetSelected(SelectionEvent e) 
+			{
 				rule = new ReferenceRule();
-				
+				List<RuleCondition> conditions = new ArrayList<RuleCondition>();
+				for(WidgetContainer wc:container)
+				{
+					RuleCondition rc = new RuleCondition();
+					rc.setNegated(wc.getNegation().getSelection());
+					rc.setConditionType(wc.getType().getItem(wc.getType().getSelectionIndex()));
+					rc.setValue(wc.getValue().getText());
+					conditions.add(rc);
+				}
+				rule.setConditions(conditions);
 				rule.setResult(resultTxt.getText());
 				
 				shell.close();
@@ -202,12 +316,20 @@ public class AddRuleDialog extends Dialog{
 	    else btnOk.setEnabled(false);
 	}
 	
+	private void setButtonRemove()
+	{
+		if(container.size()==1) container.get(0).getBtnRemove().setEnabled(false);
+		else container.get(0).getBtnRemove().setEnabled(true);
+	}
 	
 	private boolean isGrammarComplete()
 	{
-		boolean result = false;
-		
-		
+		boolean result = true;
+		for(WidgetContainer c:container)
+		{
+			if(c.getValue().getText().length()<1) return false;
+		}
+		if(resultTxt.getText().length()<1) return false;
 		return result;
 	}
 }

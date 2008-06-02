@@ -1,5 +1,8 @@
 package nz.ac.massey.cs.barrio.preferences;
 
+import java.io.File;
+import java.util.ArrayList;
+
 import nz.ac.massey.cs.barrio.Activator;
 import nz.ac.massey.cs.barrio.rules.ReferenceRule;
 
@@ -28,9 +31,8 @@ implements IWorkbenchPreferencePage {
 
 	public BarrioPreferenceRulesPage() {
 		super(GRID);
-		//setPreferenceStore(Activator.getDefault().getPreferenceStore());
-		IPreferenceStore store = Activator.getDefault().getPreferenceStore();
-		setPreferenceStore(store);
+		
+		
 	}
 	
 	/**
@@ -55,6 +57,8 @@ implements IWorkbenchPreferencePage {
 	@Override
 	public boolean performOk() {
 		System.out.println("[BarrioPreferencePage]: OK pressed");
+		RuleStorage storage = new RuleStorage(null);
+		storage.store(ruleList);
 		return super.performOk();
 	}
 	
@@ -71,6 +75,7 @@ implements IWorkbenchPreferencePage {
 	}
 	
 	protected Control createContents(Composite parent) {
+		ruleList = new ArrayList<ReferenceRule>();
 		final Composite top = new Composite(parent, SWT.LEFT);
 		top.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		top.setLayout(new GridLayout(2,false));
@@ -146,8 +151,7 @@ implements IWorkbenchPreferencePage {
 
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(top.getShell(), SWT.SAVE);
-				dialog.open();
-				RuleStorage storage = new RuleStorage(dialog.getFileName());
+				RuleStorage storage = new RuleStorage(dialog.open());
 				storage.store(ruleList);
 			}
 		});
@@ -161,25 +165,27 @@ implements IWorkbenchPreferencePage {
 
 			public void widgetSelected(SelectionEvent e) {
 				FileDialog dialog = new FileDialog(top.getShell(), SWT.OPEN);
-				dialog.open();
-				RuleStorage storage = new RuleStorage(dialog.getFileName());
+				RuleStorage storage = new RuleStorage(dialog.open());
 				ruleList = storage.load();
 				updateSWTList();
 			}
 		});
-		
+		populateList();
 		return top;
 	}
 	
 
+	private void populateList() {
+		RuleStorage storage = new RuleStorage(null);
+		if(storage.load()!=null) ruleList = storage.load();
+		updateSWTList();
+	}
+
 	protected void buttonAddRuleClick(Composite top) {
 		AddRuleDialog dialog = new AddRuleDialog(top.getShell(), null);
 		ReferenceRule rule = dialog.open();
-		if(rule!=null)	
-		{
-			ruleList.add(rule);
-			updateSWTList();
-		}
+		ruleList.add(rule);
+		updateSWTList();
 	}
 	
 	private void updateSWTList()
