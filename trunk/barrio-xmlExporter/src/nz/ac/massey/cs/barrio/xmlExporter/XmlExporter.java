@@ -361,7 +361,9 @@ public class XmlExporter implements Exporter {
 	
 	private String getName(String str)
 	{
-		int i =str.lastIndexOf(' ');
+		int i;
+		if(str.contains(" ")) i =str.lastIndexOf(' ');
+		else i = str.length()-1;
 		return str.substring(0, i);
 	}
 }
