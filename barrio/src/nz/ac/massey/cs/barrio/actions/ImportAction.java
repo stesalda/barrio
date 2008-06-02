@@ -39,10 +39,10 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 				
 		Shell shell = new Shell();
 		//testing
-		MessageBox mb = new MessageBox(shell, SWT.OK);
-        mb.setText("Message from SWT");
-        mb.setMessage("new version");
-        mb.open();
+//		MessageBox mb = new MessageBox(shell, SWT.OK);
+//        mb.setText("Message from SWT");
+//        mb.setMessage("new version");
+//        mb.open();
 		//testing ends
 		FileDialog dlg = new FileDialog(shell, SWT.OPEN);
 		dlg.setFilterNames(new String[] { "ODEM Files","XML Files", "All Files" });
