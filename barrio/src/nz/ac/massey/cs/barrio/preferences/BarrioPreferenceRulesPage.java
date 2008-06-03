@@ -193,7 +193,7 @@ implements IWorkbenchPreferencePage {
 		ruleListSWT.removeAll();
 		for(ReferenceRule rule:ruleList)
 		{
-			ruleListSWT.add(rule.toString());
+			if(rule.toString()!=null)ruleListSWT.add(rule.toString());
 		}
 	}
 

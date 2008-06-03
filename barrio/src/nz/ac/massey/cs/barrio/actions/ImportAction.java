@@ -6,6 +6,7 @@ import nz.ac.massey.cs.barrio.Activator;
 import nz.ac.massey.cs.barrio.gui.GuiGetter;
 import nz.ac.massey.cs.barrio.gui.InputUI;
 import nz.ac.massey.cs.barrio.gui.OutputUI;
+import nz.ac.massey.cs.barrio.jobs.ClassificationJob;
 import nz.ac.massey.cs.barrio.jobs.GraphProcessingJob;
 
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -75,6 +76,10 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 				output.updateVisualElements(input.getVisualSettings());
 				Long stop = System.currentTimeMillis();
 				System.out.println("[ImportAction]: Time taken = "+(stop-start)/1000+" seconds");
+				
+				ClassificationJob classifyJob = new ClassificationJob(job.getFinalGraph());
+				classifyJob.setUser(true);
+				classifyJob.schedule();
 			}
 	    	
 	    });
