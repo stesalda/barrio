@@ -4,9 +4,9 @@
    <extension
          id="nz.ac.massey.cs.barrio.vertexclassifier"
          name="VertexClassifier"
-         point="nz.ac.massey.barrio.classifier">
+         point="nz.ac.massey.cs.barrio.classifier">
          <implementations
-               classifierClass="nz.ac.massey.cs.barrio.vertexclassifier.VertextClassifier"/>
+               classifierClass="nz.ac.massey.cs.barrio.vertexclassifier.VertexClassifier"/>
    </extension>
 
 </plugin>
