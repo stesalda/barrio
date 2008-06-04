@@ -87,7 +87,7 @@ implements IWorkbenchPreferencePage {
 
 		ruleListSWT = new List(top, SWT.V_SCROLL|SWT.H_SCROLL|SWT.BORDER);
 		GridData gd = new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
-		gd.heightHint = 250;
+		gd.heightHint = 150;
 		gd.widthHint = 200;
 		ruleListSWT.setLayoutData(gd);
 		
