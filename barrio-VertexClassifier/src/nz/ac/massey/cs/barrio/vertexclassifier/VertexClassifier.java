@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import edu.uci.ics.jung.graph.Vertex;
+import edu.uci.ics.jung.utils.UserData;
 import nz.ac.massey.cs.barrio.classifier.Classifier;
 import nz.ac.massey.cs.barrio.rules.ReferenceRule;
 import nz.ac.massey.cs.barrio.rules.RuleCondition;
@@ -15,14 +16,16 @@ public class VertexClassifier implements Classifier{
 	{
 		List<String> references = new ArrayList<String>();
 		if(v.getUserDatum("reference")!=null) references = getReferences(v.getUserDatum("reference").toString());
-		System.out.println("[VertexClassifier]: references = " + references);
+		System.out.println("[VertexClassifier]: class "+v.getUserDatum("class.packageName")+"."+v.getUserDatum("class.name")+" references = " + references);
 		List<String> classifications = new ArrayList<String>();
 		
 		for(ReferenceRule rule:rules)
 		{
-			if(isSattisfyingRule(references, rule)) classifications.add(rule.getResult());
+			if(isSattisfyingRule(references, rule) && !classifications.contains(rule.getResult())) 
+				classifications.add(rule.getResult());
 		}
-		System.out.println("[VertexClassifier]: classifications = " + classifications);
+		v.setUserDatum("classification", classifications, UserData.SHARED);	
+		System.out.println("[VertexClassifier]: classifications = " + v.getUserDatum("classification").toString());
 	}
 	
 	
@@ -40,7 +43,6 @@ public class VertexClassifier implements Classifier{
 	private boolean isSattisfyingCondition(List<String> references, RuleCondition condition) {
 		String value = condition.getValue();
 		if(value.endsWith("*")) value = value.substring(0, value.lastIndexOf('*'));
-		System.out.println("[VertexClassifier]: cond value = "+value);
 		
 		boolean contains = false;
 		for(String ref:references)
