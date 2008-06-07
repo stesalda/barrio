@@ -21,14 +21,11 @@ import nz.ac.massey.cs.barrio.visual.VisualHighlightingManager;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
 
 import prefuse.Display;
 import prefuse.Visualization;
@@ -39,6 +36,7 @@ import prefuse.visual.VisualItem;
 public class OutputUI extends Composite{
 	
 	private Tree treeProject;
+	private TableTree tableTree;
 	private Tree treePwMC;
 	private Tree treeCwMP;
 	private Panel panelGraph;
@@ -52,6 +50,8 @@ public class OutputUI extends Composite{
 		final TabFolder tabFolder = new TabFolder(this, SWT.BORDER);
 		TabItem itemProject = new TabItem(tabFolder, SWT.NONE);
 	    itemProject.setText("Project description");
+	    TabItem itemMatrix = new TabItem(tabFolder, SWT.NONE);
+	    itemMatrix.setText("Tree Table");
 	    TabItem itemPwMC = new TabItem(tabFolder, SWT.NONE);
 	    itemPwMC.setText("Packages with multiple clusters");
 	    TabItem itemCwMP = new TabItem(tabFolder, SWT.NONE);
@@ -64,6 +64,9 @@ public class OutputUI extends Composite{
 	    
 	    treeProject = new Tree(tabFolder, SWT.BORDER | SWT.MULTI);
 	    itemProject.setControl(treeProject);
+	    
+	    tableTree = new TableTree(tabFolder, SWT.BORDER);
+	    itemMatrix.setControl(tableTree);
 	    
 	    treePwMC = new Tree(tabFolder, SWT.BORDER | SWT.MULTI);
 		itemPwMC.setControl(treePwMC);
@@ -166,9 +169,9 @@ public class OutputUI extends Composite{
 			}
 			
 		});
-	}
-	
-	
+	} 
+
+
 	protected void graphFolderSelected(TabFolder tabFolder, TabItem itemGraph) 
 	{
 		GuiGetter gg = new GuiGetter();
@@ -249,6 +252,7 @@ public class OutputUI extends Composite{
 	{
 		System.out.println("[OutputUI]: updateOutputs called");
 		og.generateProjectDescription(treeProject);
+		og.generateTableTree(tableTree);
 		og.generatePackagesWithMultipleClusters(treePwMC);
         og.generateClustersWithMuiltiplePackages(treeCwMP);
         

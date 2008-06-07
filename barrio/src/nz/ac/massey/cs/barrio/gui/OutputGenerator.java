@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TableTree;
+import org.eclipse.swt.custom.TableTreeItem;
+import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 
@@ -266,5 +270,51 @@ public class OutputGenerator {
 			}
 		}
 		finaliseTree(newItems.toArray());
+	}
+	
+	
+
+	@SuppressWarnings("deprecation")
+	public void generateTableTree(TableTree tableTree) 
+	{
+		Table table = tableTree.getTable();
+	    table.setHeaderVisible(true);
+	    table.setLinesVisible(true);
+
+	    // Create the columns, passing the underlying table
+	    for (int i = 0; i < 3; i++) {
+	      new org.eclipse.swt.widgets.TableColumn(table, SWT.LEFT);
+	    }
+
+	    // Create the data
+	    for (int i = 0; i < 3; i++) {
+	      // Create a parent item and add data to the columns
+	      TableTreeItem parent = new TableTreeItem(tableTree, SWT.NONE);
+	      parent.setText(0, "Parent " + (i + 1));
+	      parent.setText(1, "Data");
+	      parent.setText(2, "More data");
+
+	      // Add children items
+	      for (int j = 0; j < 3; j++) {
+	        // Create a child item and add data to the columns
+	        TableTreeItem child = new TableTreeItem(parent, SWT.NONE);
+	        child.setText(0, "Child " + (j + 1));
+	        child.setText(1, "Some child data");
+	        child.setText(2, "More child data");
+	        
+	        TableTreeItem child2 = new TableTreeItem(child, SWT.NONE);
+	        child2.setText(0, "Child2 " + (j + 1));
+	        child2.setText(1, "Some child data");
+	        child2.setText(2, "More child data");
+	      }
+	      // Expand the parent item
+	      parent.setExpanded(true);
+	    }
+
+	    // Pack the columns
+	    org.eclipse.swt.widgets.TableColumn[] columns = table.getColumns();
+	    for (int i = 0, n = columns.length; i < n; i++) {
+	      columns[i].pack();
+	    }
 	}
 }
