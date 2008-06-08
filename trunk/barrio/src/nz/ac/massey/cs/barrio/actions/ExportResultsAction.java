@@ -32,10 +32,10 @@ public class ExportResultsAction implements IWorkbenchWindowActionDelegate {
 		GuiGetter gg = new GuiGetter();
 		InputUI input = gg.getInputUI();
 		OutputUI output = gg.getOutputUI();
-		e.export(input.getJob().getInitGraph(), input.getJob().getFinalGraph(), 
-				input.getJob().getSeparation(), input.getJob().getFilters(), 
-				input.getJob().getRemovedEdges(), 
-				output.getTreePwMC(), output.getTreeCwMP());
+//		e.export(input.getJob().getInitGraph(), input.getJob().getFinalGraph(), 
+//				input.getJob().getSeparation(), input.getJob().getFilters(), 
+//				input.getJob().getRemovedEdges(), 
+//				output.getTreePwMC(), output.getTreeCwMP());
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

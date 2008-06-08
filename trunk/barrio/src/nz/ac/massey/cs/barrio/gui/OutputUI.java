@@ -35,10 +35,7 @@ import prefuse.visual.VisualItem;
 
 public class OutputUI extends Composite{
 	
-	private Tree treeProject;
 	private TableTree tableTree;
-	private Tree treePwMC;
-	private Tree treeCwMP;
 	private Panel panelGraph;
 	private JTable table;
 	
@@ -48,31 +45,16 @@ public class OutputUI extends Composite{
 		GridData tabData = new GridData(GridData.FILL_BOTH);
 		
 		final TabFolder tabFolder = new TabFolder(this, SWT.BORDER);
-		TabItem itemProject = new TabItem(tabFolder, SWT.NONE);
-	    itemProject.setText("Project description");
 	    TabItem itemMatrix = new TabItem(tabFolder, SWT.NONE);
 	    itemMatrix.setText("Tree Table");
-	    TabItem itemPwMC = new TabItem(tabFolder, SWT.NONE);
-	    itemPwMC.setText("Packages with multiple clusters");
-	    TabItem itemCwMP = new TabItem(tabFolder, SWT.NONE);
-	    itemCwMP.setText("Clusters with multiple packages");
 	    TabItem itemRE = new TabItem(tabFolder, SWT.NONE);
 	    itemRE.setText("Removed edges");
 	    final TabItem itemGraph = new TabItem(tabFolder, SWT.NONE);
 	    itemGraph.setText("Dependency graph");
 	    tabFolder.setLayoutData(tabData);
 	    
-	    treeProject = new Tree(tabFolder, SWT.BORDER | SWT.MULTI);
-	    itemProject.setControl(treeProject);
-	    
 	    tableTree = new TableTree(tabFolder, SWT.BORDER);
 	    itemMatrix.setControl(tableTree);
-	    
-	    treePwMC = new Tree(tabFolder, SWT.BORDER | SWT.MULTI);
-		itemPwMC.setControl(treePwMC);
-		
-		treeCwMP = new Tree(tabFolder, SWT.BORDER | SWT.MULTI);
-		itemCwMP.setControl(treeCwMP);
 		
 		Composite edges = new Composite(tabFolder, SWT.EMBEDDED);
 		Frame frameEdges = SWT_AWT.new_Frame(edges);
@@ -251,10 +233,7 @@ public class OutputUI extends Composite{
 	public void updateOutputs(OutputGenerator og, List edges) 
 	{
 		System.out.println("[OutputUI]: updateOutputs called");
-		og.generateProjectDescription(treeProject);
 		og.generateTableTree(tableTree);
-		og.generatePackagesWithMultipleClusters(treePwMC);
-        og.generateClustersWithMuiltiplePackages(treeCwMP);
         
         List<Object[]> list = new ArrayList<Object[]>();
         og.generateListRemovedEdges(list, edges);
@@ -264,16 +243,6 @@ public class OutputUI extends Composite{
 
 	public JTable getTable() {
 		return table;
-	}
-
-
-	public Tree getTreePwMC() {
-		return treePwMC;
-	}
-
-
-	public Tree getTreeCwMP() {
-		return treeCwMP;
 	}
 
 
