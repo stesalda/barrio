@@ -3,6 +3,7 @@ package nz.ac.massey.cs.barrio.gui;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.StringTokenizer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableTree;
@@ -25,156 +26,6 @@ public class OutputGenerator {
 		this.initGraph = initGraph;
 		this.finalGraph = finalGraph;
 	}
-	
-	//Methods to output project description
-	@SuppressWarnings("unchecked")
-	public void generateProjectDescription(Tree tree)
-	{
-		if(initGraph!=null)
-		{
-			tree.removeAll();
-			TreeItem jarcount = new TreeItem(tree, 0);
-			jarcount.setText(" container(s)");
-			TreeItem packcount = new TreeItem(tree, 0);
-			packcount.setText(" package(s)");
-			TreeItem classcount = new TreeItem(tree, 0);
-			classcount.setText(initGraph.numVertices()+" classes");
-			TreeItem edgecount = new TreeItem(tree, 0);
-			edgecount.setText(initGraph.numEdges()+" relationships");
-			TreeItem project = new TreeItem(tree, 0);
-			project.setText("Project Structure");
-			
-			Iterator<Vertex> vertIter = initGraph.getVertices().iterator();
-			while(vertIter.hasNext())
-			{
-				Vertex v = vertIter.next();
-				String[] treeElement = new String[3];
-				treeElement[0] = v.getUserDatum("class.jar").toString();
-				treeElement[1] = v.getUserDatum("class.packageName").toString();
-				treeElement[2] = v.getUserDatum("class.name").toString();
-				
-				addElement(project, treeElement);
-			}
-			countPackagesAndJars(tree, project);
-			finaliseTree(tree.getItems());
-			tree.update();
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	private void countPackagesAndJars(Tree t, TreeItem root)
-	{
-		int jarCount = 0;
-		int packCount = 0;
-		
-		TreeItem[] jars = root.getItems();
-		jarCount = jars.length;
-		for(int i=0; i<jars.length; i++)
-		{
-			TreeItem[] packs = jars[i].getItems();
-			packCount += packs.length;
-		}
-		
-		TreeItem[] rootItems = t.getItems();
-		for(int i=0; i<rootItems.length; i++)
-		{
-			if(rootItems[i].getText().equals(" container(s)")) rootItems[i].setText(jarCount+" container(s)");
-			if(rootItems[i].getText().equals(" package(s)")) rootItems[i].setText(packCount+" package(s)");
-		}
-	}
-	//project description methods end
-	
-	
-	//Building output tree for packages with multiple clusters
-	@SuppressWarnings("unchecked")
-	public void generatePackagesWithMultipleClusters(Tree tree)
-	{
-		if(finalGraph!=null)
-		{
-			tree.removeAll();
-			TreeItem root = new TreeItem (tree,0);
-			root.setText("Packages with multiple clusters");
-			
-			Iterator<Vertex> vertexIterator = finalGraph.getVertices().iterator();
-			while(vertexIterator.hasNext())
-			{
-				Vertex v = vertexIterator.next();
-				
-				String[] element = new String[4];
-				element[0] = v.getUserDatum("class.jar").toString();
-				element[1] = v.getUserDatum("class.packageName").toString();
-				element[2] = v.getUserDatum("class.cluster").toString();
-				element[3] = v.getUserDatum("class.name").toString();
-				addElement(root, element);
-			}
-			removePackagesWithSingleCluster(root);
-			finaliseTree(tree.getItems());
-			
-			tree.update();
-		}
-	}
-	
-	private void removePackagesWithSingleCluster(TreeItem root)
-	{
-		TreeItem[] level1 = root.getItems();
-		for(int i=0; i<level1.length; i++)
-		{
-			TreeItem[] level2 = level1[i].getItems();
-			for(int j=0; j<level2.length; j++)
-			{
-				if(level2[j].getItems().length < 2) level2[j].dispose();
-			}
-		}
-	}
-	//end of bulding tree of packages with multiple packages
-	
-	
-	//generate tree of clusters with multiple packages
-	@SuppressWarnings("unchecked")
-	public void generateClustersWithMuiltiplePackages(Tree tree)
-	{
-		if(finalGraph!=null)
-		{
-			tree.removeAll();
-			TreeItem root = new TreeItem (tree,0);
-			root.setText("Packages with multiple clusters");
-			
-			Iterator<Vertex> vertexIterator = finalGraph.getVertices().iterator();
-			while(vertexIterator.hasNext())
-			{
-				Vertex v = vertexIterator.next();
-				
-				String[] element = new String[4];
-				element[0] = v.getUserDatum("class.cluster").toString();
-				element[1] = v.getUserDatum("class.jar").toString();
-				element[2] = v.getUserDatum("class.packageName").toString();
-				element[3] = v.getUserDatum("class.name").toString();
-				addElement(root, element);
-			}
-			removeClustersWithSinglePackage(root);
-			finaliseTree(tree.getItems());
-			
-			tree.update();
-		}
-	}
-	
-	private void removeClustersWithSinglePackage(TreeItem root)
-	{
-		TreeItem[] level1 = root.getItems();
-		for(int i=0; i<level1.length; i++)
-		{
-			TreeItem[] level2 = level1[i].getItems();
-			if(level2.length < 2)
-			{
-				for(int j=0; j<level2.length; j++)
-				{
-					if(level2[j].getItems().length < 2) level2[j].dispose();
-				}
-			}
-			if(level1[i].getItems().length < 1) level1[i].dispose();
-		}
-	}
-	//done generating tree of clusters with multiple packages
 	
 	
 	public void generateListRemovedEdges(List<Object[]> list, List<Edge> removedEdges)
@@ -219,60 +70,6 @@ public class OutputGenerator {
 	}
 	
 	
-	private void addElement(TreeItem parent, String[] element)
-	{
-		if(element.length==0) return;
-		
-		boolean contains = false;
-		TreeItem newParent = null;
-		
-		TreeItem[] items = parent.getItems();
-		for(int i=0; i<items.length; i++)
-		{
-			if(items[i].getText().equals(element[0]))
-			{
-				contains = true;
-				newParent = items[i];
-				break;
-			}
-		}
-		
-		if(!contains || newParent==null)
-		{
-			newParent = new TreeItem(parent, 0);
-			newParent.setText(element[0]);
-		}
-		
-		String[] newElement = new String [element.length - 1];
-		for(int j=1; j<element.length; j++)
-		{
-			newElement[j-1] = element[j];
-		}
-		addElement(newParent, newElement);
-	}
-	
-	private void finaliseTree(Object[] items)
-	{
-		if(items==null || items.length==0) return;
-		
-		List<TreeItem> newItems = new ArrayList<TreeItem>();
-		
-		for(int i=0; i<items.length; i++)
-		{
-			TreeItem[] children = ((TreeItem)items[i]).getItems();
-			if(children.length > 0)
-			{
-				((TreeItem)items[i]).setText(((TreeItem)items[i]).getText()+" ("+children.length+")");
-				for(int j=0; j<children.length; j++)
-				{
-					newItems.add(children[j]);
-				}
-			}
-		}
-		finaliseTree(newItems.toArray());
-	}
-	
-	
 
 	@SuppressWarnings("deprecation")
 	public void generateTableTree(TableTree tableTree) 
@@ -281,40 +78,149 @@ public class OutputGenerator {
 	    table.setHeaderVisible(true);
 	    table.setLinesVisible(true);
 
-	    // Create the columns, passing the underlying table
-	    for (int i = 0; i < 3; i++) {
-	      new org.eclipse.swt.widgets.TableColumn(table, SWT.LEFT);
-	    }
+	    List<TableRowData> list = generateTableData(tableTree);
 
 	    // Create the data
-	    for (int i = 0; i < 3; i++) {
-	      // Create a parent item and add data to the columns
-	      TableTreeItem parent = new TableTreeItem(tableTree, SWT.NONE);
-	      parent.setText(0, "Parent " + (i + 1));
-	      parent.setText(1, "Data");
-	      parent.setText(2, "More data");
-
-	      // Add children items
-	      for (int j = 0; j < 3; j++) {
-	        // Create a child item and add data to the columns
-	        TableTreeItem child = new TableTreeItem(parent, SWT.NONE);
-	        child.setText(0, "Child " + (j + 1));
-	        child.setText(1, "Some child data");
-	        child.setText(2, "More child data");
-	        
-	        TableTreeItem child2 = new TableTreeItem(child, SWT.NONE);
-	        child2.setText(0, "Child2 " + (j + 1));
-	        child2.setText(1, "Some child data");
-	        child2.setText(2, "More child data");
-	      }
-	      // Expand the parent item
-	      parent.setExpanded(true);
+	    for (TableRowData data:list)
+	    {
+	    	addItem(data, tableTree);
 	    }
-
+	    
 	    // Pack the columns
-	    org.eclipse.swt.widgets.TableColumn[] columns = table.getColumns();
+	    
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void addItem(TableRowData data, TableTree tableTree)
+	{
+		TableTreeItem container = null;
+		for(TableTreeItem item:tableTree.getItems())
+		{
+			if(item.getText().equals(data.getContainer())) 
+			{
+				if(!item.isDisposed()) container = item;
+				break;
+			}
+		}
+		if(container == null) container = new TableTreeItem(tableTree, SWT.NONE);
+		container.setText(data.getContainer());
+		
+		TableTreeItem namespace = null;
+		for(TableTreeItem item:container.getItems())
+		{
+			if(item.getText().equals(data.getNamespace())) 
+			{
+				namespace = item;
+				break;
+			}
+		}
+		if(namespace == null) namespace = new TableTreeItem(container, SWT.NONE);
+		namespace.setText(data.getNamespace());
+		
+		TableTreeItem className = new TableTreeItem(namespace, SWT.NONE);
+		className.setText(data.getClassName());
+		
+		for(int i=tableTree.getTable().getColumnCount()-1; i>-1; i--)
+		{
+			if(data.getClusters().contains(tableTree.getTable().getColumn(i).getText()))
+				className.setText(i, "x");
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<TableRowData> generateTableData(TableTree tableTree)
+	{
+		List<String> dependencyClusters = new ArrayList<String>();
+		List<String> ruleDefinedClusters = new ArrayList<String>();
+		List<TableRowData> result = new ArrayList<TableRowData>();
+		
+		Iterator iter = finalGraph.getVertices().iterator();
+		while(iter.hasNext())
+		{
+			Vertex v = (Vertex) iter.next();
+			TableRowData temp = new TableRowData();
+			temp.setContainer(v.getUserDatum("class.jar").toString());
+			temp.setNamespace(v.getUserDatum("class.packageName").toString());
+			temp.setClassName(v.getUserDatum("class.name").toString());
+			
+			List<String> clusters = new ArrayList<String>();
+			if(!dependencyClusters.contains(v.getUserDatum("class.cluster").toString()))
+				dependencyClusters.add(v.getUserDatum("class.cluster").toString());
+			clusters.add(v.getUserDatum("class.cluster").toString());
+			
+			for(String ruleCluster : getRuleDefinedClusters(v))
+			{
+				if(!ruleDefinedClusters.contains(ruleCluster)) ruleDefinedClusters.add(ruleCluster);
+				clusters.add(ruleCluster);
+			}
+			temp.setClusters(clusters);
+			result.add(temp);
+		}
+		
+		tableTree = new TableTree(tableTree.getParent(), tableTree.getStyle());
+		Table table = tableTree.getTable();
+		new org.eclipse.swt.widgets.TableColumn(table, SWT.LEFT).setText("Project");
+		int cols = dependencyClusters.size();
+		for(int i=0; i<cols; i++)
+		{
+			new org.eclipse.swt.widgets.TableColumn(table, SWT.LEFT).setText(dependencyClusters.get(i));
+		}
+		cols = ruleDefinedClusters.size();
+		for(int i=0; i<cols; i++)
+		{
+			if(ruleDefinedClusters.get(i).equals("null")) continue;
+			new org.eclipse.swt.widgets.TableColumn(table, SWT.LEFT).setText(ruleDefinedClusters.get(i));
+		}
+		org.eclipse.swt.widgets.TableColumn[] columns = table.getColumns();
 	    for (int i = 0, n = columns.length; i < n; i++) {
 	      columns[i].pack();
 	    }
+		return result;
+	}
+	
+	private List<String> getRuleDefinedClusters(Vertex v)
+	{
+		List<String> result = new ArrayList<String>();
+		String s = v.getUserDatum("classification").toString();
+		StringTokenizer st = new StringTokenizer(s, ",[] ");
+		while(st.hasMoreTokens())
+		{
+			result.add(st.nextToken());
+		}
+		return result;
+	}
+	
+	
+	
+	private class TableRowData{
+		private String container;
+		private String namespace;
+		private String className;
+		private List<String> clusters;
+		
+		public String getContainer() {
+			return container;
+		}
+		public void setContainer(String container) {
+			this.container = container;
+		}
+		public String getNamespace() {
+			return namespace;
+		}
+		public void setNamespace(String namespace) {
+			this.namespace = namespace;
+		}
+		public String getClassName() {
+			return className;
+		}
+		public void setClassName(String className) {
+			this.className = className;
+		}
+		public List<String> getClusters() {
+			return clusters;
+		}
+		public void setClusters(List<String> clusters) {
+			this.clusters = clusters;
+		}
 	}
 }

@@ -6,7 +6,6 @@ import nz.ac.massey.cs.barrio.Activator;
 import nz.ac.massey.cs.barrio.gui.GuiGetter;
 import nz.ac.massey.cs.barrio.gui.InputUI;
 import nz.ac.massey.cs.barrio.gui.OutputUI;
-import nz.ac.massey.cs.barrio.jobs.ClassificationJob;
 import nz.ac.massey.cs.barrio.jobs.GraphProcessingJob;
 
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -15,7 +14,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.FileDialog;
-import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
@@ -39,12 +37,6 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 		init(null);
 				
 		Shell shell = new Shell();
-		//testing
-//		MessageBox mb = new MessageBox(shell, SWT.OK);
-//        mb.setText("Message from SWT");
-//        mb.setMessage("new version");
-//        mb.open();
-		//testing ends
 		FileDialog dlg = new FileDialog(shell, SWT.OPEN);
 		dlg.setFilterNames(new String[] { "ODEM Files","XML Files", "All Files" });
 		dlg.setFilterExtensions(new String[] { "*.odem", "*.xml", "*.*" });
@@ -59,16 +51,12 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 	    job.setUser(true);
 	    input.setJob(job);
 	    final Long start = System.currentTimeMillis();
-	    job.addJobChangeListener(new IJobChangeListener(){
-
+	    job.addJobChangeListener(new IJobChangeListener()
+	    {
 			public void aboutToRun(IJobChangeEvent event) {}
-
 			public void awake(IJobChangeEvent event) {}
-
 			public void running(IJobChangeEvent event) {}
-
 			public void scheduled(IJobChangeEvent event) {}
-
 			public void sleeping(IJobChangeEvent event) {}
 
 			public synchronized void done(IJobChangeEvent event) {
@@ -76,10 +64,6 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 				output.updateVisualElements(input.getVisualSettings());
 				Long stop = System.currentTimeMillis();
 				System.out.println("[ImportAction]: Time taken = "+(stop-start)/1000+" seconds");
-				
-				ClassificationJob classifyJob = new ClassificationJob(job.getFinalGraph());
-				classifyJob.setUser(true);
-				classifyJob.schedule();
 			}
 	    	
 	    });

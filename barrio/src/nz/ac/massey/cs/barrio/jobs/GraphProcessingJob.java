@@ -3,9 +3,12 @@ package nz.ac.massey.cs.barrio.jobs;
 import java.awt.BorderLayout;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import nz.ac.massey.cs.barrio.classifier.Classifier;
+import nz.ac.massey.cs.barrio.classifier.KnownClassifier;
 import nz.ac.massey.cs.barrio.clusterer.Clusterer;
 import nz.ac.massey.cs.barrio.clusterer.KnownClusterer;
 import nz.ac.massey.cs.barrio.filters.KnownEdgeFilters;
@@ -16,6 +19,8 @@ import nz.ac.massey.cs.barrio.gui.OutputUI;
 import nz.ac.massey.cs.barrio.inputReader.InputReader;
 import nz.ac.massey.cs.barrio.inputReader.KnownInputReader;
 import nz.ac.massey.cs.barrio.inputReader.UnknownInputException;
+import nz.ac.massey.cs.barrio.preferences.RuleStorage;
+import nz.ac.massey.cs.barrio.rules.ReferenceRule;
 import nz.ac.massey.cs.barrio.visual.DisplayBuilder;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -84,42 +89,26 @@ public class GraphProcessingJob extends Job {
 	
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
+		int SCALE;
+		if(input!=null) SCALE = 4+filters.size()+separation;
+		else SCALE = 3+filters.size()+separation;
+	
+			monitor.beginTask("Processing Graph", SCALE);
+			
+			if(initGraph==null) readInput(monitor);
+			if(initGraph==null) return Status.CANCEL_STATUS;
+			finalGraph = (Graph) initGraph.copy();
+			
+			filterGraph(monitor);
+			clusterGraph(monitor);
+			classifyGraph(monitor);
+			buildVisual(monitor);
+			
+			monitor.done();
+			
+			if(canceled) return Status.CANCEL_STATUS;
+			return Status.OK_STATUS;
 		
-		if(input!=null)
-		{
-			int SCALE = 4+filters.size()+separation;
-			monitor.beginTask("Processing Graph", SCALE);
-			
-			if (initGraph==null) readInput(monitor);
-			
-			if(initGraph==null) return Status.CANCEL_STATUS;
-			finalGraph = (Graph) initGraph.copy();
-			
-			filterGraph(monitor);
-			clusterGraph(monitor);
-			buildVisual(monitor);
-			
-			monitor.done();
-			
-			if(canceled) return Status.CANCEL_STATUS;
-			return Status.OK_STATUS;
-		}else
-		{
-			int SCALE = 3+filters.size()+separation;
-			monitor.beginTask("Processing Graph", SCALE);
-			
-			if(initGraph==null) return Status.CANCEL_STATUS;
-			finalGraph = (Graph) initGraph.copy();
-			
-			filterGraph(monitor);
-			clusterGraph(monitor);
-			buildVisual(monitor);
-			
-			monitor.done();
-			
-			if(canceled) return Status.CANCEL_STATUS;
-			return Status.OK_STATUS;
-		}
 	}
 
 
@@ -239,6 +228,33 @@ public class GraphProcessingJob extends Job {
 			edge.setUserDatum("relationship.state", "removed", UserData.SHARED);
 			finalGraph.addEdge(edge);
 		}
+	}
+	
+	
+	
+	
+	private void classifyGraph(IProgressMonitor monitor)
+	{
+		if(canceled) return;
+		Classifier classifier = KnownClassifier.all().get(0);
+		List<ReferenceRule> rules = getRules();
+		
+		int SCALE = finalGraph.getVertices().size();
+		monitor.beginTask("", SCALE);
+		Iterator<Object> iter = finalGraph.getVertices().iterator();
+		while(iter.hasNext())
+		{
+			Vertex v = (Vertex) iter.next();
+			classifier.classify(v, rules);
+			monitor.worked(1);
+			if(canceled) return;
+		}
+	}
+	
+	private List<ReferenceRule> getRules() 
+	{
+		RuleStorage storage = new RuleStorage(null);
+		return storage.load();
 	}
 
 
