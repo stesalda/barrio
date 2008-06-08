@@ -8,6 +8,7 @@ import java.util.StringTokenizer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableTree;
 import org.eclipse.swt.custom.TableTreeItem;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
@@ -77,6 +78,12 @@ public class OutputGenerator {
 		Table table = tableTree.getTable();
 	    table.setHeaderVisible(true);
 	    table.setLinesVisible(true);
+	    
+	    org.eclipse.swt.widgets.TableColumn[] columns1 = table.getColumns();
+	    for (int i = 0, n = columns1.length; i < n; i++) {
+	      columns1[i].dispose();
+	    }
+	    tableTree.removeAll();
 
 	    List<TableRowData> list = generateTableData(tableTree);
 
@@ -85,9 +92,13 @@ public class OutputGenerator {
 	    {
 	    	addItem(data, tableTree);
 	    }
+		
 	    
 	    // Pack the columns
-	    
+	    org.eclipse.swt.widgets.TableColumn[] columns = table.getColumns();
+	    for (int i = 0, n = columns.length; i < n; i++) {
+	      columns[i].pack();
+	    }
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -157,7 +168,8 @@ public class OutputGenerator {
 			result.add(temp);
 		}
 		
-		tableTree = new TableTree(tableTree.getParent(), tableTree.getStyle());
+		
+		
 		Table table = tableTree.getTable();
 		new org.eclipse.swt.widgets.TableColumn(table, SWT.LEFT).setText("Project");
 		int cols = dependencyClusters.size();
@@ -171,12 +183,10 @@ public class OutputGenerator {
 			if(ruleDefinedClusters.get(i).equals("null")) continue;
 			new org.eclipse.swt.widgets.TableColumn(table, SWT.LEFT).setText(ruleDefinedClusters.get(i));
 		}
-		org.eclipse.swt.widgets.TableColumn[] columns = table.getColumns();
-	    for (int i = 0, n = columns.length; i < n; i++) {
-	      columns[i].pack();
-	    }
+		
 		return result;
 	}
+	
 	
 	private List<String> getRuleDefinedClusters(Vertex v)
 	{
