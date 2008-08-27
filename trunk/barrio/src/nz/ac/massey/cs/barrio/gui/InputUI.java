@@ -9,6 +9,7 @@ import nz.ac.massey.cs.barrio.filters.EdgeFilter;
 import nz.ac.massey.cs.barrio.filters.KnownEdgeFilters;
 import nz.ac.massey.cs.barrio.filters.KnownNodeFilters;
 import nz.ac.massey.cs.barrio.filters.NodeFilter;
+import nz.ac.massey.cs.barrio.jobs.GraphClusteringJob;
 import nz.ac.massey.cs.barrio.jobs.GraphProcessingJob;
 
 import org.eclipse.core.runtime.Status;
@@ -34,7 +35,7 @@ import edu.uci.ics.jung.graph.filters.Filter;
 
 public class InputUI extends Composite{
 	
-	private Button btnRefresh;
+	private Button btnAnalyse;
 
 	private List<String> activeFilters = new ArrayList<String>();
 	private List<String> previousFilters = new ArrayList<String>();
@@ -141,10 +142,10 @@ public class InputUI extends Composite{
 		   separator3.setLayoutData(horizontalFillData);
 		   //--------------------------------------------------------------
 		   
-		   btnRefresh = new Button(topComposite, SWT.PUSH | SWT.CENTER);
-		   btnRefresh.setText("Refresh");
+		   btnAnalyse = new Button(topComposite, SWT.PUSH | SWT.CENTER);
+		   btnAnalyse.setText("Analyse");
 		   GridData refreshData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
-		   btnRefresh.setLayoutData(refreshData);
+		   btnAnalyse.setLayoutData(refreshData);
 		   
 		   
 		   //----------------------------------------------------------------
@@ -230,7 +231,7 @@ public class InputUI extends Composite{
 			      }  
 		   });
 		   
-		   btnRefresh.addSelectionListener(new SelectionListener() {
+		   btnAnalyse.addSelectionListener(new SelectionListener() {
 			      public void widgetDefaultSelected(SelectionEvent e) {}
 
 			      public void widgetSelected(SelectionEvent e) {
@@ -375,9 +376,9 @@ public class InputUI extends Composite{
 		{
 			//System.out.println("[InputUI]: graph != null");
 			if(previousFilters.equals(activeFilters) && lastSeparationLevel==separationLevel) 
-				btnRefresh.setEnabled(false);
-			else btnRefresh.setEnabled(true);
-		}else btnRefresh.setEnabled(false);
+				btnAnalyse.setEnabled(false);
+			else btnAnalyse.setEnabled(true);
+		}else btnAnalyse.setEnabled(false);
 	}
 	
 	
@@ -385,10 +386,10 @@ public class InputUI extends Composite{
 	{
 		GuiGetter gg = new GuiGetter();
 		final OutputUI output = gg.getOutputUI();
-		job = new GraphProcessingJob(null, job.getInitGraph(), activeFilters, separationLevel);
-		job.setOutput(output);
-		job.setUser(true);
-  	  	job.addJobChangeListener(new IJobChangeListener(){
+		GraphClusteringJob job1 = new GraphClusteringJob(job.getFinalGraph(), activeFilters);
+		
+		job1.setUser(true);
+  	  	job1.addJobChangeListener(new IJobChangeListener(){
 
 			public void aboutToRun(IJobChangeEvent event) {}
 
@@ -412,7 +413,7 @@ public class InputUI extends Composite{
   	  		
   	  	});
 
-		job.schedule();
+		job1.schedule();
 	}
 	
 	private void updateElements() {

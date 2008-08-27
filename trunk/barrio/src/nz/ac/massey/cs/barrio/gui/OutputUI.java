@@ -21,11 +21,14 @@ import nz.ac.massey.cs.barrio.visual.VisualHighlightingManager;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
-import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Tree;
 
 import prefuse.Display;
 import prefuse.Visualization;
@@ -35,7 +38,7 @@ import prefuse.visual.VisualItem;
 
 public class OutputUI extends Composite{
 	
-	private TableTree tableTree;
+	private Tree matrixCluster;
 	private Panel panelGraph;
 	private JTable table;
 	
@@ -46,15 +49,18 @@ public class OutputUI extends Composite{
 		
 		final TabFolder tabFolder = new TabFolder(this, SWT.BORDER);
 	    TabItem itemMatrix = new TabItem(tabFolder, SWT.NONE);
-	    itemMatrix.setText("Tree Table");
+	    itemMatrix.setText("Clusters");
 	    TabItem itemRE = new TabItem(tabFolder, SWT.NONE);
 	    itemRE.setText("Removed edges");
 	    final TabItem itemGraph = new TabItem(tabFolder, SWT.NONE);
 	    itemGraph.setText("Dependency graph");
 	    tabFolder.setLayoutData(tabData);
 	    
-	    tableTree = new TableTree(tabFolder, SWT.BORDER);
-	    itemMatrix.setControl(tableTree);
+	    matrixCluster = new Tree(tabFolder, SWT.BORDER);
+	    matrixCluster.setHeaderVisible(true);
+	    matrixCluster.setLinesVisible(true);
+	    itemMatrix.setControl(matrixCluster);
+	    
 		
 		Composite edges = new Composite(tabFolder, SWT.EMBEDDED);
 		Frame frameEdges = SWT_AWT.new_Frame(edges);
@@ -218,7 +224,7 @@ public class OutputUI extends Composite{
 	public void paintGraph(Component comp)
 	{
 		panelGraph.removeAll();
-		panelGraph.add(comp, 0);
+//		panelGraph.add(comp, 0);
 		panelGraph.doLayout();
 		panelGraph.repaint();
 	}
@@ -233,7 +239,7 @@ public class OutputUI extends Composite{
 	public void updateOutputs(OutputGenerator og, List edges) 
 	{
 		System.out.println("[OutputUI]: updateOutputs called");
-		og.generateTableTree(tableTree);
+		og.generateTableTree(matrixCluster);
         
         List<Object[]> list = new ArrayList<Object[]>();
         og.generateListRemovedEdges(list, edges);
