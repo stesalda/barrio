@@ -1,27 +1,28 @@
 package nz.ac.massey.cs.barrio.jobs;
 
-import java.awt.BorderLayout;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import nz.ac.massey.cs.barrio.Activator;
 import nz.ac.massey.cs.barrio.classifier.Classifier;
 import nz.ac.massey.cs.barrio.classifier.KnownClassifier;
 import nz.ac.massey.cs.barrio.clusterer.Clusterer;
 import nz.ac.massey.cs.barrio.clusterer.KnownClusterer;
 import nz.ac.massey.cs.barrio.filters.KnownEdgeFilters;
 import nz.ac.massey.cs.barrio.filters.KnownNodeFilters;
-import nz.ac.massey.cs.barrio.graphconverter.JungPrefuseBridge;
 import nz.ac.massey.cs.barrio.gui.OutputGenerator;
 import nz.ac.massey.cs.barrio.gui.OutputUI;
 import nz.ac.massey.cs.barrio.inputReader.InputReader;
 import nz.ac.massey.cs.barrio.inputReader.KnownInputReader;
 import nz.ac.massey.cs.barrio.inputReader.UnknownInputException;
+import nz.ac.massey.cs.barrio.preferences.PreferenceConstants;
 import nz.ac.massey.cs.barrio.preferences.RuleStorage;
 import nz.ac.massey.cs.barrio.rules.ReferenceRule;
-import nz.ac.massey.cs.barrio.visual.DisplayBuilder;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -37,8 +38,6 @@ import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.Vertex;
 import edu.uci.ics.jung.graph.filters.Filter;
 import edu.uci.ics.jung.graph.impl.DirectedSparseGraph;
-import edu.uci.ics.jung.graph.impl.DirectedSparseVertex;
-import edu.uci.ics.jung.io.GraphMLFile;
 import edu.uci.ics.jung.utils.UserData;
 
 public class GraphProcessingJob extends Job {
@@ -90,14 +89,14 @@ public class GraphProcessingJob extends Job {
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
 		int SCALE;
-		if(input!=null) SCALE = 4+filters.size()+separation;
-		else SCALE = 3+filters.size()+separation;
+		if(input!=null) SCALE = 4+filters.size();
+		else SCALE = 3+filters.size();
 	
-			monitor.beginTask("Processing Graph", SCALE);
-			
 			if(initGraph==null) readInput(monitor);
 			if(initGraph==null) return Status.CANCEL_STATUS;
 			finalGraph = (Graph) initGraph.copy();
+			
+			monitor.beginTask("Processing Graph", SCALE+finalGraph.numEdges());
 			
 			filterGraph(monitor);
 			clusterGraph(monitor);
@@ -202,8 +201,6 @@ public class GraphProcessingJob extends Job {
 	
 	@SuppressWarnings("unchecked")
 	private void clusterGraph(IProgressMonitor monitor) {
-
-		String subtask = "Removing Separation Level ";
 		
 		Set<Edge> edges = finalGraph.getEdges();
 		for(Edge edge:edges) 
@@ -212,22 +209,8 @@ public class GraphProcessingJob extends Job {
 		
 		List<Clusterer> clusterers = KnownClusterer.all();
 		Clusterer clusterer = clusterers.get(0);
-		for(int i=0; i<separation; i++)
-		{
-			monitor.subTask(subtask+(i+1));
-			clusterer.cluster(finalGraph);
-			removedEdges.addAll(clusterer.getEdgesRemoved());
-						
-			monitor.worked(1);
-			if(canceled) return;
-		}	
 		clusterer.nameClusters(finalGraph);
-		
-		for(Edge edge:removedEdges)
-		{
-			edge.setUserDatum("relationship.state", "removed", UserData.SHARED);
-			finalGraph.addEdge(edge);
-		}
+		monitor.worked(1);
 	}
 	
 	
@@ -256,8 +239,6 @@ public class GraphProcessingJob extends Job {
 		RuleStorage storage = new RuleStorage(null);
 		return storage.load();
 	}
-
-
 	 
 
 
@@ -266,11 +247,11 @@ public class GraphProcessingJob extends Job {
 		if(canceled) return;
 		monitor.subTask("Producing Visualisation");
 		
-		JungPrefuseBridge bridge = new JungPrefuseBridge();
-		DisplayBuilder disBuilder = new DisplayBuilder();
-		disBuilder.setOutput(output);
-		display = disBuilder.getDisplay(bridge.convert(finalGraph));
-		display.setLayout(new BorderLayout());
+//		JungPrefuseBridge bridge = new JungPrefuseBridge();
+//		DisplayBuilder disBuilder = new DisplayBuilder();
+//		disBuilder.setOutput(output);
+//		display = disBuilder.getDisplay(bridge.convert(finalGraph));
+//		display.setLayout(new BorderLayout());
 		monitor.worked(1);
 		
 		
@@ -280,7 +261,7 @@ public class GraphProcessingJob extends Job {
 			{
 				OutputGenerator og = new OutputGenerator(initGraph, finalGraph);
 				output.updateOutputs(og, removedEdges);	
-				output.paintGraph(display);
+//				output.paintGraph(display);
 			}
 			
 		});

@@ -6,11 +6,8 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableTree;
-import org.eclipse.swt.custom.TableTreeItem;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
 import edu.uci.ics.jung.graph.Edge;
@@ -19,12 +16,10 @@ import edu.uci.ics.jung.graph.Vertex;
 
 public class OutputGenerator {
 	
-	private Graph initGraph = null;
 	private Graph finalGraph = null;
 	
 	public OutputGenerator(Graph initGraph, Graph finalGraph)
 	{
-		this.initGraph = initGraph;
 		this.finalGraph = finalGraph;
 	}
 	
@@ -72,40 +67,35 @@ public class OutputGenerator {
 	
 	
 
-	@SuppressWarnings("deprecation")
-	public void generateTableTree(TableTree tableTree) 
+	public void generateTableTree(Tree tree) 
 	{
-		Table table = tableTree.getTable();
-	    table.setHeaderVisible(true);
-	    table.setLinesVisible(true);
 	    
-	    org.eclipse.swt.widgets.TableColumn[] columns1 = table.getColumns();
+	    TreeColumn[] columns1 = tree.getColumns();
 	    for (int i = 0, n = columns1.length; i < n; i++) {
 	      columns1[i].dispose();
 	    }
-	    tableTree.removeAll();
+	    tree.removeAll();
 
-	    List<TableRowData> list = generateTableData(tableTree);
+	    List<TableRowData> list = generateTableData(tree);
 
 	    // Create the data
 	    for (TableRowData data:list)
 	    {
-	    	addItem(data, tableTree);
+	    	addItem(data, tree);
 	    }
 		
 	    
 	    // Pack the columns
-	    org.eclipse.swt.widgets.TableColumn[] columns = table.getColumns();
+	    TreeColumn[] columns = tree.getColumns();
 	    for (int i = 0, n = columns.length; i < n; i++) {
 	      columns[i].pack();
 	    }
 	}
 	
-	@SuppressWarnings("deprecation")
-	private void addItem(TableRowData data, TableTree tableTree)
+	private void addItem(TableRowData data, Tree tree)
 	{
-		TableTreeItem container = null;
-		for(TableTreeItem item:tableTree.getItems())
+		TreeItem container = null;
+		for(TreeItem item:tree.getItems())
 		{
 			if(item.getText().equals(data.getContainer())) 
 			{
@@ -113,11 +103,11 @@ public class OutputGenerator {
 				break;
 			}
 		}
-		if(container == null) container = new TableTreeItem(tableTree, SWT.NONE);
+		if(container == null) container = new TreeItem(tree, SWT.NONE);
 		container.setText(data.getContainer());
 		
-		TableTreeItem namespace = null;
-		for(TableTreeItem item:container.getItems())
+		TreeItem namespace = null;
+		for(TreeItem item:container.getItems())
 		{
 			if(item.getText().equals(data.getNamespace())) 
 			{
@@ -125,21 +115,21 @@ public class OutputGenerator {
 				break;
 			}
 		}
-		if(namespace == null) namespace = new TableTreeItem(container, SWT.NONE);
+		if(namespace == null) namespace = new TreeItem(container, SWT.NONE);
 		namespace.setText(data.getNamespace());
 		
-		TableTreeItem className = new TableTreeItem(namespace, SWT.NONE);
+		TreeItem className = new TreeItem(namespace, SWT.NONE);
 		className.setText(data.getClassName());
 		
-		for(int i=tableTree.getTable().getColumnCount()-1; i>-1; i--)
+		for(int i=tree.getColumnCount()-1; i>-1; i--)
 		{
-			if(data.getClusters().contains(tableTree.getTable().getColumn(i).getText()))
+			if(data.getClusters().contains(tree.getColumn(i).getText()))
 				className.setText(i, "x");
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<TableRowData> generateTableData(TableTree tableTree)
+	private List<TableRowData> generateTableData(Tree tree)
 	{
 		List<String> dependencyClusters = new ArrayList<String>();
 		List<String> ruleDefinedClusters = new ArrayList<String>();
@@ -170,18 +160,19 @@ public class OutputGenerator {
 		
 		
 		
-		Table table = tableTree.getTable();
-		new org.eclipse.swt.widgets.TableColumn(table, SWT.LEFT).setText("Project");
+		TreeColumn column = new TreeColumn(tree, SWT.LEFT);
+		column.setText("Project");
+		column.setMoveable(true);
 		int cols = dependencyClusters.size();
 		for(int i=0; i<cols; i++)
 		{
-			new org.eclipse.swt.widgets.TableColumn(table, SWT.LEFT).setText(dependencyClusters.get(i));
+			new TreeColumn(tree, SWT.LEFT).setText(dependencyClusters.get(i));
 		}
 		cols = ruleDefinedClusters.size();
 		for(int i=0; i<cols; i++)
 		{
 			if(ruleDefinedClusters.get(i).equals("null")) continue;
-			new org.eclipse.swt.widgets.TableColumn(table, SWT.LEFT).setText(ruleDefinedClusters.get(i));
+			new TreeColumn(tree, SWT.LEFT).setText(ruleDefinedClusters.get(i));
 		}
 		
 		return result;
