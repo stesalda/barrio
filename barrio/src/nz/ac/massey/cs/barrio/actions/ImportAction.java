@@ -44,13 +44,13 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 	    shell.close();
 	    
 	    String str=Activator.getDefault().getPreferenceStore().getString("ruleListEditor");
-	    System.out.println("[ImportAction]: rules = "+str);
+//	    System.out.println("[ImportAction]: rules = "+str);
 	    
 	    final GraphProcessingJob job = new GraphProcessingJob(new File(filename), null, input.getActiveFilters(), input.getSeparationLevel());
 	    job.setOutput(output);
 	    job.setUser(true);
 	    input.setJob(job);
-	    final Long start = System.currentTimeMillis();
+//	    final Long start = System.currentTimeMillis();
 	    job.addJobChangeListener(new IJobChangeListener()
 	    {
 			public void aboutToRun(IJobChangeEvent event) {}
@@ -62,8 +62,8 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 			public synchronized void done(IJobChangeEvent event) {
 				paintDisplay(job);
 				output.updateVisualElements(input.getVisualSettings());
-				Long stop = System.currentTimeMillis();
-				System.out.println("[ImportAction]: Time taken = "+(stop-start)/1000+" seconds");
+//				Long stop = System.currentTimeMillis();
+//				System.out.println("[ImportAction]: Time taken = "+(stop-start)/1000+" seconds");
 			}
 	    	
 	    });
