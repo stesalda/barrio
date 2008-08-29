@@ -1,6 +1,8 @@
 package nz.ac.massey.cs.barrio.jobs;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -20,17 +22,28 @@ public class PackageAnalyser {
 	{
 		List<String> result = new ArrayList<String>();
 		
-		List<List<String>> tempContainer = new ArrayList<List<String>>();
+		List<PackageCluster> tempContainer = new ArrayList<PackageCluster>();
 		
 		
 		Set<Vertex> verts = graph.getVertices();
 		for(Vertex v:verts)
 		{
-			StringBuffer namespase = new StringBuffer();
-			namespase.append(v.getUserDatum("class.jar").toString());
-			namespase.append('/');
-			namespase.append(v.getUserDatum("class.packageName").toString());
+			StringBuffer namespace = new StringBuffer();
+			namespace.append(v.getUserDatum("class.jar").toString());
+			namespace.append('/');
+			namespace.append(v.getUserDatum("class.packageName").toString());
 			
+			PackageCluster pc = new PackageCluster();
+			pc.setNamespace(namespace.toString());
+			pc.setCluster(v.getUserDatum("class.packageName").toString());
+			
+			if(!tempContainer.contains(pc)) tempContainer.add(pc);
+		}
+		Collections.sort(tempContainer);
+		
+		PackageCluster temp = null;
+		for(PackageCluster pc:tempContainer)
+		{
 		}
 		return result;
 	}
