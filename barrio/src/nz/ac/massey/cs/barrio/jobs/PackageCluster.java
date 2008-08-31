@@ -1,12 +1,16 @@
 package nz.ac.massey.cs.barrio.jobs;
 
-public class PackageCluster implements Comparable{
+import java.util.ArrayList;
+import java.util.List;
+
+public class PackageCluster{
 	
 	private String namespace;
-	private String cluster;
+	private List<String> clusters;
 	
 	public PackageCluster() {
 		super();
+		clusters = new ArrayList<String>();
 	}
 	
 	public String getNamespace() {
@@ -17,30 +21,16 @@ public class PackageCluster implements Comparable{
 		this.namespace = namespace;
 	}
 	
-	public String getCluster() {
-		return cluster;
+	public List<String> getCluster() {
+		return clusters;
 	}
 	
-	public void setCluster(String cluster) {
-		this.cluster = cluster;
-	}
-
-	@Override
-	public boolean equals(Object arg0) {
-		PackageCluster pc = (PackageCluster) arg0;
-		
-		if(pc.getNamespace().equals(this.namespace) && pc.getCluster().equals(this.cluster)) 
-			return true;
-		else return false;
-	}
-
-	@Override
-	public int compareTo(Object arg0) {
-		PackageCluster pc = (PackageCluster) arg0;
-		
-		return this.namespace.compareTo(pc.namespace);
+	public void setCluster(List<String> clusters) {
+		this.clusters = clusters;
 	}
 	
-	
-
+	public void addCluster(String cluster)
+	{
+		if(!clusters.contains(cluster)) clusters.add(cluster);
+	}
 }

@@ -18,7 +18,7 @@ public class PackageAnalyser {
 		this.graph = graph;
 	}
 	
-	public List<String> getPwMC()
+	public List<String> getPackageWMC()
 	{
 		List<String> result = new ArrayList<String>();
 		
@@ -33,17 +33,72 @@ public class PackageAnalyser {
 			namespace.append('/');
 			namespace.append(v.getUserDatum("class.packageName").toString());
 			
-			PackageCluster pc = new PackageCluster();
-			pc.setNamespace(namespace.toString());
-			pc.setCluster(v.getUserDatum("class.packageName").toString());
+			PackageCluster pc = null;
+			for(PackageCluster clust:tempContainer)
+			{
+				if(clust.getNamespace().equals(namespace.toString()))
+				{
+					pc = clust;
+					break;
+				}
+			}
+
+			String cluster = v.getUserDatum("class.cluster").toString();
+			if(pc==null)
+			{
+				pc = new PackageCluster();
+				pc.setNamespace(namespace.toString());
+				pc.addCluster(cluster);
+				tempContainer.add(pc);
+			}
+			else pc.addCluster(cluster);
 			
-			if(!tempContainer.contains(pc)) tempContainer.add(pc);
 		}
-		Collections.sort(tempContainer);
 		
-		PackageCluster temp = null;
 		for(PackageCluster pc:tempContainer)
 		{
+			if(pc.getCluster().size()>1) result.add(pc.getNamespace());
+		}
+		return result;
+	}
+	
+	public List<String> getContainerWMC()
+	{
+		List<String> result = new ArrayList<String>();
+		
+		List<PackageCluster> tempContainer = new ArrayList<PackageCluster>();
+		
+		
+		Set<Vertex> verts = graph.getVertices();
+		for(Vertex v:verts)
+		{
+			String container = v.getUserDatum("class.jar").toString();
+			
+			PackageCluster pc = null;
+			for(PackageCluster clust:tempContainer)
+			{
+				if(clust.getNamespace().equals(container.toString()))
+				{
+					pc = clust;
+					break;
+				}
+			}
+
+			String cluster = v.getUserDatum("class.cluster").toString();
+			if(pc==null)
+			{
+				pc = new PackageCluster();
+				pc.setNamespace(container.toString());
+				pc.addCluster(cluster);
+				tempContainer.add(pc);
+			}
+			else pc.addCluster(cluster);
+			
+		}
+		
+		for(PackageCluster pc:tempContainer)
+		{
+			if(pc.getCluster().size()>1) result.add(pc.getNamespace());
 		}
 		return result;
 	}
