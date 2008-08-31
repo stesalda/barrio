@@ -60,9 +60,11 @@ public class GraphClusteringJob extends Job {
 		canceled = false;
 		numClusters = 0;
 		out = null;
+		String filename = getFilename(finalGraph.getUserDatum("file").toString());
+//		System.out.println("[ClusterJob] file = "+filename);
 		try {
 			String folder = Activator.getDefault().getPreferenceStore().getString(PreferenceConstants.FOLDER_NAME);
-			out = new PrintStream(folder+"/log.xml");
+			out = new PrintStream(folder+filename+".xml");
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -70,6 +72,12 @@ public class GraphClusteringJob extends Job {
 	}
 	
 	
+	private String getFilename(String string) {
+		return string.substring(string.lastIndexOf('\\'), string.lastIndexOf('.'));
+		
+	}
+
+
 	protected void canceling() {
 		canceled = true;
 	}
@@ -120,10 +128,7 @@ public class GraphClusteringJob extends Job {
 		for(Edge edge:edges) 
 			edge.setUserDatum("relationship.betweenness", "null", UserData.SHARED);
 		removedEdges.clear();
-		
-		
-		
-		
+		String message = "Removing Separation Level: ";		
 		List<Clusterer> clusterers = KnownClusterer.all();
 		Clusterer clusterer = clusterers.get(0);
 		
@@ -133,6 +138,7 @@ public class GraphClusteringJob extends Job {
 		int sep = 1;
 		while(finalGraph.numEdges()>0)
 		{
+			monitor.subTask(message+sep);
 			clusterer.cluster(finalGraph);
 			clusterer.nameClusters(finalGraph);
 			removedEdges.addAll(clusterer.getEdgesRemoved());
@@ -216,6 +222,30 @@ public class GraphClusteringJob extends Job {
 			out.print("<relationships count=\"");
 			out.print(finalGraph.numEdges());
 			out.println("\" />");
+			
+			PackageAnalyser pa = new PackageAnalyser(finalGraph);
+			out.print("<containers-with-clusters count=\"");
+			out.print(pa.getContainerWMC().size());
+			out.println("\">");
+			for(String s:pa.getContainerWMC())
+			{
+				out.print("<container name=\"");
+				out.print(s);
+				out.println("\" />");
+			}
+			out.println("</containers-with-clusters>");
+			
+			out.print("<namesapses-with-clusters count=\"");
+			out.print(pa.getPackageWMC().size());
+			out.println("\">");
+			for(String s:pa.getPackageWMC())
+			{
+				out.print("<namespace name=\"");
+				out.print(s);
+				out.println("\" />");
+			}
+			out.println("</namesapses-with-clusters>");
+			
 			out.println("</separation>");
 			numClusters = clusters.size();
 		}
