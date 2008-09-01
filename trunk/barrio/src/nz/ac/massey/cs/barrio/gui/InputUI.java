@@ -2,6 +2,7 @@ package nz.ac.massey.cs.barrio.gui;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -38,12 +39,11 @@ public class InputUI extends Composite{
 	private Button btnAnalyse;
 
 	private List<String> activeFilters = new ArrayList<String>();
-	private List<String> previousFilters = new ArrayList<String>();
 	private List<Filter> knownFilters = new ArrayList<Filter>();
 	private int separationLevel = 0;
-	private int lastSeparationLevel = 0;
-	
+	private HashMap<Integer, Integer> separationValues = null;
 	private Composite graphControlsComposite;
+	private final Scale slider;
 	
 	private List<String> visualSettings;
 	
@@ -131,9 +131,9 @@ public class InputUI extends Composite{
 		   final Label lblSeparation = new Label(topComposite, SWT.NONE);
 		   lblSeparation.setText("Separation level = 0          ");
 		   
-		   final Scale slider = new Scale(topComposite, SWT.HORIZONTAL);
+		   slider = new Scale(topComposite, SWT.HORIZONTAL);
 		   slider.setMinimum(0);
-		   slider.setMaximum(500);
+		   slider.setMaximum(0);
 		   slider.setIncrement(1);
 		   slider.setPageIncrement(1);
 		   slider.setSelection(0);
@@ -235,7 +235,7 @@ public class InputUI extends Composite{
 			      public void widgetDefaultSelected(SelectionEvent e) {}
 
 			      public void widgetSelected(SelectionEvent e) {
-			    	  btnRefreshClick(nodeFilters, edgeFilters);
+			    	  btnAnalyseClick(nodeFilters, edgeFilters);
 			      }  
 		   });
 
@@ -347,7 +347,7 @@ public class InputUI extends Composite{
 					}
 		   });
 		   
-		   updateBtnRefreshEnabled();
+		   updateBtnAnalyseEnabled();
 		   display = super.getDisplay();
 		   
 
@@ -367,26 +367,26 @@ public class InputUI extends Composite{
 	{
 		if(check.getSelection()) activeFilters.add(check.getText());
 		else activeFilters.remove(check.getText());
-		updateBtnRefreshEnabled();
+		updateBtnAnalyseEnabled();
 	}
 	
-	private void updateBtnRefreshEnabled()
+	private void updateBtnAnalyseEnabled()
 	{
 		if(job!=null && job.getInitGraph()!=null)
 		{
-			//System.out.println("[InputUI]: graph != null");
-			if(previousFilters.equals(activeFilters) && lastSeparationLevel==separationLevel) 
-				btnAnalyse.setEnabled(false);
-			else btnAnalyse.setEnabled(true);
-		}else btnAnalyse.setEnabled(false);
+//			//System.out.println("[InputUI]: graph != null");
+//			if(previousFilters.equals(activeFilters) && lastSeparationLevel==separationLevel) 
+//				btnAnalyse.setEnabled(false);
+			btnAnalyse.setEnabled(true);
+		}//else btnAnalyse.setEnabled(false);
 	}
 	
 	
-	private void btnRefreshClick(List<NodeFilter> nodeFilters, List<EdgeFilter> edgeFilters) 
+	private void btnAnalyseClick(List<NodeFilter> nodeFilters, List<EdgeFilter> edgeFilters) 
 	{
 		GuiGetter gg = new GuiGetter();
 		final OutputUI output = gg.getOutputUI();
-		GraphClusteringJob job1 = new GraphClusteringJob(job.getFinalGraph(), activeFilters);
+		final GraphClusteringJob job1 = new GraphClusteringJob(job.getFinalGraph(), activeFilters);
 		
 		job1.setUser(true);
   	  	job1.addJobChangeListener(new IJobChangeListener(){
@@ -400,7 +400,10 @@ public class InputUI extends Composite{
 
 					public void run() {
 						updateElements();
+						//btnAnalyse.setEnabled(false);
 						output.updateVisualElements(visualSettings);
+						separationValues = job1.getSeparationValues();
+						slider.setMaximum(separationValues.size()-1);
 					}
 				});
 			}
@@ -416,25 +419,24 @@ public class InputUI extends Composite{
 		job1.schedule();
 	}
 	
-	private void updateElements() {
+	public void updateElements() {
 
-		//System.out.println("[InputUI]: job = "+job.getResult());
-		if(job.getResult().equals(Status.OK_STATUS))
-		{
-			System.out.println("[InputUI]: job ok");
-			previousFilters.clear();
-			previousFilters.addAll(activeFilters);
-			lastSeparationLevel = separationLevel;
-			updateBtnRefreshEnabled();
-		}
+//		//System.out.println("[InputUI]: job = "+job.getResult());
+//		if(job!=null && job.getResult().equals(Status.OK_STATUS))
+//		{
+//			System.out.println("[InputUI]: job ok");
+//			previousFilters.clear();
+//			previousFilters.addAll(activeFilters);
+//			lastSeparationLevel = separationLevel;
+//			updateBtnAnalyseEnabled();
+//		}
 	}
 
 
 	private void sliderMove(Label label, int value)
 	{
-		label.setText("Separation level = "+ value);
-		separationLevel = value;
-		updateBtnRefreshEnabled();
+		label.setText("Separation level = "+ separationValues.get(value));
+		
 	}
 	
 	

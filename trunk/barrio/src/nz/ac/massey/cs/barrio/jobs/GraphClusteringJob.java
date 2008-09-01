@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -49,6 +50,7 @@ public class GraphClusteringJob extends Job {
 	private int numClusters;
 	private PrintStream out;
 	private long start;
+	private HashMap<Integer, Integer> separationValues;
 	
 	public GraphClusteringJob(Graph finalGraph, List<String> filters) 
 	{
@@ -60,6 +62,7 @@ public class GraphClusteringJob extends Job {
 		canceled = false;
 		numClusters = 0;
 		out = null;
+		separationValues = new HashMap<Integer, Integer>();
 		String filename = getFilename(finalGraph.getUserDatum("file").toString());
 //		System.out.println("[ClusterJob] file = "+filename);
 		try {
@@ -141,7 +144,12 @@ public class GraphClusteringJob extends Job {
 			monitor.subTask(message+sep);
 			clusterer.cluster(finalGraph);
 			clusterer.nameClusters(finalGraph);
-			removedEdges.addAll(clusterer.getEdgesRemoved());
+			List<Edge> newRemovedEdges = clusterer.getEdgesRemoved();
+			for(Edge e:newRemovedEdges)
+			{
+				e.setUserDatum("relationship.separation", sep, UserData.SHARED);
+			}
+			removedEdges.addAll(newRemovedEdges);
 			monitor.worked(clusterer.getEdgesRemoved().size());
 			printMiddle(out, sep);
 			sep++;
@@ -213,6 +221,7 @@ public class GraphClusteringJob extends Job {
 		}
 		if(numClusters!=clusters.size())
 		{
+			separationValues.put(separationValues.size(), sep);
 			out.print("<separation value =\"");
 			out.print(sep);
 			out.println("\">");
@@ -251,6 +260,11 @@ public class GraphClusteringJob extends Job {
 		}
 	}
 	 
+
+	public HashMap<Integer, Integer> getSeparationValues() {
+		return separationValues;
+	}
+
 
 	public Graph getFinalGraph() {
 		return finalGraph;
