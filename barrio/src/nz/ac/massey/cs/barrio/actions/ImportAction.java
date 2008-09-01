@@ -61,6 +61,13 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 
 			public synchronized void done(IJobChangeEvent event) {
 				paintDisplay(job);
+//				input.setJob(job);
+				input.getDisplay().asyncExec(new Runnable(){
+
+					public void run() {
+						input.updateElements();
+					}
+				});
 				output.updateVisualElements(input.getVisualSettings());
 //				Long stop = System.currentTimeMillis();
 //				System.out.println("[ImportAction]: Time taken = "+(stop-start)/1000+" seconds");
