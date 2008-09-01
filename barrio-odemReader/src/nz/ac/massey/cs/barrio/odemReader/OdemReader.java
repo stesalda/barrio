@@ -227,7 +227,8 @@ public class OdemReader implements InputReader {
 					buffer.append("\" relationship.type=\"");
 					buffer.append(te.getType());
 					buffer.append("\" edge.isSelected=\"false\" relationship.state=\"null");
-					buffer.append("\" relationship.betweenness=\"null\" />");
+					buffer.append("\" relationship.betweenness=\"null");
+					buffer.append("\" relationship.separation=\"null\" />");
 					edges.add(buffer.toString());
 					break;
 				}
