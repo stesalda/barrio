@@ -15,6 +15,8 @@ import nz.ac.massey.cs.barrio.clusterer.Clusterer;
 import nz.ac.massey.cs.barrio.clusterer.KnownClusterer;
 import nz.ac.massey.cs.barrio.filters.KnownEdgeFilters;
 import nz.ac.massey.cs.barrio.filters.KnownNodeFilters;
+import nz.ac.massey.cs.barrio.graphManager.GraphManager;
+import nz.ac.massey.cs.barrio.graphManager.KnownGraphManagers;
 import nz.ac.massey.cs.barrio.gui.OutputGenerator;
 import nz.ac.massey.cs.barrio.gui.OutputUI;
 import nz.ac.massey.cs.barrio.inputReader.InputReader;
@@ -40,15 +42,12 @@ import edu.uci.ics.jung.graph.filters.Filter;
 import edu.uci.ics.jung.graph.impl.DirectedSparseGraph;
 import edu.uci.ics.jung.utils.UserData;
 
-public class GraphProcessingJob extends Job {
+public class GraphBuildingJob extends Job {
 
 	private Object input;
 	private Graph initGraph;
-	private Graph finalGraph;
 
 	private List<String> filters;
-	private int separation;
-	private List<Edge> removedEdges;
 	private boolean canceled;
 	
 	private Display display;
@@ -62,17 +61,14 @@ public class GraphProcessingJob extends Job {
 
 
 
-	public GraphProcessingJob(Object input, Graph initGraph, List<String> filters, int separation) 
+	public GraphBuildingJob(Object input, List<String> filters) 
 	{
 		super("Processing graph");
 		this.input = input;
 		
-		this.initGraph = initGraph;
-		this.finalGraph = null;
+		this.initGraph = null;
 		
-		this.filters = filters;
-		this.separation = separation;		
-		removedEdges = new ArrayList<Edge>();
+		this.filters = filters;	
 		canceled = false;
 		
 	}
@@ -92,17 +88,15 @@ public class GraphProcessingJob extends Job {
 		if(input!=null) SCALE = 4+filters.size();
 		else SCALE = 3+filters.size();
 	
-			if(initGraph==null) readInput(monitor);
+			readInput(monitor);
 			if(initGraph==null) return Status.CANCEL_STATUS;
-			finalGraph = (Graph) initGraph.copy();
 			
-			monitor.beginTask("Processing Graph", SCALE+finalGraph.numEdges());
+			monitor.beginTask("Processing Graph", SCALE+initGraph.numEdges());
 			
 			filterGraph(monitor);
 			clusterGraph(monitor);
 			classifyGraph(monitor);
 			buildVisual(monitor);
-			
 			monitor.done();
 			
 			if(canceled) return Status.CANCEL_STATUS;
@@ -189,7 +183,7 @@ public class GraphProcessingJob extends Job {
 			Filter f = filter;
 			if(filters.contains(filter.getName()))
 			{
-				finalGraph = f.filter(finalGraph).assemble();
+				initGraph = f.filter(initGraph).assemble();
 			}
 			monitor.worked(1);
 			if(canceled) return;
@@ -200,16 +194,11 @@ public class GraphProcessingJob extends Job {
 	
 	
 	@SuppressWarnings("unchecked")
-	private void clusterGraph(IProgressMonitor monitor) {
-		
-		Set<Edge> edges = finalGraph.getEdges();
-		for(Edge edge:edges) 
-			edge.setUserDatum("relationship.betweenness", "null", UserData.SHARED);
-		removedEdges.clear();
-		
+	private void clusterGraph(IProgressMonitor monitor) 
+	{
 		List<Clusterer> clusterers = KnownClusterer.all();
 		Clusterer clusterer = clusterers.get(0);
-		clusterer.nameClusters(finalGraph);
+		clusterer.nameClusters(initGraph);
 		monitor.worked(1);
 	}
 	
@@ -222,9 +211,9 @@ public class GraphProcessingJob extends Job {
 		Classifier classifier = KnownClassifier.all().get(0);
 		List<ReferenceRule> rules = getRules();
 		
-		int SCALE = finalGraph.getVertices().size();
+		int SCALE = initGraph.getVertices().size();
 		monitor.beginTask("", SCALE);
-		Iterator<Object> iter = finalGraph.getVertices().iterator();
+		Iterator<Object> iter = initGraph.getVertices().iterator();
 		while(iter.hasNext())
 		{
 			Vertex v = (Vertex) iter.next();
@@ -259,8 +248,8 @@ public class GraphProcessingJob extends Job {
 		{
 			public void run() 
 			{
-				OutputGenerator og = new OutputGenerator(initGraph, finalGraph);
-				output.updateOutputs(og, removedEdges);	
+				OutputGenerator og = new OutputGenerator(initGraph, 0);
+				output.updateOutputs(og, null);	
 //				output.paintGraph(display);
 			}
 			
@@ -273,25 +262,13 @@ public class GraphProcessingJob extends Job {
 	public Graph getInitGraph() {
 		return initGraph;
 	}
-
-	public Graph getFinalGraph() {
-		return finalGraph;
-	}
 	
 	public Display getDispaly()
 	{
 		return display;
 	}
 
-	public List<Edge> getRemovedEdges() {
-		return removedEdges;
-	}
-
 	public List<String> getFilters() {
 		return filters;
-	}
-
-	public int getSeparation() {
-		return separation;
 	}
 }

@@ -9,7 +9,7 @@ import java.util.List;
 import nz.ac.massey.cs.barrio.gui.GuiGetter;
 import nz.ac.massey.cs.barrio.gui.InputUI;
 import nz.ac.massey.cs.barrio.gui.OutputUI;
-import nz.ac.massey.cs.barrio.jobs.GraphProcessingJob;
+import nz.ac.massey.cs.barrio.jobs.GraphBuildingJob;
 import nz.ac.massey.cs.barrio.srcReader.KnownSourceReader;
 import nz.ac.massey.cs.barrio.srcReader.SourceReader;
 
@@ -65,7 +65,7 @@ public class SrcCodeReadAction implements IWorkbenchWindowActionDelegate {
 	
 	
 	protected void setNextJob() {
-		final GraphProcessingJob job = new GraphProcessingJob(projectOdem, null, input.getActiveFilters(), input.getSeparationLevel());
+		final GraphBuildingJob job = new GraphBuildingJob(projectOdem, input.getActiveFilters());
 	    job.setOutput(output);
 	    job.setUser(true);
 	    input.setJob(job);
@@ -96,7 +96,7 @@ public class SrcCodeReadAction implements IWorkbenchWindowActionDelegate {
 	}
 
 
-	private void paintDisplay(final GraphProcessingJob job)
+	private void paintDisplay(final GraphBuildingJob job)
 	{
 		output.getDisplay().asyncExec(new Runnable()
 		{

@@ -2,6 +2,7 @@ package nz.ac.massey.cs.barrio.actions;
 
 import java.util.List;
 
+import nz.ac.massey.cs.barrio.Activator;
 import nz.ac.massey.cs.barrio.exporter.Exporter;
 import nz.ac.massey.cs.barrio.exporter.KnownExporter;
 import nz.ac.massey.cs.barrio.gui.GuiGetter;
@@ -32,10 +33,8 @@ public class ExportResultsAction implements IWorkbenchWindowActionDelegate {
 		GuiGetter gg = new GuiGetter();
 		InputUI input = gg.getInputUI();
 		OutputUI output = gg.getOutputUI();
-//		e.export(input.getJob().getInitGraph(), input.getJob().getFinalGraph(), 
-//				input.getJob().getSeparation(), input.getJob().getFilters(), 
-//				input.getJob().getRemovedEdges(), 
-//				output.getTreePwMC(), output.getTreeCwMP());
+		e.export(input.getJob().getInitGraph(), input.getJob1().getFinalGraph(), 
+				input.getJob1().getSeparationValue(), Activator.getDefault().getPreferenceStore().getString("folderName"));
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

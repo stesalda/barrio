@@ -3,7 +3,11 @@ package nz.ac.massey.cs.barrio.gui;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
+
+import nz.ac.massey.cs.barrio.clusterer.Clusterer;
+import nz.ac.massey.cs.barrio.clusterer.KnownClusterer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Tree;
@@ -17,10 +21,33 @@ import edu.uci.ics.jung.graph.Vertex;
 public class OutputGenerator {
 	
 	private Graph finalGraph = null;
+	private int separation;
 	
-	public OutputGenerator(Graph initGraph, Graph finalGraph)
+	public OutputGenerator(Graph graph, int separation)
 	{
-		this.finalGraph = finalGraph;
+		finalGraph = (Graph) graph.copy();
+		this.separation = separation;
+
+		System.out.println("[OG]: sep = "+separation+"; graph-e = "+graph.numEdges());
+		Set<Edge> edges = finalGraph.getEdges();
+		List<Edge> edgesToRemove = new ArrayList<Edge>();
+		Iterator<Edge> edgeIter = finalGraph.getEdges().iterator();
+		while(edgeIter.hasNext())
+		{
+			Edge e = edgeIter.next();
+			String value = e.getUserDatum("relationship.separation").toString();
+			int sep = finalGraph.numEdges();
+			if(!value.equals("null")) sep = Integer.valueOf(value);
+			if(sep <= separation) edgesToRemove.add(e);
+		}
+		for(Edge e:edgesToRemove)
+		{
+			finalGraph.removeEdge(e);
+		}
+		List<Clusterer> clusterers = KnownClusterer.all();
+		Clusterer clusterer = clusterers.get(0);
+		clusterer.nameClusters(finalGraph);
+		System.out.println("[OG]: edges = "+finalGraph.numEdges());
 	}
 	
 	
@@ -164,6 +191,7 @@ public class OutputGenerator {
 		column.setText("Project");
 		column.setMoveable(true);
 		int cols = dependencyClusters.size();
+		System.out.println("[OG]: clusters = "+cols);
 		for(int i=0; i<cols; i++)
 		{
 			new TreeColumn(tree, SWT.LEFT).setText(dependencyClusters.get(i));
