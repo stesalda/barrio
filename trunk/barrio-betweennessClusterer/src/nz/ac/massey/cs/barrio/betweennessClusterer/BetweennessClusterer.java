@@ -1,5 +1,6 @@
 package nz.ac.massey.cs.barrio.betweennessClusterer;
 
+import java.util.HashMap;
 import java.util.List;
 
 import nz.ac.massey.cs.barrio.clusterer.Clusterer;
@@ -21,9 +22,9 @@ public class BetweennessClusterer implements Clusterer{
 		return edgesRemoved;
 	}
 
-	public void nameClusters(Graph graph) {
+	public HashMap<String, Integer> nameClusters(Graph graph) {
 		EdgeBetweennessClusterer ebc = new EdgeBetweennessClusterer();
-		ebc.nameClusters(graph);
+		return ebc.nameClusters(graph);
 		
 	}
 }
