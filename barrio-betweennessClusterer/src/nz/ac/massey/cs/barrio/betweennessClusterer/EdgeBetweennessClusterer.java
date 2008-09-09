@@ -1,6 +1,7 @@
 package nz.ac.massey.cs.barrio.betweennessClusterer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -70,8 +71,9 @@ public class EdgeBetweennessClusterer implements GraphClusterer {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void nameClusters(ClusterSet cs)
+	private HashMap<String, Integer> nameClusters(ClusterSet cs)
 	{
+		HashMap<String, Integer> map = new HashMap<String, Integer>();
 		for(int i=0; i<cs.size(); i++)
 		{
 			Set<Vertex> verts = cs.getCluster(i);
@@ -83,17 +85,18 @@ public class EdgeBetweennessClusterer implements GraphClusterer {
 				Vertex v = vertItearIterator.next();
 				v.setUserDatum("class.cluster", clusterName, UserData.SHARED);
 			}
+			map.put(clusterName, cs.getCluster(i).size());
 		}
+//		System.out.println("[EdgeBetwClust]: map = "+map);
+		return map;
 	}
 	
 	
-	public void nameClusters(Graph graph)
+	public HashMap<String, Integer> nameClusters(Graph graph)
 	{
 		WeakComponentClusterer wcSearch = new WeakComponentClusterer();
 	    ClusterSet clusterSet = wcSearch.extract(graph);
-
-	    
-	    nameClusters(clusterSet);
+	    return nameClusters(clusterSet);
 	}
 
 }
