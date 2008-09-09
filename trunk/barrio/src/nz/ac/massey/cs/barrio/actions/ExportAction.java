@@ -10,7 +10,7 @@ import nz.ac.massey.cs.barrio.exporter.KnownExporter;
 import nz.ac.massey.cs.barrio.gui.GuiGetter;
 import nz.ac.massey.cs.barrio.gui.InputUI;
 import nz.ac.massey.cs.barrio.gui.OutputUI;
-import nz.ac.massey.cs.barrio.jobs.GraphProcessingJob;
+import nz.ac.massey.cs.barrio.jobs.GraphBuildingJob;
 import nz.ac.massey.cs.barrio.srcReader.KnownSourceReader;
 import nz.ac.massey.cs.barrio.srcReader.SourceReader;
 

@@ -1,5 +1,6 @@
 package nz.ac.massey.cs.barrio.clusterer;
 
+import java.util.HashMap;
 import java.util.List;
 
 import edu.uci.ics.jung.graph.Graph;
@@ -11,5 +12,5 @@ public interface Clusterer{
 	
 	public List<Edge> getEdgesRemoved();
 	
-	public void nameClusters(Graph graph);
+	public HashMap<String, Integer> nameClusters(Graph graph);
 }

@@ -132,6 +132,7 @@ Export-Package: edu.uci.ics.jung.algorithms;
  nz.ac.massey.cs.barrio.exporter;uses:="edu.uci.ics.jung.graph,org.eclipse.swt.widgets",
  nz.ac.massey.cs.barrio.extensionFinder,
  nz.ac.massey.cs.barrio.filters;uses:="edu.uci.ics.jung.graph,edu.uci.ics.jung.graph.filters",
+ nz.ac.massey.cs.barrio.graphManager,
  nz.ac.massey.cs.barrio.gui;
   uses:="nz.ac.massey.cs.barrio.jobs,
    edu.uci.ics.jung.graph,

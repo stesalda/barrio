@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import nz.ac.massey.cs.barrio.clusterer.Clusterer;
+import nz.ac.massey.cs.barrio.clusterer.KnownClusterer;
 import nz.ac.massey.cs.barrio.filters.EdgeFilter;
 import nz.ac.massey.cs.barrio.filters.KnownEdgeFilters;
 import nz.ac.massey.cs.barrio.filters.KnownNodeFilters;
 import nz.ac.massey.cs.barrio.filters.NodeFilter;
 import nz.ac.massey.cs.barrio.jobs.GraphClusteringJob;
-import nz.ac.massey.cs.barrio.jobs.GraphProcessingJob;
+import nz.ac.massey.cs.barrio.jobs.GraphBuildingJob;
 
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
@@ -32,6 +34,7 @@ import org.eclipse.swt.widgets.Scale;
 import prefuse.Display;
 import prefuse.Visualization;
 import prefuse.util.display.DisplayLib;
+import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.filters.Filter;
 
 public class InputUI extends Composite{
@@ -41,13 +44,13 @@ public class InputUI extends Composite{
 	private List<String> activeFilters = new ArrayList<String>();
 	private List<Filter> knownFilters = new ArrayList<Filter>();
 	private int separationLevel = 0;
-	private HashMap<Integer, Integer> separationValues = null;
 	private Composite graphControlsComposite;
 	private final Scale slider;
 	
 	private List<String> visualSettings;
 	
-	private GraphProcessingJob job;
+	private GraphBuildingJob job;
+	private GraphClusteringJob job1;
 	
 	protected static org.eclipse.swt.widgets.Display display;
 	
@@ -133,7 +136,7 @@ public class InputUI extends Composite{
 		   
 		   slider = new Scale(topComposite, SWT.HORIZONTAL);
 		   slider.setMinimum(0);
-		   slider.setMaximum(0);
+		   slider.setMaximum(1);
 		   slider.setIncrement(1);
 		   slider.setPageIncrement(1);
 		   slider.setSelection(0);
@@ -386,7 +389,7 @@ public class InputUI extends Composite{
 	{
 		GuiGetter gg = new GuiGetter();
 		final OutputUI output = gg.getOutputUI();
-		final GraphClusteringJob job1 = new GraphClusteringJob(job.getFinalGraph(), activeFilters);
+		job1 = new GraphClusteringJob(job.getInitGraph());
 		
 		job1.setUser(true);
   	  	job1.addJobChangeListener(new IJobChangeListener(){
@@ -402,8 +405,7 @@ public class InputUI extends Composite{
 						updateElements();
 						//btnAnalyse.setEnabled(false);
 						output.updateVisualElements(visualSettings);
-						separationValues = job1.getSeparationValues();
-						slider.setMaximum(separationValues.size()-1);
+						separationLevel = job1.getSeparationValue();
 					}
 				});
 			}
@@ -435,7 +437,17 @@ public class InputUI extends Composite{
 
 	private void sliderMove(Label label, int value)
 	{
-		label.setText("Separation level = "+ separationValues.get(value));
+		System.out.println("[InputUI]: value = "+value);
+		int sep = value;
+		if(value==1) sep = job1.getSeparationValue();
+		label.setText("Separation level = "+ sep);
+		
+		
+		OutputGenerator og = new OutputGenerator(job1.getFinalGraph(), sep);
+		
+		GuiGetter gg = new GuiGetter();
+		OutputUI output = gg.getOutputUI();
+		output.updateOutputs(og, job1.getRemovedEdges());
 		
 	}
 	
@@ -473,12 +485,19 @@ public class InputUI extends Composite{
 	}
 
 
-	public GraphProcessingJob getJob() {
+	public GraphBuildingJob getJob() {
 		return job;
 	}
 
 
-	public void setJob(GraphProcessingJob job) {
+	public void setJob(GraphBuildingJob job) {
 		this.job = job;
 	}
+
+
+	public GraphClusteringJob getJob1() {
+		return job1;
+	}
+	
+	
 }

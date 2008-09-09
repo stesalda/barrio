@@ -6,7 +6,7 @@ import nz.ac.massey.cs.barrio.Activator;
 import nz.ac.massey.cs.barrio.gui.GuiGetter;
 import nz.ac.massey.cs.barrio.gui.InputUI;
 import nz.ac.massey.cs.barrio.gui.OutputUI;
-import nz.ac.massey.cs.barrio.jobs.GraphProcessingJob;
+import nz.ac.massey.cs.barrio.jobs.GraphBuildingJob;
 
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
@@ -46,7 +46,7 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 	    String str=Activator.getDefault().getPreferenceStore().getString("ruleListEditor");
 //	    System.out.println("[ImportAction]: rules = "+str);
 	    
-	    final GraphProcessingJob job = new GraphProcessingJob(new File(filename), null, input.getActiveFilters(), input.getSeparationLevel());
+	    final GraphBuildingJob job = new GraphBuildingJob(new File(filename), input.getActiveFilters());
 	    job.setOutput(output);
 	    job.setUser(true);
 	    input.setJob(job);
@@ -78,7 +78,7 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 	}
 	
 	
-	private void paintDisplay(final GraphProcessingJob job)
+	private void paintDisplay(final GraphBuildingJob job)
 	{
 		output.getDisplay().asyncExec(new Runnable()
 		{
