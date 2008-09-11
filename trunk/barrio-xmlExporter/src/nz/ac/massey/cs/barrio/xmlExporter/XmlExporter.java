@@ -116,7 +116,7 @@ public class XmlExporter implements Exporter {
 		out.print(gm.getProjectClusters(false).size());
 		out.println("\" />");
 		out.print("<relationships count=\"");
-		out.print(initGraph.numEdges());
+		out.print(finalGraph.numEdges());
 		out.println("\" />");
 		
 		
