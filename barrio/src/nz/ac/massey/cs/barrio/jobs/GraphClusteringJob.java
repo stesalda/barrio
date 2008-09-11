@@ -94,10 +94,10 @@ public class GraphClusteringJob extends Job {
 		
 		clusterer.nameClusters(finalGraph);
 		
-		for(Edge e: removedEdges)
-		{
-			finalGraph.addEdge(e);
-		}
+//		for(Edge e: removedEdges)
+//		{
+//			finalGraph.addEdge(e);
+//		}
 	}
 
 
