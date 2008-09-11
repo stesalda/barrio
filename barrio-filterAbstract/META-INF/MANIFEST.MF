@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Barrio Abstract Filter Plug-in
 Bundle-SymbolicName: nz.ac.massey.cs.barrio.filterAbstract;singleton:=true
-Bundle-Version: 1.0.31
+Bundle-Version: 1.0.32
 Bundle-Activator: nz.ac.massey.cs.barrio.abstractFilter.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
