@@ -16,16 +16,18 @@ public class VertexClassifier implements Classifier{
 	{
 		List<String> references = new ArrayList<String>();
 		if(v.getUserDatum("reference")!=null) references = getReferences(v.getUserDatum("reference").toString());
-//		System.out.println("[VertexClassifier]: class "+v.getUserDatum("class.packageName")+"."+v.getUserDatum("class.name")+" references = " + references);
 		List<String> classifications = new ArrayList<String>();
-		
+
+//		System.out.println("[VertexClassifier] class = "+v.getUserDatum("class.name").toString());
+//		System.out.println("[VertexClassifier] rules = "+rules);
+//		System.out.println("[VertexClassifier] references = "+references);
 		for(ReferenceRule rule:rules)
 		{
 			if(isSattisfyingRule(references, rule) && !classifications.contains(rule.getResult())) 
 				classifications.add(rule.getResult());
 		}
+//		System.out.println("[VertexClassifier] classifications = "+classifications);
 		v.setUserDatum("classification", classifications, UserData.SHARED);	
-//		System.out.println("[VertexClassifier]: classifications = " + v.getUserDatum("classification").toString());
 	}
 	
 	
