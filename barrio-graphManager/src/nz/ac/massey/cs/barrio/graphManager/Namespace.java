@@ -7,7 +7,14 @@ public class Namespace {
 	private String name;
 	private List<Clazz> classes;
 	private List<Cluster> clusters;
+	private List<String> ruleDefinedClusters;
 	
+	public List<String> getRuleDefinedClusters() {
+		return ruleDefinedClusters;
+	}
+	public void setRuleDefinedClusters(List<String> ruleDefinedClusters) {
+		this.ruleDefinedClusters = ruleDefinedClusters;
+	}
 	public String getName() {
 		return name;
 	}

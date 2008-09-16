@@ -12,13 +12,15 @@ public class Manager implements GraphManager {
 	private Project project = null;
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setGraph(Graph graph) 
 	{
 		project = new Project();
-		project.setName("name"); 	//need to set proper name
+		project.setName(graph.getUserDatum("file").toString());
 		project.setContainers(new ArrayList<Container>());
 		project.setClusters(new ArrayList<Cluster>());
+		project.setRuleDefinedClusters(new ArrayList<String>());
 		
 		Set<Vertex> verts = graph.getVertices();
 		for(Vertex v:verts)
@@ -30,16 +32,17 @@ public class Manager implements GraphManager {
 			String namespaceName = v.getUserDatum("class.packageName").toString();
 			String clusterName = v.getUserDatum("class.cluster").toString();
 			String className = v.getUserDatum("class.name").toString();
+			List<String> classRuleDefinedClusters = (List<String>) v.getUserDatum("classification");
 			
 			if(project.getContainer(containerName)!=null) 
 				container = project.getContainer(containerName);
 			else
-			{
-				System.out.println("[Manager]: container not found: "+containerName);				
+			{			
 				container = new Container();
 				container.setName(containerName);
 				container.setNamespaces(new ArrayList<Namespace>());
 				container.setClusters(new ArrayList<Cluster>());
+				container.setRuleDefinedClusters(new ArrayList<String>());
 				project.getContainers().add(container);
 			}
 			
@@ -51,12 +54,25 @@ public class Manager implements GraphManager {
 				namespace.setName(namespaceName);
 				namespace.setClasses(new ArrayList<Clazz>());
 				namespace.setClusters(new ArrayList<Cluster>());
+				namespace.setRuleDefinedClusters(new ArrayList<String>());
 				container.getNamespaces().add(namespace);
 			}
 			
 			Clazz clazz = new Clazz();
 			clazz.setName(className);
+			clazz.setClusterName(clusterName);
+			clazz.setRuleDefinedClusters(classRuleDefinedClusters);
 			namespace.getClasses().add(clazz);
+			
+			for(String classRuleDefinedCluser: classRuleDefinedClusters)
+			{
+				if(!project.getRuleDefinedClusters().contains(classRuleDefinedCluser))
+					project.getRuleDefinedClusters().add(classRuleDefinedCluser);
+				if(!container.getRuleDefinedClusters().contains(classRuleDefinedCluser))
+					container.getRuleDefinedClusters().add(classRuleDefinedCluser);
+				if(!namespace.getRuleDefinedClusters().contains(classRuleDefinedCluser))
+					namespace.getRuleDefinedClusters().add(classRuleDefinedCluser);
+			}
 
 			Cluster cluster = null;
 			if(project.getCluster(clusterName)!=null) 
@@ -91,37 +107,6 @@ public class Manager implements GraphManager {
 				namespace.getClusters().add(cluster);
 			}
 			cluster.getClasses().add(clazz);
-		}
-//		printProject();
-	}
-
-	private void printProject() 
-	{
-		System.out.println(project.getName()+"; clusters = "+project.getClusters().size());
-		for(Cluster c1: project.getClusters())
-		{
-			System.out.println("cluster = "+c1.getName()+" ("+c1.getClasses().size()+")");
-		}
-		
-		for(Container c : project.getContainers())
-		{
-			for(Cluster c1: c.getClusters())
-			{
-				System.out.println("   cluster = "+c1.getName()+" ("+c1.getClasses().size()+")");
-			}			
-			System.out.println("   "+c.getName());
-			for(Namespace n : c.getNamespaces())
-			{
-				for(Cluster c2: n.getClusters())
-				{
-					System.out.println("      cluster = "+c2.getName()+" ("+c2.getClasses().size()+")");
-				}
-				System.out.println("      "+n.getName());
-				for(Clazz cz : n.getClasses())
-				{
-					System.out.println("         "+cz.getName());
-				}
-			}
 		}
 	}
 
@@ -202,4 +187,47 @@ public class Manager implements GraphManager {
 		}
 		return result;
 	}
+	
+	@Override
+	public String getClassCluster(String containerName, String namespaceName, String className) {
+		Container container = project.getContainer(containerName);
+		Namespace namespace = container.getNamespace(namespaceName);
+		Clazz clazz = namespace.getClazz(className);
+		return clazz.getClusterName();
+	}
+
+	@Override
+	public int getProjectClusterSize(String clusterName) {
+		Cluster cluster = project.getCluster(clusterName);
+		if(cluster==null) return 0;
+		return cluster.getClasses().size();
+	}
+
+	@Override
+	public List<String> getProjectRuleDefinedClusters() {
+		return project.getRuleDefinedClusters();
+	}
+
+	@Override
+	public List<String> getContainerRuleDefinedClusters(String containerName) {
+		Container container = project.getContainer(containerName);
+		return container.getRuleDefinedClusters();
+	}
+
+	@Override
+	public List<String> getNamespaceRuleDefinedClusters(String containerName, String namespaceName) {
+		Container container = project.getContainer(containerName);
+		Namespace namespace = container.getNamespace(namespaceName);
+		return namespace.getRuleDefinedClusters();
+	}
+
+	@Override
+	public List<String> getClassRuleDefinedClusters(String containerName, String namespaceName, String className) {
+		Container container = project.getContainer(containerName);
+		Namespace namespace = container.getNamespace(namespaceName);
+		Clazz clazz = namespace.getClazz(className);
+		return clazz.getRuleDefinedClusters();
+	}
+	
+	
 }

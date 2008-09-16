@@ -7,7 +7,16 @@ public class Container {
 	private String name;
 	private List<Namespace> namespaces;
 	private List<Cluster> clusters;
+	private List<String> ruleDefinedClusters;
 	
+	public List<String> getRuleDefinedClusters() {
+		return ruleDefinedClusters;
+	}
+
+	public void setRuleDefinedClusters(List<String> ruleDefinedClusters) {
+		this.ruleDefinedClusters = ruleDefinedClusters;
+	}
+
 	@Override
 	public String toString() {
 		return name;
