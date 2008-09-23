@@ -7,6 +7,7 @@ public class Clazz {
 	private String name;
 	private String clusterName;
 	private List<String> ruleDefinedClusters;
+	private String annotation;
 
 	public List<String> getRuleDefinedClusters() {
 		return ruleDefinedClusters;
@@ -32,9 +33,22 @@ public class Clazz {
 		this.name = name;
 	}
 
+	public void setAnnotation(String annotation) {
+		this.annotation = annotation;
+	}
+
+	public String getAnnotation() {
+		return annotation;
+	}
+
 	@Override
 	public String toString() {
-		return name;
+		StringBuilder builder = new StringBuilder();
+		builder.append(name);
+		builder.append("-(");
+		builder.append(annotation);
+		builder.append(')');
+		return builder.toString();
 	}
 	
 	

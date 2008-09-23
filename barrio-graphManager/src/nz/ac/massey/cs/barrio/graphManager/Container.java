@@ -21,6 +21,17 @@ public class Container {
 	public String toString() {
 		return name;
 	}
+	
+	public int getSize()
+	{
+		int count=0;
+		List<Namespace> namespaces = getNamespaces();
+		for(Namespace namespace:namespaces)
+		{
+			count+=namespace.getClasses().size();
+		}		
+		return count;
+	}
 
 	public String getName() {
 		return name;

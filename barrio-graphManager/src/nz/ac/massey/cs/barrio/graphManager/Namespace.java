@@ -34,6 +34,11 @@ public class Namespace {
 		this.clusters = clusters;
 	}
 	
+	public int getSize()
+	{
+		return getClasses().size();
+	}
+	
 	public Clazz getClazz(String name)
 	{
 		for(Clazz c: classes)

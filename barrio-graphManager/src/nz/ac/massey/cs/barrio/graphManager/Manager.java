@@ -34,7 +34,20 @@ public class Manager implements GraphManager {
 			String clusterName = v.getUserDatum("class.cluster").toString();
 			String className = v.getUserDatum("class.name").toString();
 			List<String> classRuleDefinedClusters = (List<String>) v.getUserDatum("classification");
-			
+			StringBuilder builder = new StringBuilder();
+			String visibility = v.getUserDatum("class.access").toString();
+			String isAbstract = v.getUserDatum("class.isAbstract").toString();
+			String isInterface = v.getUserDatum("class.isInterface").toString();
+			String isException = v.getUserDatum("class.isException").toString();
+			if(visibility.equals("private")) builder.append("prv");
+			if(visibility.equals("public")) builder.append("pub");
+			if(visibility.equals("protected")) builder.append("prt");
+			if(visibility.equals("default")) builder.append("dfl");
+			if(isAbstract.equals("true")) builder.append(", Abs");
+			if(isInterface.equals("true")) builder.append(", Int");
+			if(isException.equals("true")) builder.append(", Exc");
+			String annotation = builder.toString();
+					
 			if(project.getContainer(containerName)!=null) 
 				container = project.getContainer(containerName);
 			else
@@ -63,6 +76,7 @@ public class Manager implements GraphManager {
 			clazz.setName(className);
 			clazz.setClusterName(clusterName);
 			clazz.setRuleDefinedClusters(classRuleDefinedClusters);
+			clazz.setAnnotation(annotation);
 			namespace.getClasses().add(clazz);
 			
 			for(String classRuleDefinedCluser: classRuleDefinedClusters)
@@ -158,7 +172,7 @@ public class Manager implements GraphManager {
 		List<String> result = new ArrayList<String>();
 		for(Container c:project.getContainers())
 		{
-			result.add(c.getName());
+			result.add(c.toString());
 		}
 		return result;
 	}
@@ -229,6 +243,80 @@ public class Manager implements GraphManager {
 		Clazz clazz = namespace.getClazz(className);
 		return clazz.getRuleDefinedClusters();
 	}
-	
-	
+
+	@Override
+	public String getClassAnnotation(String containerName, String namespaceName, String className) {
+		Container container = project.getContainer(containerName);
+		Namespace namespace = container.getNamespace(namespaceName);
+		Clazz clazz = namespace.getClazz(className);
+		return clazz.getAnnotation();
+	}
+
+	@Override
+	public int getContainerSize(String containerName) {
+		return project.getContainer(containerName).getSize();
+	}
+
+	@Override
+	public int getNamespaceSize(String containerName, String namespaceName) {
+		Container container = project.getContainer(containerName);
+		return container.getNamespace(namespaceName).getSize();
+	}
+
+	@Override
+	public int getIntersectionSize(String containerName, String clusterName) {
+		int count = 0;		
+		List<String> dependencyClusters = getProjectClusters(true);
+		List<String> ruleDefinedClusters = getProjectRuleDefinedClusters();
+		Container container = project.getContainer(containerName);
+		
+		if(dependencyClusters.contains(clusterName))
+		{
+			for(Namespace namespace:container.getNamespaces())
+			{
+				for(Clazz clazz:namespace.getClasses())
+				{
+					if(clazz.getClusterName().equals(clusterName)) count++;
+				}
+			}
+		}
+		
+		if(ruleDefinedClusters.contains(clusterName))
+		{
+			for(Namespace namespace:container.getNamespaces())
+			{
+				for(Clazz clazz:namespace.getClasses())
+				{
+					if(clazz.getRuleDefinedClusters().contains(clusterName)) count++;
+				}
+			}
+		}
+		
+		return count;
+	}
+
+	@Override
+	public int getIntersectionSize(String containerName, String namespaceName, String clusterName) {
+		int count = 0;
+		List<String> dependencyClusters = getProjectClusters(true);
+		List<String> ruleDefinedClusters = getProjectRuleDefinedClusters();
+		Container container = project.getContainer(containerName);
+		Namespace namespace = container.getNamespace(namespaceName);
+		
+		if(dependencyClusters.contains(clusterName))
+		{
+			for(Clazz clazz:namespace.getClasses())
+			{
+				if(clazz.getClusterName().equals(clusterName)) count++;
+			}
+		}
+		if(ruleDefinedClusters.contains(clusterName))
+		{
+			for(Clazz clazz:namespace.getClasses())
+			{
+				if(clazz.getRuleDefinedClusters().contains(clusterName)) count++;
+			}
+		}
+		return count;
+	}
 }
