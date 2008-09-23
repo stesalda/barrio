@@ -1,12 +1,13 @@
 package nz.ac.massey.cs.barrio.actions;
 
 import java.io.File;
+import java.util.ArrayList;
 
-import nz.ac.massey.cs.barrio.Activator;
 import nz.ac.massey.cs.barrio.gui.GuiGetter;
 import nz.ac.massey.cs.barrio.gui.InputUI;
 import nz.ac.massey.cs.barrio.gui.OutputUI;
 import nz.ac.massey.cs.barrio.jobs.GraphBuildingJob;
+import nz.ac.massey.cs.barrio.jobs.GraphFilteringJob;
 
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
@@ -17,6 +18,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+
 
 public class ImportAction implements IWorkbenchWindowActionDelegate{
 	
@@ -43,15 +45,9 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 	    String filename = dlg.open();
 	    shell.close();
 	    
-	    String str=Activator.getDefault().getPreferenceStore().getString("ruleListEditor");
-//	    System.out.println("[ImportAction]: rules = "+str);
-	    
-	    final GraphBuildingJob job = new GraphBuildingJob(new File(filename), input.getActiveFilters());
-	    job.setOutput(output);
-	    job.setUser(true);
-	    input.setJob(job);
-//	    final Long start = System.currentTimeMillis();
-	    job.addJobChangeListener(new IJobChangeListener()
+	    final GraphBuildingJob buildingJob = new GraphBuildingJob(new File(filename));
+	    buildingJob.setUser(true);
+	    buildingJob.addJobChangeListener(new IJobChangeListener()
 	    {
 			public void aboutToRun(IJobChangeEvent event) {}
 			public void awake(IJobChangeEvent event) {}
@@ -59,33 +55,36 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 			public void scheduled(IJobChangeEvent event) {}
 			public void sleeping(IJobChangeEvent event) {}
 
-			public synchronized void done(IJobChangeEvent event) {
-				paintDisplay(job);
-//				input.setJob(job);
-				input.getDisplay().asyncExec(new Runnable(){
+			public synchronized void done(IJobChangeEvent event) 
+			{
+				input.setInitGraph(buildingJob.getInitGraph());
+				final GraphFilteringJob filteringJob = new GraphFilteringJob(buildingJob.getInitGraph(), input.getActiveFilters());
+				filteringJob.setUser(true);
+				filteringJob.addJobChangeListener(new IJobChangeListener()
+				{
+					public void aboutToRun(IJobChangeEvent event) {}
+					public void awake(IJobChangeEvent event) {}
+					public void running(IJobChangeEvent event) {}
+					public void scheduled(IJobChangeEvent event) {}
+					public void sleeping(IJobChangeEvent event) {}
 
-					public void run() {
-						input.updateElements();
+					@SuppressWarnings("unchecked")
+					public synchronized void done(IJobChangeEvent event) 
+					{
+						input.setFilteredGraph(filteringJob.getFilteredGraph());
+						input.setRemovedEdges(new ArrayList());
+						output.getDisplay().asyncExec(new Runnable()
+		                {
+		                        public void run() 
+		                        {
+		                        	output.updateOutputs(filteringJob.getFilteredGraph());
+		                        }
+		                });
 					}
 				});
-				output.updateVisualElements(input.getVisualSettings());
-//				Long stop = System.currentTimeMillis();
-//				System.out.println("[ImportAction]: Time taken = "+(stop-start)/1000+" seconds");
+				filteringJob.schedule();
 			}
-	    	
 	    });
-	    job.schedule();
-	}
-	
-	
-	private void paintDisplay(final GraphBuildingJob job)
-	{
-		output.getDisplay().asyncExec(new Runnable()
-		{
-			public void run() 
-			{
-				output.paintGraph(job.getDispaly());	
-			}			
-		});
+	    buildingJob.schedule();
 	}
 }

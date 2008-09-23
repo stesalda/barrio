@@ -9,6 +9,7 @@ import java.awt.*;
  * @version 1.0 11/09/98
  */
  
+@SuppressWarnings("serial")
 public class MultiLineCellRenderer extends JTextArea implements TableCellRenderer {
  
   public MultiLineCellRenderer() {

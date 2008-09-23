@@ -1,21 +1,16 @@
 package nz.ac.massey.cs.barrio.gui;
 
-import java.awt.Point;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import nz.ac.massey.cs.barrio.clusterer.Clusterer;
-import nz.ac.massey.cs.barrio.clusterer.KnownClusterer;
 import nz.ac.massey.cs.barrio.filters.EdgeFilter;
 import nz.ac.massey.cs.barrio.filters.KnownEdgeFilters;
 import nz.ac.massey.cs.barrio.filters.KnownNodeFilters;
 import nz.ac.massey.cs.barrio.filters.NodeFilter;
 import nz.ac.massey.cs.barrio.jobs.GraphClusteringJob;
-import nz.ac.massey.cs.barrio.jobs.GraphBuildingJob;
+import nz.ac.massey.cs.barrio.jobs.GraphFilteringJob;
 
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
 import org.eclipse.swt.SWT;
@@ -31,27 +26,28 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
 
-import prefuse.Display;
-import prefuse.Visualization;
-import prefuse.util.display.DisplayLib;
+import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.filters.Filter;
 
 public class InputUI extends Composite{
 	
 	private Button btnAnalyse;
+	private Button btnApplyFilters;
 
-	private List<String> activeFilters = new ArrayList<String>();
+	private List<String> doneFilters = new ArrayList<String>();
+	private List<String> todoFilters = new ArrayList<String>();
 	private List<Filter> knownFilters = new ArrayList<Filter>();
 	private int separationLevel = 0;
 	private Composite graphControlsComposite;
 	private final Scale slider;
-	
-	private List<String> visualSettings;
-	
-	private GraphBuildingJob job;
-	private GraphClusteringJob job1;
-	
+	private final Label lblSeparation;
+	private Graph initGraph = null;
+	private Graph filteredGraph = null;
+	private Graph clusteredGraph = null;
+	private List<Edge> removedEdges = null;
+
+
 	protected static org.eclipse.swt.widgets.Display display;
 	
 	public InputUI(Composite parent, int style) {
@@ -127,11 +123,14 @@ public class InputUI extends Composite{
 			   });
 		   }
 		   
+		   btnApplyFilters = new Button(topComposite, SWT.PUSH);
+		   btnApplyFilters.setText("Apply Filters");
+		   btnApplyFilters.setEnabled(false);
 		   Label separator2 = new Label(topComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		   separator2.setLayoutData(horizontalFillData);
 		   //-------------------------------------------------------------
 		   
-		   final Label lblSeparation = new Label(topComposite, SWT.NONE);
+		   lblSeparation = new Label(topComposite, SWT.NONE);
 		   lblSeparation.setText("Separation level = 0          ");
 		   
 		   slider = new Scale(topComposite, SWT.HORIZONTAL);
@@ -220,8 +219,6 @@ public class InputUI extends Composite{
 		   final Button checkRemovedEdges = new Button(graphControlsComposite, SWT.CHECK|SWT.NONE);
 		   checkRemovedEdges.setText("View Removed Edges");
 		   
-		   
-		   visualSettings = new ArrayList<String>();
 		   //----------------------------------------------------------------
 		   
 		   
@@ -230,8 +227,17 @@ public class InputUI extends Composite{
 			      public void widgetDefaultSelected(SelectionEvent e) {}
 
 			      public void widgetSelected(SelectionEvent e) {
-			    	  sliderMove(lblSeparation, slider.getSelection());
+			    	  sliderMove();
 			      }  
+		   });
+		   
+		   btnApplyFilters.addSelectionListener(new SelectionListener() {
+			   public void widgetDefaultSelected(SelectionEvent e) {}
+			   
+			   public void widgetSelected(SelectionEvent e) {
+				   btnApplyFiltersClick();
+			   }
+			   
 		   });
 		   
 		   btnAnalyse.addSelectionListener(new SelectionListener() {
@@ -241,263 +247,168 @@ public class InputUI extends Composite{
 			    	  btnAnalyseClick(nodeFilters, edgeFilters);
 			      }  
 		   });
-
-		   final double panValue = 100;
-		   final long duration = 1000;
-		   btnUp.addSelectionListener(new SelectionListener(){
-				public void widgetDefaultSelected(SelectionEvent e) {}
-	
-				public void widgetSelected(SelectionEvent e) {
-					GuiGetter gg = new GuiGetter();
-					OutputUI output = gg.getOutputUI();
-					((Display)output.getGraphComponent()).animatePan(0, 0-panValue, duration);
-				}
-		   });
-		   
-		   btnDown.addSelectionListener(new SelectionListener(){
-				public void widgetDefaultSelected(SelectionEvent e) {}
-
-				public void widgetSelected(SelectionEvent e) {
-					GuiGetter gg = new GuiGetter();
-					OutputUI output = gg.getOutputUI();
-					((Display)output.getGraphComponent()).animatePan(0, panValue, duration);
-				}
-			});
-		   
-		   btnLeft.addSelectionListener(new SelectionListener(){
-				public void widgetDefaultSelected(SelectionEvent e) {}
-
-				public void widgetSelected(SelectionEvent e) {
-					GuiGetter gg = new GuiGetter();
-					OutputUI output = gg.getOutputUI();
-					((Display)output.getGraphComponent()).animatePan(0-panValue, 0, duration);
-				}
-			});
-		   
-		   btnRight.addSelectionListener(new SelectionListener(){
-				public void widgetDefaultSelected(SelectionEvent e) {}
-
-				public void widgetSelected(SelectionEvent e) {
-					GuiGetter gg = new GuiGetter();
-					OutputUI output = gg.getOutputUI();
-					((Display)output.getGraphComponent()).animatePan(panValue, 0, duration);
-				}
-			});
-		   
-		   btnZoomIn.addSelectionListener(new SelectionListener(){
-				public void widgetDefaultSelected(SelectionEvent e) {}
-
-				public void widgetSelected(SelectionEvent e) {
-					GuiGetter gg = new GuiGetter();
-					OutputUI output = gg.getOutputUI();
-					Display display = (Display)output.getGraphComponent();
-					display.animateZoom(new Point(display.getWidth()/2, display.getHeight()/2), 1.2, duration);
-				}
-			});
-		   
-		   btnZoomOut.addSelectionListener(new SelectionListener(){
-				public void widgetDefaultSelected(SelectionEvent e) {}
-
-				public void widgetSelected(SelectionEvent e) {
-					GuiGetter gg = new GuiGetter();
-					OutputUI output = gg.getOutputUI();
-					Display display = (Display)output.getGraphComponent();
-					display.animateZoom(new Point(display.getWidth()/2, display.getHeight()/2), 0.8, duration);
-				}
-			});
-		   
-		   btnZoomToFit.addSelectionListener(new SelectionListener(){
-				public void widgetDefaultSelected(SelectionEvent e) {}
-
-				public void widgetSelected(SelectionEvent e) {
-					GuiGetter gg = new GuiGetter();
-					OutputUI output = gg.getOutputUI();
-					Display display = (Display)output.getGraphComponent();
-	                DisplayLib.fitViewToBounds(display,display.getVisualization().getBounds(Visualization.ALL_ITEMS), duration); 
-				}
-			});
-		   
-		   checkDependencyCluster.addSelectionListener(new SelectionListener(){
-			   public void widgetDefaultSelected(SelectionEvent e) {}
-
-			   public void widgetSelected(SelectionEvent e) {
-				   visualControlCheck(checkDependencyCluster);
-			   }
-		   });
-		   
-		   checkPackages.addSelectionListener(new SelectionListener(){
-			   public void widgetDefaultSelected(SelectionEvent e) {}
-
-			   public void widgetSelected(SelectionEvent e) {
-				   visualControlCheck(checkPackages);
-			   }
-		   });
-		   
-		   checkContainers.addSelectionListener(new SelectionListener(){
-			   public void widgetDefaultSelected(SelectionEvent e) {}
-
-			   public void widgetSelected(SelectionEvent e) {
-				   visualControlCheck(checkContainers);
-			   }
-		   });
-		   
-		   checkRemovedEdges.addSelectionListener(new SelectionListener(){
-
-				public void widgetDefaultSelected(SelectionEvent e) {}
-		
-					public void widgetSelected(SelectionEvent e) {
-						visualControlCheck(checkRemovedEdges);
-					}
-		   });
-		   
-		   updateBtnAnalyseEnabled();
-		   display = super.getDisplay();
-		   
-
 		   sc.setMinSize(mainComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
 	
 		
 	public void dispose() {
 		super.dispose();
-	}
-	
-	
-	
+	}	
 	
 	//User Interface events==============================================================
 	private void filterCheckboxClick(Button check)
 	{
-		if(check.getSelection()) activeFilters.add(check.getText());
-		else activeFilters.remove(check.getText());
-		updateBtnAnalyseEnabled();
+		if(check.getSelection()) todoFilters.add(check.getText());
+		else todoFilters.remove(check.getText());
+		
+		if(initGraph==null)
+		{
+			btnApplyFilters.setEnabled(false);
+			return;
+		}
+		
+		if(isFiltered()) btnApplyFilters.setEnabled(false);
+		else btnApplyFilters.setEnabled(true);
 	}
 	
-	private void updateBtnAnalyseEnabled()
+	private boolean isFiltered()
 	{
-		if(job!=null && job.getInitGraph()!=null)
+		if(todoFilters.size()!=doneFilters.size()) return false;
+		for(String filter:doneFilters)
 		{
-//			//System.out.println("[InputUI]: graph != null");
-//			if(previousFilters.equals(activeFilters) && lastSeparationLevel==separationLevel) 
-//				btnAnalyse.setEnabled(false);
-			btnAnalyse.setEnabled(true);
-		}//else btnAnalyse.setEnabled(false);
+			if(!todoFilters.contains(filter)) return false;
+		}
+		return true;
+	}
+	
+	private void btnApplyFiltersClick()
+	{
+		final OutputUI output = new GuiGetter().getOutputUI();
+		final GraphFilteringJob filteringJob = new GraphFilteringJob(initGraph, todoFilters);
+		filteringJob.setUser(true);
+		filteringJob.addJobChangeListener(new IJobChangeListener(){
+
+			public void aboutToRun(IJobChangeEvent event) {}
+			public void awake(IJobChangeEvent event) {}
+			public void running(IJobChangeEvent event) {}
+			public void scheduled(IJobChangeEvent event) {}
+			public void sleeping(IJobChangeEvent event) {}
+			
+			public void done(IJobChangeEvent event) 
+			{
+				filteredGraph = filteringJob.getFilteredGraph();
+				output.getDisplay().syncExec(new Runnable(){
+
+					@Override
+					public void run() {
+						output.updateOutputs(filteredGraph);
+						doneFilters = new ArrayList<String>();
+						for(String filter:todoFilters) doneFilters.add(filter);
+						btnApplyFilters.setEnabled(false);
+					}									
+				});
+			}
+				
+		});
+		filteringJob.schedule();
+				
+		
 	}
 	
 	
 	private void btnAnalyseClick(List<NodeFilter> nodeFilters, List<EdgeFilter> edgeFilters) 
 	{
-		GuiGetter gg = new GuiGetter();
-		final OutputUI output = gg.getOutputUI();
-		job1 = new GraphClusteringJob(job.getInitGraph());
-		
-		job1.setUser(true);
-  	  	job1.addJobChangeListener(new IJobChangeListener(){
+		if(initGraph!=null)
+		{
+			System.out.println("[InputUI]: initGraph file = " +initGraph.getUserDatum("file"));
+			final OutputUI output = new GuiGetter().getOutputUI();
+			final GraphClusteringJob clusteringJob = new GraphClusteringJob(filteredGraph);
+			clusteringJob.setUser(true);
+			clusteringJob.addJobChangeListener(new IJobChangeListener(){
+				
+				public void aboutToRun(IJobChangeEvent event) {}
+				public void awake(IJobChangeEvent event) {}
+				public void running(IJobChangeEvent event) {}
+				public void scheduled(IJobChangeEvent event) {}
+				public void sleeping(IJobChangeEvent event) {}
+				
+				public void done(IJobChangeEvent event) 
+				{
+					clusteredGraph = clusteringJob.getClusteredGraph();
+					if(clusteredGraph==null) return;
+					removedEdges = clusteringJob.getRemovedEdges();
+					separationLevel = clusteringJob.getSeparationValue();
+					
+					output.getDisplay().syncExec(new Runnable(){
 
-			public void aboutToRun(IJobChangeEvent event) {}
-
-			public void awake(IJobChangeEvent event) {}
-
-			public void done(IJobChangeEvent event) {
-				display.asyncExec(new Runnable(){
-
-					public void run() {
-						updateElements();
-						//btnAnalyse.setEnabled(false);
-						output.updateVisualElements(visualSettings);
-						separationLevel = job1.getSeparationValue();
-					}
-				});
-			}
-
-			public void running(IJobChangeEvent event) {}
-
-			public void scheduled(IJobChangeEvent event) {}
-
-			public void sleeping(IJobChangeEvent event) {}
-  	  		
-  	  	});
-
-		job1.schedule();
-	}
-	
-	public void updateElements() {
-
-//		//System.out.println("[InputUI]: job = "+job.getResult());
-//		if(job!=null && job.getResult().equals(Status.OK_STATUS))
-//		{
-//			System.out.println("[InputUI]: job ok");
-//			previousFilters.clear();
-//			previousFilters.addAll(activeFilters);
-//			lastSeparationLevel = separationLevel;
-//			updateBtnAnalyseEnabled();
-//		}
+						@Override
+						public void run() {
+							sliderMove();
+						}									
+					});
+					
+				}
+			});
+			clusteringJob.schedule();
+		}
 	}
 
 
-	private void sliderMove(Label label, int value)
+	private void sliderMove()
 	{
-		System.out.println("[InputUI]: value = "+value);
-		int sep = value;
-		if(value==1) sep = job1.getSeparationValue();
-		label.setText("Separation level = "+ sep);
 		
-		
-		OutputGenerator og = new OutputGenerator(job1.getFinalGraph(), sep);
-		
-		GuiGetter gg = new GuiGetter();
-		OutputUI output = gg.getOutputUI();
-		output.updateOutputs(og, job1.getRemovedEdges());
-		
-	}
-	
-	
-	private void visualControlCheck(Button check)
-	{
-		GuiGetter gg = new GuiGetter();
-		OutputUI output = gg.getOutputUI();
-		if(check.getSelection()) visualSettings.add(check.getText());
-		else visualSettings.remove(check.getText());
-		output.updateVisualElements(visualSettings);
+		final OutputUI output = new GuiGetter().getOutputUI();
+		if(slider.getSelection()==0){
+			lblSeparation.setText("Separation level = 0");
+			output.updateOutputs(filteredGraph);
+			output.updateTableRemovedEdges(null);
+		}
+		if(slider.getSelection()==1){
+			lblSeparation.setText("Separation level = "+ separationLevel);
+			output.updateOutputs(clusteredGraph);
+			output.updateTableRemovedEdges(removedEdges);
+		}
 	}
 	//User Interface events end==============================================================
 	
-	
-	
-	public List<String> getActiveFilters() {
-		return activeFilters;
-	}
 
+	
+	public void setInitGraph(Graph initGraph) {
+		this.initGraph = initGraph;
+	}
 
 	public int getSeparationLevel() {
 		return separationLevel;
 	}
 
 
-	public List<String> getVisualSettings()
-	{
-		return visualSettings;
+	public Graph getInitGraph() {
+		return initGraph;
 	}
 
 
-	protected void setGraphControlsCompositeVisible(boolean isVisible) {
-		this.graphControlsComposite.setVisible(isVisible);
+	public Graph getFilteredGraph() {
+		return filteredGraph;
 	}
 
 
-	public GraphBuildingJob getJob() {
-		return job;
-	}
-
-
-	public void setJob(GraphBuildingJob job) {
-		this.job = job;
-	}
-
-
-	public GraphClusteringJob getJob1() {
-		return job1;
+	public Graph getClusteredGraph() {
+		return clusteredGraph;
 	}
 	
+	public void setRemovedEdges(List<Edge> removedEdges) {
+		this.removedEdges = removedEdges;
+	}
+
+	public void setFilteredGraph(Graph filteredGraph) {
+		this.filteredGraph = filteredGraph;
+	}
+
+	public void setClusteredGraph(Graph clusteredGraph) {
+		this.clusteredGraph = clusteredGraph;
+	}
 	
+	public List<String> getActiveFilters() {
+		return todoFilters;
+	}	
 }
