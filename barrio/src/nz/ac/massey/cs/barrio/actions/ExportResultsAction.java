@@ -11,6 +11,8 @@ import nz.ac.massey.cs.barrio.gui.OutputUI;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 
@@ -32,9 +34,13 @@ public class ExportResultsAction implements IWorkbenchWindowActionDelegate {
 		
 		GuiGetter gg = new GuiGetter();
 		InputUI input = gg.getInputUI();
-		OutputUI output = gg.getOutputUI();
-		e.export(input.getJob().getInitGraph(), input.getJob1().getFinalGraph(), 
-				input.getJob1().getSeparationValue(), Activator.getDefault().getPreferenceStore().getString("folderName"));
+		
+		FileDialog dialog = new FileDialog(input.getShell(), SWT.SAVE);
+		dialog.setFilterNames(new String[]{"XML files"});
+		dialog.setFilterExtensions(new String[]{"*.xml"});
+		
+		e.export(input.getFilteredGraph(), input.getClusteredGraph(), 
+				input.getSeparationLevel(), input.getActiveFilters(), dialog.open());
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {

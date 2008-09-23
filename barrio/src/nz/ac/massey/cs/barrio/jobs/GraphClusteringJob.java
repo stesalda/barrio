@@ -22,16 +22,17 @@ import edu.uci.ics.jung.utils.UserData;
 
 public class GraphClusteringJob extends Job {
 
-	private Graph finalGraph;
+	private Graph clusteredGraph;
 	private List<Edge> removedEdges;
 	private boolean canceled;
 	private int numClusters;
 	private int separationValue;
 	
-	public GraphClusteringJob(Graph initGraph) 
+	public GraphClusteringJob(Graph filteredGraph) 
 	{
-		super("Processing graph");
-		this.finalGraph = (Graph) initGraph.copy();	
+		super("Clustering graph");
+		this.clusteredGraph = (Graph) filteredGraph.copy();	
+		//System.out.println("[ClusteringJob]: file = "+clusteredGraph.getUserDatum("file").toString());
 		removedEdges = new ArrayList<Edge>();
 		canceled = false;
 		numClusters = 0;
@@ -47,8 +48,8 @@ public class GraphClusteringJob extends Job {
 	
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
-		int SCALE = finalGraph.numEdges()/3;
-		monitor.beginTask("Processing Graph", SCALE);
+		int SCALE = clusteredGraph.numEdges()/3;
+		monitor.beginTask("Clustering Graph", SCALE);
 		clusterGraph(monitor);		
 		monitor.done();
 		
@@ -61,22 +62,22 @@ public class GraphClusteringJob extends Job {
 	@SuppressWarnings("unchecked")
 	private void clusterGraph(IProgressMonitor monitor) {
 		
-		Set<Edge> edges = finalGraph.getEdges();
+		Set<Edge> edges = clusteredGraph.getEdges();
 		for(Edge edge:edges) 
 			edge.setUserDatum("relationship.betweenness", "null", UserData.SHARED);
 		removedEdges.clear();
 		String message = "Removing Separation Level: ";		
 		List<Clusterer> clusterers = KnownClusterer.all();
 		Clusterer clusterer = clusterers.get(0);
-		HashMap<String,Integer> clusts = clusterer.nameClusters(finalGraph);
+		HashMap<String,Integer> clusts = clusterer.nameClusters(clusteredGraph);
 		numClusters = clusts.size();
 		
 		int sep = 1;
-		while(finalGraph.numEdges()>0)
+		while(clusteredGraph.numEdges()>0)
 		{
 			if(canceled) return;
 			monitor.subTask(message+sep);
-			clusterer.cluster(finalGraph);
+			clusterer.cluster(clusteredGraph);
 			List<Edge> newRemovedEdges = clusterer.getEdgesRemoved();
 			for(Edge e:newRemovedEdges)
 			{
@@ -84,7 +85,7 @@ public class GraphClusteringJob extends Job {
 			}
 			removedEdges.addAll(newRemovedEdges);
 			monitor.worked(clusterer.getEdgesRemoved().size());
-			if(numClusters!=clusterer.nameClusters(finalGraph).size())
+			if(numClusters!=clusterer.nameClusters(clusteredGraph).size())
 			{
 				separationValue = sep;
 				break;
@@ -92,12 +93,7 @@ public class GraphClusteringJob extends Job {
 			sep++;
 		}
 		
-		clusterer.nameClusters(finalGraph);
-		
-//		for(Edge e: removedEdges)
-//		{
-//			finalGraph.addEdge(e);
-//		}
+		clusterer.nameClusters(clusteredGraph);
 	}
 
 
@@ -106,8 +102,8 @@ public class GraphClusteringJob extends Job {
 	}
 
 
-	public Graph getFinalGraph() {
-		return finalGraph;
+	public Graph getClusteredGraph() {
+		return clusteredGraph;
 	}
 
 

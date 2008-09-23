@@ -65,7 +65,7 @@ public class SrcCodeReadAction implements IWorkbenchWindowActionDelegate {
 	
 	
 	protected void setNextJob() {
-		final GraphBuildingJob job = new GraphBuildingJob(projectOdem, input.getActiveFilters());
+		final GraphBuildingJob job = new GraphBuildingJob(projectOdem);
 	    job.setOutput(output);
 	    job.setUser(true);
 	    input.setJob(job);
