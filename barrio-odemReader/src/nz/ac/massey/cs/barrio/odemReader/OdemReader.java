@@ -69,6 +69,7 @@ public class OdemReader implements InputReader {
 			out.write('\n');
 			out.write("<graph edgedefault=\"directed\" file=\"");
 			out.write(((File)input).getAbsolutePath());
+			//System.out.println("[OdemReader]: file = "+((File)input).getAbsolutePath());
 			out.write("\">\n");
 	
 			nodes = new ArrayList<String>();
