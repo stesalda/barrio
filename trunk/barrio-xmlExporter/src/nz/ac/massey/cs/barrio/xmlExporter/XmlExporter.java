@@ -12,20 +12,18 @@ import edu.uci.ics.jung.graph.Graph;
 
 public class XmlExporter implements Exporter {
 	
-	public void export(Graph initGraph, Graph finalGraph, int separation, String folderName) 
+	public void export(Graph filteredGraph, Graph clusteredGraph, int separation, List<String> filters, String filename) 
 	{
 		PrintStream out = null;
-		String filename = finalGraph.getUserDatum("file").toString();
-		filename = filename.substring(filename.lastIndexOf('\\'),filename.lastIndexOf('.'));
 		try {
-			out = new PrintStream(folderName+filename+".xml");
+			out = new PrintStream(filename);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}		
 		if(out==null) return;
 				
 		GraphManager gm = KnownGraphManagers.all().get(0);
-		gm.setGraph(initGraph);
+		gm.setGraph(filteredGraph);
 		int numNamespaces = 0;
 		int numClasses = 0;
 		int numCwMC = 0;
@@ -47,7 +45,7 @@ public class XmlExporter implements Exporter {
 		
 		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		out.print("<graph file=\"");
-		out.print(finalGraph.getUserDatum("file"));
+		out.print(filteredGraph.getUserDatum("file"));
 		out.println("\">");
 		out.print("<containers count =\"");
 		out.print(gm.getContainers().size());
@@ -66,6 +64,18 @@ public class XmlExporter implements Exporter {
 		out.print("<classes count =\"");
 		out.print(numClasses);
 		out.println("\" />");
+		
+		if(filters.size()>0)
+		{
+			out.println("<filters>");
+			for(String filter:filters)
+			{
+				out.print("<filter name=\"");
+				out.print(filter);
+				out.println("\" />");
+			}
+			out.println("</filters>");
+		}
 			
 		out.println("<separation value =\"0\">");
 		out.print("<clusters count=\"");
@@ -74,10 +84,8 @@ public class XmlExporter implements Exporter {
 		out.print(gm.getProjectClusters(false).size());
 		out.println("\" />");
 		out.print("<relationships count=\"");
-		out.print(initGraph.numEdges());
+		out.print(filteredGraph.numEdges());
 		out.println("\" />");
-		
-		
 		
 		out.print("<containers-with-clusters count=\"");
 		out.print(numCwMC);
@@ -92,7 +100,7 @@ public class XmlExporter implements Exporter {
 		out.println("\" />");		
 		out.println("</separation>");
 		
-		gm.setGraph(finalGraph);
+		gm.setGraph(clusteredGraph);
 		numCwMC = 0;
 		numCwMCns = 0;
 		numNwMC = 0;
@@ -116,7 +124,7 @@ public class XmlExporter implements Exporter {
 		out.print(gm.getProjectClusters(false).size());
 		out.println("\" />");
 		out.print("<relationships count=\"");
-		out.print(finalGraph.numEdges());
+		out.print(clusteredGraph.numEdges());
 		out.println("\" />");
 		
 		
