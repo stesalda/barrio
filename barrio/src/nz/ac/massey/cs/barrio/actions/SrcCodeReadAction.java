@@ -4,12 +4,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 
 import nz.ac.massey.cs.barrio.gui.GuiGetter;
 import nz.ac.massey.cs.barrio.gui.InputUI;
 import nz.ac.massey.cs.barrio.gui.OutputUI;
 import nz.ac.massey.cs.barrio.jobs.GraphBuildingJob;
+import nz.ac.massey.cs.barrio.jobs.GraphFilteringJob;
 import nz.ac.massey.cs.barrio.srcReader.KnownSourceReader;
 import nz.ac.massey.cs.barrio.srcReader.SourceReader;
 
@@ -44,18 +46,10 @@ public class SrcCodeReadAction implements IWorkbenchWindowActionDelegate {
 			public void awake(IJobChangeEvent event) {}
 			public void running(IJobChangeEvent event) {}
 			public void scheduled(IJobChangeEvent event) {}
-			public void sleeping(IJobChangeEvent event) {}
-			
+			public void sleeping(IJobChangeEvent event) {}			
 			public void done(IJobChangeEvent event) 
 			{
 				projectOdem = srcReadingJob.getBuffer();
-				try {
-					FileWriter writer = new FileWriter(new File("test.xml"));
-					//writer.write(projectOdem);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
 				setNextJob();
 			}
         	
@@ -65,46 +59,51 @@ public class SrcCodeReadAction implements IWorkbenchWindowActionDelegate {
 	
 	
 	protected void setNextJob() {
-		final GraphBuildingJob job = new GraphBuildingJob(projectOdem);
-	    job.setOutput(output);
-	    job.setUser(true);
-	    input.setJob(job);
-	    
-	    final Long start = System.currentTimeMillis();
-	    job.addJobChangeListener(new IJobChangeListener(){
-
+		final GraphBuildingJob buildingJob = new GraphBuildingJob(projectOdem);
+		buildingJob.setUser(true);
+		buildingJob.addJobChangeListener(new IJobChangeListener(){
 			public void aboutToRun(IJobChangeEvent event) {}
-
 			public void awake(IJobChangeEvent event) {}
-
 			public void running(IJobChangeEvent event) {}
-
 			public void scheduled(IJobChangeEvent event) {}
-
 			public void sleeping(IJobChangeEvent event) {}
+			public synchronized void done(IJobChangeEvent event) 
+			{
+				input.setInitGraph(buildingJob.getInitGraph());
+				final GraphFilteringJob filteringJob = new GraphFilteringJob(buildingJob.getInitGraph(), input.getActiveFilters());
+				filteringJob.setUser(true);
+				filteringJob.addJobChangeListener(new IJobChangeListener()
+				{
+					public void aboutToRun(IJobChangeEvent event) {}
+					public void awake(IJobChangeEvent event) {}
+					public void running(IJobChangeEvent event) {}
+					public void scheduled(IJobChangeEvent event) {}
+					public void sleeping(IJobChangeEvent event) {}
 
-			public synchronized void done(IJobChangeEvent event) {
-				paintDisplay(job);
-				output.updateVisualElements(input.getVisualSettings());
-				Long stop = System.currentTimeMillis();
-				System.out.println("[ImportAction]: Time taken = "+(stop-start)/1000+" seconds");
+					@SuppressWarnings("unchecked")
+					public synchronized void done(IJobChangeEvent event) 
+					{
+						input.setFilteredGraph(filteringJob.getFilteredGraph());
+						input.setRemovedEdges(new ArrayList());
+						output.getDisplay().asyncExec(new Runnable()
+		                {
+		                        public void run() 
+		                        {
+		                        	input.checkDisplayGraphClick();
+		                        	input.setClustered(false);
+		                        	input.setDoneFilters();
+		                        	input.setInteractiveElements();
+		                        	output.updateOutputs(filteringJob.getFilteredGraph());
+		                        }
+		                });
+					}
+				});
+				filteringJob.schedule();
 			}
 	    	
 	    });
-	    job.schedule();
+		buildingJob.schedule();
 		
-	}
-
-
-	private void paintDisplay(final GraphBuildingJob job)
-	{
-		output.getDisplay().asyncExec(new Runnable()
-		{
-			public void run() 
-			{
-				output.paintGraph(job.getDispaly());	
-			}			
-		});
 	}
 	
 

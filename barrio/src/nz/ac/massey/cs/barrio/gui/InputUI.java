@@ -1,8 +1,12 @@
 package nz.ac.massey.cs.barrio.gui;
 
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.swing.JFrame;
 
 import nz.ac.massey.cs.barrio.filters.EdgeFilter;
 import nz.ac.massey.cs.barrio.filters.KnownEdgeFilters;
@@ -17,7 +21,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -30,25 +33,26 @@ import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.filters.Filter;
 
-public class InputUI extends Composite{
-	
-	private Button btnAnalyse;
-	private Button btnApplyFilters;
+public class InputUI extends Composite{	
 
 	private List<String> doneFilters = new ArrayList<String>();
 	private List<String> todoFilters = new ArrayList<String>();
 	private List<Filter> knownFilters = new ArrayList<Filter>();
 	private int separationLevel = 0;
-	private Composite graphControlsComposite;
-	private final Scale slider;
-	private final Label lblSeparation;
 	private Graph initGraph = null;
 	private Graph filteredGraph = null;
 	private Graph clusteredGraph = null;
 	private List<Edge> removedEdges = null;
+	private VisualGraphFrame vgf = null;
+	private boolean isClustered = false;
+	
+	private Button btnAnalyse;
+	private Button btnApplyFilters;
+	private final Scale slider;
+	private final Label lblSeparation;
+	private final Button checkDisplayGraph;
 
-
-	protected static org.eclipse.swt.widgets.Display display;
+	
 	
 	public InputUI(Composite parent, int style) {
 		   super(parent, SWT.NONE);
@@ -139,6 +143,7 @@ public class InputUI extends Composite{
 		   slider.setIncrement(1);
 		   slider.setPageIncrement(1);
 		   slider.setSelection(0);
+		   slider.setEnabled(false);
 		   
 		   Label separator3 = new Label(topComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		   separator3.setLayoutData(horizontalFillData);
@@ -148,78 +153,19 @@ public class InputUI extends Composite{
 		   btnAnalyse.setText("Analyse");
 		   GridData refreshData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		   btnAnalyse.setLayoutData(refreshData);
+		   btnAnalyse.setEnabled(false);
 		   
+		    //----------------------------------------------------------------
 		   
-		   //----------------------------------------------------------------
+		   Composite graphDisplay = new Composite(mainComposite, SWT.NONE);
+		   graphDisplay.setLayout(new GridLayout());
+		   checkDisplayGraph = new Button(graphDisplay, SWT.CHECK);
+		   checkDisplayGraph.setText("Display Visual Graph");		   
+		  
+		   vgf = new VisualGraphFrame();
+		   vgf.setVisible(false);
+		   vgf.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		   
-		   Composite space = new Composite(mainComposite, SWT.NONE);
-		   space.setLayout(new GridLayout());
-		   new Label(space, SWT.NULL);
-		   
-		   
-		   //visual display controls ----------------------------------------
-		   GridLayout graphControlsLayout = new GridLayout();
-		   
-		   graphControlsComposite = new Composite(mainComposite, SWT.NONE);
-		   graphControlsComposite.setLayout(graphControlsLayout);
-		   graphControlsComposite.setVisible(false);
-		   
-		   Composite navigationComposite = new Composite(graphControlsComposite, SWT.NONE);
-		   navigationComposite.setLayout(new GridLayout(5,true));
-		   
-		   new Label(navigationComposite, SWT.NULL);
-		   new Label(navigationComposite, SWT.NULL);
-		   
-		   final Button btnUp = new Button(navigationComposite, SWT.PUSH);
-		   btnUp.setImage(new Image(display, this.getClass().getResourceAsStream("icons/arrowUp.png")));
-		   btnUp.setToolTipText("Pan up");
-
-		   new Label(navigationComposite, SWT.NULL);
-		   new Label(navigationComposite, SWT.NULL);
-		   
-		   Button btnLeft = new Button(navigationComposite, SWT.PUSH);
-		   btnLeft.setImage(new Image(display, this.getClass().getResourceAsStream("icons/arrowLeft.png")));
-		   btnLeft.setToolTipText("Pan left");
-		   
-		   Button btnZoomOut = new Button(navigationComposite, SWT.PUSH);
-		   btnZoomOut.setImage(new Image(display, this.getClass().getResourceAsStream("icons/zOut.png")));
-		   btnZoomOut.setToolTipText("Zoom out");
-		   
-		   Button btnZoomToFit = new Button(navigationComposite, SWT.PUSH);
-		   btnZoomToFit.setImage(new Image(display, this.getClass().getResourceAsStream("icons/zFit.png")));
-		   btnZoomToFit.setToolTipText("Zoom to fit screen");
-		   
-		   Button btnZoomIn = new Button(navigationComposite, SWT.PUSH);
-		   btnZoomIn.setImage(new Image(display, this.getClass().getResourceAsStream("icons/zIn.png")));
-		   btnZoomIn.setToolTipText("Zoom in");
-		   
-		   Button btnRight = new Button(navigationComposite, SWT.PUSH);
-		   btnRight.setImage(new Image(display, this.getClass().getResourceAsStream("icons/arrowRight.png")));
-		   btnRight.setToolTipText("Pan right");		   
-
-		   new Label(navigationComposite, SWT.NULL);
-		   new Label(navigationComposite, SWT.NULL);
-		   
-		   Button btnDown = new Button(navigationComposite, SWT.PUSH);
-		   btnDown.setImage(new Image(display, this.getClass().getResourceAsStream("icons/arrowDown.png")));
-		   btnDown.setToolTipText("Pan down");		   
-
-		   new Label(navigationComposite, SWT.NULL);
-		   new Label(navigationComposite, SWT.NULL);
-		   
-		   final Button checkContainers = new Button(graphControlsComposite, SWT.CHECK|SWT.NONE);
-		   checkContainers.setText("View Containers");
-		   
-		   final Button checkPackages = new Button(graphControlsComposite, SWT.CHECK|SWT.NONE);
-		   checkPackages.setText("View Packages");
-		   
-		   final Button checkDependencyCluster = new Button(graphControlsComposite, SWT.CHECK|SWT.NONE);
-		   checkDependencyCluster.setText("View Dependency Clusters");
-		   
-		   final Button checkRemovedEdges = new Button(graphControlsComposite, SWT.CHECK|SWT.NONE);
-		   checkRemovedEdges.setText("View Removed Edges");
-		   
-		   //----------------------------------------------------------------
 		   
 		   
 		   //Events
@@ -241,16 +187,43 @@ public class InputUI extends Composite{
 		   });
 		   
 		   btnAnalyse.addSelectionListener(new SelectionListener() {
-			      public void widgetDefaultSelected(SelectionEvent e) {}
-
-			      public void widgetSelected(SelectionEvent e) {
-			    	  btnAnalyseClick(nodeFilters, edgeFilters);
-			      }  
+				public void widgetDefaultSelected(SelectionEvent e) {}
+				
+				public void widgetSelected(SelectionEvent e) {
+					btnAnalyseClick(nodeFilters, edgeFilters);
+					}  
 		   });
+		   
+		   checkDisplayGraph.addSelectionListener(new SelectionListener(){
+			   public void widgetDefaultSelected(SelectionEvent e) {}
+			   
+			   public void widgetSelected(SelectionEvent e) {
+				   checkDisplayGraphClick();
+			   }
+			   
+		   });
+		   
+		   vgf.addWindowListener(new WindowListener(){
+			   public void windowActivated(WindowEvent arg0) {}
+			   public void windowClosing(WindowEvent arg0) {}
+			   public void windowDeactivated(WindowEvent arg0) {}
+			   public void windowDeiconified(WindowEvent arg0) {}
+			   public void windowIconified(WindowEvent arg0) {}
+			   public void windowOpened(WindowEvent arg0) {}	
+			   public void windowClosed(WindowEvent arg0) {
+				   InputUI.this.getDisplay().asyncExec(new Runnable(){
+						@Override
+						public void run() {
+							checkDisplayGraph.setSelection(false);
+						}				   
+				   });				   
+			   }		   
+		   });
+		   
 		   sc.setMinSize(mainComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT));
 	}
-	
-		
+
+
 	public void dispose() {
 		super.dispose();
 	}	
@@ -261,19 +234,14 @@ public class InputUI extends Composite{
 		if(check.getSelection()) todoFilters.add(check.getText());
 		else todoFilters.remove(check.getText());
 		
-		if(initGraph==null)
-		{
-			btnApplyFilters.setEnabled(false);
-			return;
-		}
-		
-		if(isFiltered()) btnApplyFilters.setEnabled(false);
-		else btnApplyFilters.setEnabled(true);
+		setInteractiveElements();
 	}
 	
 	private boolean isFiltered()
 	{
 		if(todoFilters.size()!=doneFilters.size()) return false;
+		if(initGraph==null) return false;
+		if(filteredGraph==null) return false;
 		for(String filter:doneFilters)
 		{
 			if(!todoFilters.contains(filter)) return false;
@@ -304,14 +272,32 @@ public class InputUI extends Composite{
 						output.updateOutputs(filteredGraph);
 						doneFilters = new ArrayList<String>();
 						for(String filter:todoFilters) doneFilters.add(filter);
-						btnApplyFilters.setEnabled(false);
+						setClustered(false);
+						setInteractiveElements();
 					}									
 				});
 			}
 				
 		});
 		filteringJob.schedule();
-				
+	}
+	
+		
+	public void checkDisplayGraphClick() {
+		boolean selection = checkDisplayGraph.getSelection();
+		if(selection)
+		{
+			Graph g = null;
+			if(slider.getSelection()==0) g = filteredGraph;
+			if(slider.getSelection()==1) g = clusteredGraph;
+			
+			if(g!=null) vgf.setGraph(g);
+			vgf.setVisible(true);
+		}
+		else
+		{
+			vgf.setVisible(false);
+		}
 		
 	}
 	
@@ -343,6 +329,8 @@ public class InputUI extends Composite{
 
 						@Override
 						public void run() {
+							setClustered(true);
+							setInteractiveElements();
 							sliderMove();
 						}									
 					});
@@ -355,8 +343,7 @@ public class InputUI extends Composite{
 
 
 	private void sliderMove()
-	{
-		
+	{		
 		final OutputUI output = new GuiGetter().getOutputUI();
 		if(slider.getSelection()==0){
 			lblSeparation.setText("Separation level = 0");
@@ -368,9 +355,43 @@ public class InputUI extends Composite{
 			output.updateOutputs(clusteredGraph);
 			output.updateTableRemovedEdges(removedEdges);
 		}
+		checkDisplayGraphClick();
 	}
 	//User Interface events end==============================================================
 	
+	public void setInteractiveElements()
+	{
+		if(initGraph==null)
+		{
+			System.out.println("[InputUI]: initG = null");
+			btnApplyFilters.setEnabled(false);
+			slider.setEnabled(false);
+			btnAnalyse.setEnabled(false);
+		}
+		else
+		{
+			if(isFiltered())
+			{
+				btnApplyFilters.setEnabled(false);
+				if(isClustered)
+				{
+					slider.setEnabled(true);
+					btnAnalyse.setEnabled(false);
+				}
+				else
+				{
+					slider.setEnabled(false);
+					btnAnalyse.setEnabled(true);
+				}
+			}
+			else
+			{
+				btnApplyFilters.setEnabled(true);
+				slider.setEnabled(false);
+				btnAnalyse.setEnabled(false);
+			}
+		}
+	}
 
 	
 	public void setInitGraph(Graph initGraph) {
@@ -410,5 +431,22 @@ public class InputUI extends Composite{
 	
 	public List<String> getActiveFilters() {
 		return todoFilters;
+	}
+
+
+	public boolean isClustered() {
+		return isClustered;
+	}
+
+
+	public void setClustered(boolean isClustered) {
+		this.isClustered = isClustered;
+	}
+
+
+	public void setDoneFilters() {
+		for(String filter:todoFilters) doneFilters.add(filter);
 	}	
+	
+	
 }
