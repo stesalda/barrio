@@ -68,7 +68,10 @@ public class OdemReader implements InputReader {
 			out.write(" xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns/graphml\">");
 			out.write('\n');
 			out.write("<graph edgedefault=\"directed\" file=\"");
-			out.write(((File)input).getAbsolutePath());
+			if(input instanceof File) 
+				out.write(((File)input).getAbsolutePath());
+			if(input instanceof byte[]) 
+				out.write("source code");			
 			//System.out.println("[OdemReader]: file = "+((File)input).getAbsolutePath());
 			out.write("\">\n");
 	
