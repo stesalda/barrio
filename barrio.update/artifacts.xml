@@ -1,0 +1,722 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<?artifactRepository class='org.eclipse.equinox.internal.p2.artifact.repository.simple.SimpleArtifactRepository' version='1.0.0'?>
+<repository name='file:/C:/Users/Slava/workspace/barrio.update/ - artifacts' type='org.eclipse.equinox.p2.artifact.repository.simpleRepository' version='1.0.0'>
+  <properties size='2'>
+    <property name='p2.compressed' value='false'/>
+    <property name='p2.timestamp' value='1222916331382'/>
+  </properties>
+  <mappings size='3'>
+    <rule filter='(&amp; (classifier=osgi.bundle))' output='${repoUrl}/plugins/${id}_${version}.jar'/>
+    <rule filter='(&amp; (classifier=binary))' output='${repoUrl}/binary/${id}_${version}'/>
+    <rule filter='(&amp; (classifier=org.eclipse.update.feature))' output='${repoUrl}/features/${id}_${version}.jar'/>
+  </mappings>
+  <artifacts size='102'>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.nonAbstractFilter' version='1.0.31'>
+      <properties size='3'>
+        <property name='artifact.size' value='2864'/>
+        <property name='download.size' value='2864'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.sc.barrio.DependencyGraphExtractor' version='1.0.34'>
+      <properties size='3'>
+        <property name='artifact.size' value='53130'/>
+        <property name='download.size' value='53130'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.VertexClassifier' version='1.0.34'>
+      <properties size='3'>
+        <property name='artifact.size' value='4046'/>
+        <property name='download.size' value='4046'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.VertexClassifier' version='1.0.31'>
+      <properties size='3'>
+        <property name='artifact.size' value='4051'/>
+        <property name='download.size' value='4051'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.odemReader' version='1.0.35'>
+      <properties size='3'>
+        <property name='artifact.size' value='7548'/>
+        <property name='download.size' value='7548'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.odemReader' version='1.0.36'>
+      <properties size='3'>
+        <property name='artifact.size' value='7548'/>
+        <property name='download.size' value='7548'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.interfaceFilter' version='1.0.35'>
+      <properties size='3'>
+        <property name='artifact.size' value='2831'/>
+        <property name='download.size' value='2831'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.nonAbstractFilter' version='1.0.37'>
+      <properties size='3'>
+        <property name='artifact.size' value='2865'/>
+        <property name='download.size' value='2865'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.xmlExporter' version='1.0.37'>
+      <properties size='3'>
+        <property name='artifact.size' value='4516'/>
+        <property name='download.size' value='4516'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.xmlExporter' version='1.0.31'>
+      <properties size='3'>
+        <property name='artifact.size' value='7401'/>
+        <property name='download.size' value='7401'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.nonPublicFilter' version='1.0.32'>
+      <properties size='3'>
+        <property name='artifact.size' value='2844'/>
+        <property name='download.size' value='2844'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='nz.ac.massey.cs.barrio' version='1.0.31'>
+      <properties size='2'>
+        <property name='artifact.size' value='4792'/>
+        <property name='download.size' value='4792'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.nonPublicFilter' version='1.0.36'>
+      <properties size='3'>
+        <property name='artifact.size' value='2845'/>
+        <property name='download.size' value='2845'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='nz.ac.massey.cs.barrio' version='1.0.32'>
+      <properties size='2'>
+        <property name='artifact.size' value='4791'/>
+        <property name='download.size' value='4791'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='barrio_graphManager' version='1.0.37'>
+      <properties size='3'>
+        <property name='artifact.size' value='12367'/>
+        <property name='download.size' value='12367'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.filterAbstract' version='1.0.33'>
+      <properties size='3'>
+        <property name='artifact.size' value='2825'/>
+        <property name='download.size' value='2825'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.betweennessClusterer' version='1.0.32'>
+      <properties size='3'>
+        <property name='artifact.size' value='5444'/>
+        <property name='download.size' value='5444'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.odemReader' version='1.0.32'>
+      <properties size='3'>
+        <property name='artifact.size' value='7495'/>
+        <property name='download.size' value='7495'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.betweennessClusterer' version='1.0.35'>
+      <properties size='3'>
+        <property name='artifact.size' value='5446'/>
+        <property name='download.size' value='5446'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.odemReader' version='1.0.34'>
+      <properties size='3'>
+        <property name='artifact.size' value='7547'/>
+        <property name='download.size' value='7547'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.extendsFilter' version='1.0.33'>
+      <properties size='3'>
+        <property name='artifact.size' value='2804'/>
+        <property name='download.size' value='2804'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.implementsFilter' version='1.0.35'>
+      <properties size='3'>
+        <property name='artifact.size' value='2840'/>
+        <property name='download.size' value='2840'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.nonPublicFilter' version='1.0.35'>
+      <properties size='3'>
+        <property name='artifact.size' value='2845'/>
+        <property name='download.size' value='2845'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='barrio_graphManager' version='1.0.36'>
+      <properties size='3'>
+        <property name='artifact.size' value='12364'/>
+        <property name='download.size' value='12364'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.nonPublicFilter' version='1.0.31'>
+      <properties size='3'>
+        <property name='artifact.size' value='2844'/>
+        <property name='download.size' value='2844'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.exceptionFilter' version='1.0.34'>
+      <properties size='3'>
+        <property name='artifact.size' value='2823'/>
+        <property name='download.size' value='2823'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.extendsFilter' version='1.0.34'>
+      <properties size='3'>
+        <property name='artifact.size' value='2805'/>
+        <property name='download.size' value='2805'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio' version='1.0.37'>
+      <properties size='3'>
+        <property name='artifact.size' value='2166729'/>
+        <property name='download.size' value='2166729'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.interfaceFilter' version='1.0.36'>
+      <properties size='3'>
+        <property name='artifact.size' value='2831'/>
+        <property name='download.size' value='2831'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.filterAbstract' version='1.0.37'>
+      <properties size='3'>
+        <property name='artifact.size' value='2826'/>
+        <property name='download.size' value='2826'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.implementsFilter' version='1.0.37'>
+      <properties size='3'>
+        <property name='artifact.size' value='2840'/>
+        <property name='download.size' value='2840'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.nonAbstractFilter' version='1.0.32'>
+      <properties size='3'>
+        <property name='artifact.size' value='2864'/>
+        <property name='download.size' value='2864'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='nz.ac.massey.cs.barrio' version='1.0.37'>
+      <properties size='2'>
+        <property name='artifact.size' value='4806'/>
+        <property name='download.size' value='4806'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.VertexClassifier' version='1.0.33'>
+      <properties size='3'>
+        <property name='artifact.size' value='4046'/>
+        <property name='download.size' value='4046'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='barrio_graphManager' version='1.0.35'>
+      <properties size='3'>
+        <property name='artifact.size' value='12367'/>
+        <property name='download.size' value='12367'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.betweennessClusterer' version='1.0.31'>
+      <properties size='3'>
+        <property name='artifact.size' value='5245'/>
+        <property name='download.size' value='5245'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.VertexClassifier' version='1.0.35'>
+      <properties size='3'>
+        <property name='artifact.size' value='4047'/>
+        <property name='download.size' value='4047'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.implementsFilter' version='1.0.33'>
+      <properties size='3'>
+        <property name='artifact.size' value='2839'/>
+        <property name='download.size' value='2839'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.sc.barrio.DependencyGraphExtractor' version='1.0.33'>
+      <properties size='3'>
+        <property name='artifact.size' value='53131'/>
+        <property name='download.size' value='53131'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.filterAbstract' version='1.0.35'>
+      <properties size='3'>
+        <property name='artifact.size' value='2826'/>
+        <property name='download.size' value='2826'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.exceptionFilter' version='1.0.36'>
+      <properties size='3'>
+        <property name='artifact.size' value='2823'/>
+        <property name='download.size' value='2823'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.filterAbstract' version='1.0.32'>
+      <properties size='3'>
+        <property name='artifact.size' value='2825'/>
+        <property name='download.size' value='2825'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.implementsFilter' version='1.0.36'>
+      <properties size='3'>
+        <property name='artifact.size' value='2840'/>
+        <property name='download.size' value='2840'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.interfaceFilter' version='1.0.37'>
+      <properties size='3'>
+        <property name='artifact.size' value='2831'/>
+        <property name='download.size' value='2831'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.odemReader' version='1.0.33'>
+      <properties size='3'>
+        <property name='artifact.size' value='7547'/>
+        <property name='download.size' value='7547'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.sc.barrio.DependencyGraphExtractor' version='1.0.37'>
+      <properties size='3'>
+        <property name='artifact.size' value='53131'/>
+        <property name='download.size' value='53131'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.nonPublicFilter' version='1.0.33'>
+      <properties size='3'>
+        <property name='artifact.size' value='2844'/>
+        <property name='download.size' value='2844'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='nz.ac.massey.cs.barrio' version='1.0.36'>
+      <properties size='2'>
+        <property name='artifact.size' value='4806'/>
+        <property name='download.size' value='4806'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.exceptionFilter' version='1.0.37'>
+      <properties size='3'>
+        <property name='artifact.size' value='2823'/>
+        <property name='download.size' value='2823'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.filterAbstract' version='1.0.31'>
+      <properties size='3'>
+        <property name='artifact.size' value='2825'/>
+        <property name='download.size' value='2825'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.sc.barrio.DependencyGraphExtractor' version='1.0.32'>
+      <properties size='3'>
+        <property name='artifact.size' value='53130'/>
+        <property name='download.size' value='53130'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.xmlExporter' version='1.0.33'>
+      <properties size='3'>
+        <property name='artifact.size' value='4515'/>
+        <property name='download.size' value='4515'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio' version='1.0.32'>
+      <properties size='3'>
+        <property name='artifact.size' value='2033589'/>
+        <property name='download.size' value='2033589'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio' version='1.0.34'>
+      <properties size='3'>
+        <property name='artifact.size' value='2035559'/>
+        <property name='download.size' value='2035559'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.xmlExporter' version='1.0.34'>
+      <properties size='3'>
+        <property name='artifact.size' value='4515'/>
+        <property name='download.size' value='4515'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='barrio_graphManager' version='1.0.34'>
+      <properties size='3'>
+        <property name='artifact.size' value='12367'/>
+        <property name='download.size' value='12367'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.exceptionFilter' version='1.0.33'>
+      <properties size='3'>
+        <property name='artifact.size' value='2822'/>
+        <property name='download.size' value='2822'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.filterAbstract' version='1.0.36'>
+      <properties size='3'>
+        <property name='artifact.size' value='2826'/>
+        <property name='download.size' value='2826'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.xmlExporter' version='1.0.36'>
+      <properties size='3'>
+        <property name='artifact.size' value='4516'/>
+        <property name='download.size' value='4516'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.extendsFilter' version='1.0.36'>
+      <properties size='3'>
+        <property name='artifact.size' value='2806'/>
+        <property name='download.size' value='2806'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio' version='1.0.36'>
+      <properties size='3'>
+        <property name='artifact.size' value='2166729'/>
+        <property name='download.size' value='2166729'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.sc.barrio.DependencyGraphExtractor' version='1.0.35'>
+      <properties size='3'>
+        <property name='artifact.size' value='53131'/>
+        <property name='download.size' value='53131'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.betweennessClusterer' version='1.0.36'>
+      <properties size='3'>
+        <property name='artifact.size' value='5446'/>
+        <property name='download.size' value='5446'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.extendsFilter' version='1.0.35'>
+      <properties size='3'>
+        <property name='artifact.size' value='2806'/>
+        <property name='download.size' value='2806'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='nz.ac.massey.cs.barrio' version='1.0.35'>
+      <properties size='2'>
+        <property name='artifact.size' value='4806'/>
+        <property name='download.size' value='4806'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.interfaceFilter' version='1.0.33'>
+      <properties size='3'>
+        <property name='artifact.size' value='2830'/>
+        <property name='download.size' value='2830'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.interfaceFilter' version='1.0.32'>
+      <properties size='3'>
+        <property name='artifact.size' value='2832'/>
+        <property name='download.size' value='2832'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio' version='1.0.33'>
+      <properties size='3'>
+        <property name='artifact.size' value='2035559'/>
+        <property name='download.size' value='2035559'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.implementsFilter' version='1.0.31'>
+      <properties size='3'>
+        <property name='artifact.size' value='2839'/>
+        <property name='download.size' value='2839'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.interfaceFilter' version='1.0.34'>
+      <properties size='3'>
+        <property name='artifact.size' value='2831'/>
+        <property name='download.size' value='2831'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.VertexClassifier' version='1.0.37'>
+      <properties size='3'>
+        <property name='artifact.size' value='4047'/>
+        <property name='download.size' value='4047'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.implementsFilter' version='1.0.32'>
+      <properties size='3'>
+        <property name='artifact.size' value='2838'/>
+        <property name='download.size' value='2838'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio' version='1.0.35'>
+      <properties size='3'>
+        <property name='artifact.size' value='2166685'/>
+        <property name='download.size' value='2166685'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.xmlExporter' version='1.0.32'>
+      <properties size='3'>
+        <property name='artifact.size' value='4550'/>
+        <property name='download.size' value='4550'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.nonAbstractFilter' version='1.0.36'>
+      <properties size='3'>
+        <property name='artifact.size' value='2865'/>
+        <property name='download.size' value='2865'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.odemReader' version='1.0.37'>
+      <properties size='3'>
+        <property name='artifact.size' value='7548'/>
+        <property name='download.size' value='7548'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.implementsFilter' version='1.0.34'>
+      <properties size='3'>
+        <property name='artifact.size' value='2839'/>
+        <property name='download.size' value='2839'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.betweennessClusterer' version='1.0.37'>
+      <properties size='3'>
+        <property name='artifact.size' value='5446'/>
+        <property name='download.size' value='5446'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.nonAbstractFilter' version='1.0.34'>
+      <properties size='3'>
+        <property name='artifact.size' value='2864'/>
+        <property name='download.size' value='2864'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='nz.ac.massey.cs.barrio' version='1.0.34'>
+      <properties size='2'>
+        <property name='artifact.size' value='4806'/>
+        <property name='download.size' value='4806'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.betweennessClusterer' version='1.0.33'>
+      <properties size='3'>
+        <property name='artifact.size' value='5444'/>
+        <property name='download.size' value='5444'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.extendsFilter' version='1.0.31'>
+      <properties size='3'>
+        <property name='artifact.size' value='2804'/>
+        <property name='download.size' value='2804'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.extendsFilter' version='1.0.37'>
+      <properties size='3'>
+        <property name='artifact.size' value='2806'/>
+        <property name='download.size' value='2806'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.interfaceFilter' version='1.0.31'>
+      <properties size='3'>
+        <property name='artifact.size' value='2830'/>
+        <property name='download.size' value='2830'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.sc.barrio.DependencyGraphExtractor' version='1.0.36'>
+      <properties size='3'>
+        <property name='artifact.size' value='53131'/>
+        <property name='download.size' value='53131'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio' version='1.0.31'>
+      <properties size='3'>
+        <property name='artifact.size' value='2035407'/>
+        <property name='download.size' value='2035407'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.nonPublicFilter' version='1.0.37'>
+      <properties size='3'>
+        <property name='artifact.size' value='2845'/>
+        <property name='download.size' value='2845'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.filterAbstract' version='1.0.34'>
+      <properties size='3'>
+        <property name='artifact.size' value='2825'/>
+        <property name='download.size' value='2825'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.extendsFilter' version='1.0.32'>
+      <properties size='3'>
+        <property name='artifact.size' value='2804'/>
+        <property name='download.size' value='2804'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.nonPublicFilter' version='1.0.34'>
+      <properties size='3'>
+        <property name='artifact.size' value='2844'/>
+        <property name='download.size' value='2844'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.odemReader' version='1.0.31'>
+      <properties size='3'>
+        <property name='artifact.size' value='7475'/>
+        <property name='download.size' value='7475'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.VertexClassifier' version='1.0.36'>
+      <properties size='3'>
+        <property name='artifact.size' value='4047'/>
+        <property name='download.size' value='4047'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.exceptionFilter' version='1.0.35'>
+      <properties size='3'>
+        <property name='artifact.size' value='2823'/>
+        <property name='download.size' value='2823'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.VertexClassifier' version='1.0.32'>
+      <properties size='3'>
+        <property name='artifact.size' value='4050'/>
+        <property name='download.size' value='4050'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.exceptionFilter' version='1.0.32'>
+      <properties size='3'>
+        <property name='artifact.size' value='2822'/>
+        <property name='download.size' value='2822'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.betweennessClusterer' version='1.0.34'>
+      <properties size='3'>
+        <property name='artifact.size' value='5445'/>
+        <property name='download.size' value='5445'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='org.eclipse.update.feature' id='nz.ac.massey.cs.barrio' version='1.0.33'>
+      <properties size='2'>
+        <property name='artifact.size' value='4793'/>
+        <property name='download.size' value='4793'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.nonAbstractFilter' version='1.0.33'>
+      <properties size='3'>
+        <property name='artifact.size' value='2864'/>
+        <property name='download.size' value='2864'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.xmlExporter' version='1.0.35'>
+      <properties size='3'>
+        <property name='artifact.size' value='4516'/>
+        <property name='download.size' value='4516'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.sc.barrio.DependencyGraphExtractor' version='1.0.31'>
+      <properties size='3'>
+        <property name='artifact.size' value='53130'/>
+        <property name='download.size' value='53130'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.exceptionFilter' version='1.0.31'>
+      <properties size='3'>
+        <property name='artifact.size' value='2822'/>
+        <property name='download.size' value='2822'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+    <artifact classifier='osgi.bundle' id='nz.ac.massey.cs.barrio.nonAbstractFilter' version='1.0.35'>
+      <properties size='3'>
+        <property name='artifact.size' value='2865'/>
+        <property name='download.size' value='2865'/>
+        <property name='download.contentType' value='application/zip'/>
+      </properties>
+    </artifact>
+  </artifacts>
+</repository>
