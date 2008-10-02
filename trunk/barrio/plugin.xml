@@ -43,21 +43,21 @@
          </menu>
          <action
                class="nz.ac.massey.cs.barrio.actions.ActionRun"
-               icon="icons/releng_gears.gif"
+               icon="menuIcons/releng_gears.gif"
                id="barrio.action1"
                label="Open Barrio Perspective"
                menubarPath="barrio.topMenu/barrio.content">
          </action>
          <action
                class="nz.ac.massey.cs.barrio.actions.ImportAction"
-               icon="icons/import.gif"
+               icon="menuIcons/import.gif"
                id="barrio.action2"
                label="Import Graph and Analyse"
                menubarPath="barrio.topMenu/barrio.actions1">
          </action>
          <action
                class="nz.ac.massey.cs.barrio.actions.SrcCodeReadAction"
-               icon="icons/sample.gif"
+               icon="menuIcons/sample.gif"
                id="barrio.action3"
                label="Analyse Project Sources"
                menubarPath="barrio.topMenu/barrio.actions2"
@@ -65,14 +65,14 @@
          </action>
          <action
                class="nz.ac.massey.cs.barrio.actions.ExportAction"
-               icon="icons/export.gif"
+               icon="menuIcons/export.gif"
                id="barrio.action4"
                label="Extract and Export Graph"
                menubarPath="barrio.topMenu/barrio.actions3">
          </action>
          <action
                class="nz.ac.massey.cs.barrio.actions.ExportResultsAction"
-               icon="icons/export.gif"
+               icon="menuIcons/export.gif"
                id="barrio.exportResultsAction"
                label="Export Results"
                menubarPath="barrio.topMenu/barrio.actionExportResults"
@@ -84,7 +84,7 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="nz.ac.massey.cs.barrio.perspectives.PerspectiveBarrio"
-            icon="icons/releng_gears.gif"
+            icon="menuIcons/releng_gears.gif"
             id="nz.ac.massey.cs.barrio.perspectives.GuiPerspective"
             name="Cluster Analysis">
       </perspective>

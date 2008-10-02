@@ -77,6 +77,10 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 		                {
 		                        public void run() 
 		                        {
+		                        	input.checkDisplayGraphClick();
+		                        	input.setClustered(false);
+		                        	input.setDoneFilters();
+		                        	input.setInteractiveElements();
 		                        	output.updateOutputs(filteringJob.getFilteredGraph());
 		                        }
 		                });

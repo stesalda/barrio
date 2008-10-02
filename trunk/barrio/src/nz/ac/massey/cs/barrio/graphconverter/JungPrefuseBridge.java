@@ -46,6 +46,7 @@ public class JungPrefuseBridge {
 				e.printStackTrace();
 			}				
 		}
+		System.out.println("[J-P Bridge]: prfusegraph = "+prefuseGraph.getNodeCount());
 		return prefuseGraph;
 	}
 

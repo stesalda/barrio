@@ -6,9 +6,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import nz.ac.massey.cs.barrio.gui.OutputUI;
-
-
 import prefuse.Constants;
 import prefuse.Display;
 import prefuse.Visualization;
@@ -20,6 +17,7 @@ import prefuse.action.assignment.DataColorAction;
 import prefuse.action.layout.graph.RadialTreeLayout;
 import prefuse.activity.Activity;
 import prefuse.controls.PanControl;
+import prefuse.controls.WheelZoomControl;
 import prefuse.controls.ZoomControl;
 import prefuse.controls.ZoomToFitControl;
 import prefuse.data.Graph;
@@ -42,7 +40,6 @@ public class DisplayBuilder {
 	private List<String> packages;
 	private List<String> jars;
 	private List<String> clusters;
-	private OutputUI output;
 	
 	public DisplayBuilder() 
 	{
@@ -108,7 +105,7 @@ public class DisplayBuilder {
         while(packs.hasNext())
         {
         	AggregateItem aitem = (AggregateItem)at.addItem();
-        	aitem.set("aggregate.name", "View Packages");
+        	aitem.set("aggregate.name", "View Namespaces");
         	String aPack =  packs.next();
         	aitem.setString("type", "package");
         	Iterator<Node> nodes = vg.nodes();
@@ -252,8 +249,9 @@ public class DisplayBuilder {
 		dis.setHighQuality(true);
 		dis.addControlListener(new PanControl());
 		dis.addControlListener(new ZoomToFitControl());
-		dis.addControlListener(new EdgeClickControl(output));
+		dis.addControlListener(new EdgeClickControl());
 		dis.addControlListener(new ZoomControl());
+		dis.addControlListener(new WheelZoomControl());
 		dis.addControlListener(new AggregateDragControl());
 		
 		return dis;
@@ -275,12 +273,5 @@ public class DisplayBuilder {
 			if(!jars.contains(jar)) jars.add(jar);
 			if(!clusters.contains(cluster)) clusters.add(cluster);
 		}
-		
-	}
-
-
-
-	public void setOutput(OutputUI output) {
-		this.output = output;
 	}
 }
