@@ -9,6 +9,7 @@
    <extension-point id="nz.ac.massey.cs.barrio.srcReader" name="Source Code Reader" schema="schema/nz.ac.massey.cs.barrio.srcReader.exsd"/>
    <extension-point id="nz.ac.massey.cs.barrio.classifier" name="Classifier" schema="schema/nz.ac.massey.barrio.classifier.exsd"/>
    <extension-point id="nz.ac.massey.cs.barrio.graphManager" name="Graph Manager" schema="schema/nz.ac.massey.cs.barrio.graphManager.exsd"/>
+   <extension-point id="nz.ac.massey.cs.barrio.motifFinder" name="MotifFinder" schema="schema/nz.ac.massey.cs.barrio.motifFinder.exsd"/>
    <extension
          point="org.eclipse.ui.actionSets">
       <actionSet

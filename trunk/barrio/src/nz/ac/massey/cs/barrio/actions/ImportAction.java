@@ -8,6 +8,7 @@ import nz.ac.massey.cs.barrio.gui.InputUI;
 import nz.ac.massey.cs.barrio.gui.OutputUI;
 import nz.ac.massey.cs.barrio.jobs.GraphBuildingJob;
 import nz.ac.massey.cs.barrio.jobs.GraphFilteringJob;
+import nz.ac.massey.cs.barrio.motifFinder.KnownMotifs;
 
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
@@ -82,6 +83,8 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 		                        	input.setDoneFilters();
 		                        	input.setInteractiveElements();
 		                        	output.updateOutputs(filteringJob.getFilteredGraph());
+		                        	
+		                        	//KnownMotifs.all().get(0).findAll(filteringJob.getFilteredGraph());
 		                        }
 		                });
 					}
