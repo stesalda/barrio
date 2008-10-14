@@ -19,12 +19,27 @@ public class LabelExpression extends AbstractExpression{
 	
 	@Override
 	public Object get(Tuple t) {
-		String s1 = t.get(jar).toString();
-		String s2 = t.get(packageName).toString();
-		String s3 = t.get(className).toString();
+		String s1 = "";
+		String s2 = "";
+		String s3 = "";
+		if(t.canGetString(jar)) s1 = t.get(jar).toString();
+		if(t.canGetString(packageName)) s2 = t.get(packageName).toString();
+		if(t.canGetString(className)) s3 = t.get(className).toString();
 		
+		StringBuilder builder = new StringBuilder();
+		if(s1.length()>0) {
+			builder.append(s1);
+		}
+		if(s2.length()>0) {
+			builder.append('\n');
+			builder.append(s2);
+		}
+		if(s3.length()>0) {
+			builder.append('\n');
+			builder.append(s3);
+		}
 		
-		return s1 + '\n' + s2 + '\n' + s3;
+		return builder.toString();
 	}
 
 	public Class getType(Schema arg0) {

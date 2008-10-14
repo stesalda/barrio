@@ -20,7 +20,13 @@ public class EdgeClickControl extends ControlAdapter implements Control {
 		if(item.getGroup().equals("graph.edges"))
 		{
 			VisualHighlightingManager mgr = new VisualHighlightingManager();
-			mgr.setSelectItem(item, String.valueOf(!item.get("edge.isSelected").equals("true")));
+			String select = "";
+			if(item.canGetString("edge.isSelected")) 
+			{
+				select =String.valueOf(!item.get("edge.isSelected").equals("true"));
+				mgr.setSelectItem(item, select);
+			}
+			
 		}
 	}
 }

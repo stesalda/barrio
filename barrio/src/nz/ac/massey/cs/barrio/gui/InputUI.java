@@ -212,7 +212,7 @@ public class InputUI extends Composite{
 			   public void windowOpened(WindowEvent arg0) {}	
 			   public void windowClosed(WindowEvent arg0) {
 				   InputUI.this.getDisplay().asyncExec(new Runnable(){
-						@Override
+//						@Override
 						public void run() {
 							checkDisplayGraph.setSelection(false);
 						}				   
@@ -267,7 +267,7 @@ public class InputUI extends Composite{
 				filteredGraph = filteringJob.getFilteredGraph();
 				output.getDisplay().syncExec(new Runnable(){
 
-					@Override
+//					@Override
 					public void run() {
 						output.updateOutputs(filteredGraph);
 						doneFilters = new ArrayList<String>();
@@ -327,7 +327,7 @@ public class InputUI extends Composite{
 					
 					output.getDisplay().syncExec(new Runnable(){
 
-						@Override
+//						@Override
 						public void run() {
 							setClustered(true);
 							setInteractiveElements();

@@ -22,6 +22,9 @@ public class ImageExpression extends AbstractExpression{
 	
 	@Override
 	public Object get(Tuple t) {
+		
+		if(!t.canGetString(isInterface)) return null;
+		
 		boolean isI = t.get(isInterface).toString().equals("true");
 		boolean isE = t.get(isException).toString().equals("true");
 		boolean isA = t.get(isAbstract).toString().equals("true");

@@ -43,7 +43,8 @@ public class LabelEdgeRenderer extends EdgeRenderer {
 		m_cubic.subdivide(cc, new CubicCurve2D.Float());
 		double x = cc.getX2();
 		double y = cc.getY2();
-		Object o = item.get(m_name);
+		Object o = null;
+		if(item.canGetString(m_name)) o = item.get(m_name);
 		if(o != null)
 		{
 			String s = o.toString();

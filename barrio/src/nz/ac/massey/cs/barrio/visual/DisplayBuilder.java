@@ -78,7 +78,8 @@ public class DisplayBuilder {
         	while(nodes.hasNext())
         	{
         		prefuse.data.Node node = nodes.next();
-        		String jar = node.getString("class.jar");
+        		String jar = "";
+        		if(node.canGetString("class.jar")) jar = node.getString("class.jar");
         		if(jar.equals(aJar)) aitem.addItem((VisualItem)node);
         	}
         	aitem.setVisible(false);
@@ -95,7 +96,8 @@ public class DisplayBuilder {
         	while(nodes.hasNext())
         	{
         		prefuse.data.Node node = nodes.next();
-        		String cluster = node.getString("class.cluster");
+        		String cluster = "";
+        		if(node.canGetString("class.cluster")) cluster = node.getString("class.cluster");
         		if(cluster.equals(aCluster)) aitem.addItem((VisualItem)node);
         	}
         	aitem.setVisible(false);
@@ -112,7 +114,8 @@ public class DisplayBuilder {
         	while(nodes.hasNext())
         	{
         		prefuse.data.Node node = nodes.next();
-        		String pack = node.getString("class.packageName");
+        		String pack = "";
+        		if(node.canGetString("class.packageName")) pack = node.getString("class.packageName");
         		if(pack.equals(aPack)) aitem.addItem((VisualItem)node);
         	}
         	aitem.setVisible(false);
@@ -121,7 +124,8 @@ public class DisplayBuilder {
 		AbstractPredicate nodeSelectPredicate = new AbstractPredicate()
 		{
 			public boolean getBoolean(Tuple t) {
-				String isSelected = t.get("node.isSelected").toString();
+				String isSelected = "";
+				if(t.canGetString("node.isSelected")) isSelected = t.get("node.isSelected").toString();
 				return isSelected.equals("true");
 			}
 		};
@@ -129,7 +133,8 @@ public class DisplayBuilder {
 		AbstractPredicate abstractPredicate = new AbstractPredicate()
 		{
 			public boolean getBoolean(Tuple t) {
-				String state = t.get("relationship.state").toString();
+				String state = "";
+				if(t.canGetString("relationship.state")) state = t.get("relationship.state").toString();
 		    	if(state.equals("removed"))return true;
 		        return false;
 			}
@@ -138,7 +143,8 @@ public class DisplayBuilder {
 		AbstractPredicate abstractPredicate2 = new AbstractPredicate()
 		{
 			public boolean getBoolean(Tuple t) {
-				String isSelected = t.get("edge.isSelected").toString();
+				String isSelected = "";
+				if(t.canGetString("edge.isSelected")) isSelected = t.get("edge.isSelected").toString();
 		    	return isSelected.equals("true");
 			}
 		};
@@ -266,9 +272,12 @@ public class DisplayBuilder {
 		while(nodeIter.hasNext())
 		{
 			Node node = nodeIter.next();
-			String pack = node.getString("class.packageName");
-			String jar = node.getString("class.jar");
-			String cluster = node.getString("class.cluster");
+			String pack = "";
+			String jar = "";
+			String cluster = "";
+			if(node.canGetString("class.packageName")) pack = node.getString("class.packageName");
+			if(node.canGetString("class.jar")) jar = node.getString("class.jar");
+			if(node.canGetString("class.cluster")) cluster = node.getString("class.cluster");
 			if(!packages.contains(pack)) packages.add(pack);
 			if(!jars.contains(jar)) jars.add(jar);
 			if(!clusters.contains(cluster)) clusters.add(cluster);

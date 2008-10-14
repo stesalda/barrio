@@ -13,6 +13,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -25,6 +26,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.OverlayLayout;
 
+import nz.ac.massey.cs.barrio.graphManager.GraphManager;
+import nz.ac.massey.cs.barrio.graphManager.KnownGraphManagers;
 import nz.ac.massey.cs.barrio.graphconverter.JungPrefuseBridge;
 import nz.ac.massey.cs.barrio.visual.DisplayBuilder;
 import prefuse.Display;
@@ -32,9 +35,15 @@ import prefuse.Visualization;
 import prefuse.data.tuple.TupleSet;
 import prefuse.util.display.DisplayLib;
 import prefuse.visual.VisualItem;
+import edu.uci.ics.jung.graph.Edge;
 import edu.uci.ics.jung.graph.Graph;
+import edu.uci.ics.jung.graph.Vertex;
+import edu.uci.ics.jung.graph.impl.DirectedSparseEdge;
+import edu.uci.ics.jung.graph.impl.DirectedSparseGraph;
+import edu.uci.ics.jung.graph.impl.DirectedSparseVertex;
+import edu.uci.ics.jung.utils.UserData;
 
-@SuppressWarnings("serial")
+//@SuppressWarnings("serial")
 public class VisualGraphFrame extends JFrame {
 	
 	private Graph graph = null;
@@ -52,7 +61,7 @@ public class VisualGraphFrame extends JFrame {
         mainPanel.setLayout(overlay);
         
 		JPanel controlsPanel = new JPanel();
-		controlsPanel.setBorder(BorderFactory.createEtchedBorder());
+		//controlsPanel.setBorder(BorderFactory.createEtchedBorder());
 		controlsPanel.setAlignmentX(0.0f);
 		controlsPanel.setAlignmentY(0.0f);			
 		
@@ -120,6 +129,7 @@ public class VisualGraphFrame extends JFrame {
 		checksPanel.add(checkRemovedEdges);
 		
 		JRadioButton classRadioButton = new JRadioButton("Class level");
+		classRadioButton.setSelected(true);
 		JRadioButton namespaceRadioButton = new JRadioButton("Namespace level");
 		JRadioButton containerRadioButton = new JRadioButton("Container level");
 		ButtonGroup levels = new ButtonGroup();
@@ -161,7 +171,7 @@ public class VisualGraphFrame extends JFrame {
 		final double panValue = 100;
         final long duration = 1000;
         btnUp.addActionListener(new ActionListener(){
-			@Override
+			//@Override
 			public void actionPerformed(ActionEvent e) {
 				if(graphPanel.getComponentCount()>0)
 					((Display)graphPanel.getComponent(0)).animatePan(0, 0+panValue, duration);				
@@ -169,7 +179,7 @@ public class VisualGraphFrame extends JFrame {
         });
         
         btnDown.addActionListener(new ActionListener(){
-			@Override
+			//@Override
 			public void actionPerformed(ActionEvent e) {
 				if(graphPanel.getComponentCount()>0)
 					((Display)graphPanel.getComponent(0)).animatePan(0, 0-panValue, duration);				
@@ -177,7 +187,7 @@ public class VisualGraphFrame extends JFrame {
         });
         
         btnLeft.addActionListener(new ActionListener(){
-			@Override
+			//@Override
 			public void actionPerformed(ActionEvent e) {
 				if(graphPanel.getComponentCount()>0)
 					((Display)graphPanel.getComponent(0)).animatePan(0+panValue, 0, duration);				
@@ -185,7 +195,7 @@ public class VisualGraphFrame extends JFrame {
         });
         
         btnRight.addActionListener(new ActionListener(){
-			@Override
+			//@Override
 			public void actionPerformed(ActionEvent e) {
 				if(graphPanel.getComponentCount()>0)
 					((Display)graphPanel.getComponent(0)).animatePan(0-panValue, 0, duration);				
@@ -193,7 +203,7 @@ public class VisualGraphFrame extends JFrame {
         });
         
         btnZI.addActionListener(new ActionListener(){
-			@Override
+			//@Override
 			public void actionPerformed(ActionEvent e) {
 				if(graphPanel.getComponentCount()>0)
 				{
@@ -204,7 +214,7 @@ public class VisualGraphFrame extends JFrame {
         });
         
         btnZO.addActionListener(new ActionListener(){
-			@Override
+			//@Override
 			public void actionPerformed(ActionEvent e) {
 				if(graphPanel.getComponentCount()>0)
 				{
@@ -215,7 +225,7 @@ public class VisualGraphFrame extends JFrame {
         });
         
         btnZTF.addActionListener(new ActionListener(){
-			@Override
+			//@Override
 			public void actionPerformed(ActionEvent e) {
 				if(graphPanel.getComponentCount()>0)
 				{
@@ -226,7 +236,7 @@ public class VisualGraphFrame extends JFrame {
         });
         
         checkDependencyClusters.addActionListener(new ActionListener(){
-			@Override
+			//@Override
 			public void actionPerformed(ActionEvent e) {
 				if(checkDependencyClusters.isSelected()) visualSettings.add(checkDependencyClusters.getText());
 				else visualSettings.remove(checkDependencyClusters.getText());
@@ -235,7 +245,7 @@ public class VisualGraphFrame extends JFrame {
         });
         
         checkNamespaces.addActionListener(new ActionListener(){
-			@Override
+			//@Override
 			public void actionPerformed(ActionEvent e) {
 				if(checkNamespaces.isSelected()) visualSettings.add(checkNamespaces.getText());
 				else visualSettings.remove(checkNamespaces.getText());
@@ -244,7 +254,7 @@ public class VisualGraphFrame extends JFrame {
         });
         
         checkContainers.addActionListener(new ActionListener(){
-			@Override
+			//@Override
 			public void actionPerformed(ActionEvent e) {
 				if(checkContainers.isSelected()) visualSettings.add(checkContainers.getText());
 				else visualSettings.remove(checkContainers.getText());
@@ -260,6 +270,16 @@ public class VisualGraphFrame extends JFrame {
 //                                     visualControlCheck(checkRemovedEdges);
 //                             }
 //        });
+        
+        namespaceRadioButton.addActionListener(new ActionListener(){
+        	
+			public void actionPerformed(ActionEvent e) {
+				if(graph==null) return;
+				
+				JungPrefuseBridge bridge = new JungPrefuseBridge();
+				updateVis(bridge.convert(buildNamespaceGraph(graph)));
+			}        	
+        });
 
 	}
 	
@@ -270,18 +290,19 @@ public class VisualGraphFrame extends JFrame {
 	public void setGraph(Graph graph) {
 		if(this.graph!=graph){
 			this.graph = graph;
-			updateVis();
+			JungPrefuseBridge bridge = new JungPrefuseBridge();
+			updateVis(bridge.convert(graph));
+			updateVisualElements();
 		}		
 	}
-
-	private void updateVis(){
-		JungPrefuseBridge bridge = new JungPrefuseBridge();
+	
+	private void updateVis(prefuse.data.Graph graph)
+	{
 		DisplayBuilder db = new DisplayBuilder();
-		Display graphDisplay = db.getDisplay(bridge.convert(graph));
+		Display graphDisplay = db.getDisplay(graph);
 		graphPanel.removeAll();
 		graphPanel.add(graphDisplay);
 		graphPanel.updateUI();
-		updateVisualElements();
 	}
 	
 	
@@ -305,10 +326,128 @@ public class VisualGraphFrame extends JFrame {
             while(edgeIter.hasNext())
             {
                 VisualItem edge = edgeIter.next();
+                if(!edge.canGetString("relationship.state")) continue;
 	            if(!visualSettings.contains("View Removed Edges") && edge.getString("relationship.state").equals("removed")) edge.setVisible(false);
 	            else edge.setVisible(true);
             }
         }               
     }
 
+	
+	
+	private Graph buildNamespaceGraph(Graph graph)
+	{
+		Graph namespaceGraph = new DirectedSparseGraph();
+		GraphManager manager = KnownGraphManagers.all().get(0);
+		manager.setGraph(graph);
+		int vertexId = 0;
+		for(String container:manager.getContainers())
+		{
+			for(String namespace: manager.getNamespaces(container))
+			{
+				Vertex v = new DirectedSparseVertex();
+				v.addUserDatum("class.id", String.valueOf(vertexId), UserData.SHARED);
+				v.addUserDatum("class.jar", container, UserData.SHARED);
+				v.addUserDatum("class.packageName", namespace, UserData.SHARED);
+				namespaceGraph.addVertex(v);
+				vertexId++;
+			}
+		}
+		
+		List<TempEdge> tempEdges = new ArrayList<TempEdge>();
+		Set<Edge> edges = graph.getEdges();
+		for(Edge edge:edges)
+		{
+			String srcC = ((Vertex)edge.getEndpoints().getFirst()).getUserDatum("class.jar").toString();
+			String srcN = ((Vertex)edge.getEndpoints().getFirst()).getUserDatum("class.packageName").toString();
+			String destC = ((Vertex)edge.getEndpoints().getSecond()).getUserDatum("class.jar").toString();
+			String destN = ((Vertex)edge.getEndpoints().getSecond()).getUserDatum("class.packageName").toString();
+			if(srcC.equals(destC) && srcN.equals(destN)) continue;
+			TempEdge te = new TempEdge();
+			te.setSrcC(srcC);
+			te.setSrcN(srcN);
+			te.setDestC(destC);
+			te.setDestN(destN);
+			if(!tempEdges.contains(te)) tempEdges.add(te);
+		}
+		
+		for(TempEdge te:tempEdges)
+		{
+			Vertex src = null;
+			Vertex dest = null;
+			Set<Vertex> verts = namespaceGraph.getVertices();
+			for(Vertex v:verts)
+			{
+				if(te.getSrcC().equals(v.getUserDatum("class.jar")) && te.getSrcN().equals(v.getUserDatum("class.packageName")))
+					src = v;				
+				if(te.getDestC().equals(v.getUserDatum("class.jar")) && te.getDestN().equals(v.getUserDatum("class.packageName")))
+					dest = v;
+				
+				if(src!=null && dest!=null) break;
+			}
+			if(src!=null && dest!=null) 
+			{
+				Edge e = new DirectedSparseEdge(src, dest);
+				e.addUserDatum("sourceId", src.getUserDatum("class.id"), UserData.SHARED);
+				e.addUserDatum("targetId", dest.getUserDatum("class.id"), UserData.SHARED);
+				namespaceGraph.addEdge(e);
+			}
+		}
+		System.out.println("[VGF]: namespaceGraph = "+namespaceGraph.numVertices()+" "+namespaceGraph.numEdges());
+		return namespaceGraph;
+	}
+	
+	
+	
+	
+	private class TempEdge
+	{
+		private String srcC = null;
+		private String srcN = null;
+		private String destC = null;
+		private String destN = null;
+		
+		public String getSrcC() {
+			return srcC;
+		}
+
+		public void setSrcC(String srcC) {
+			this.srcC = srcC;
+		}
+
+		public String getSrcN() {
+			return srcN;
+		}
+
+		public void setSrcN(String srcN) {
+			this.srcN = srcN;
+		}
+
+		public String getDestC() {
+			return destC;
+		}
+
+		public void setDestC(String destC) {
+			this.destC = destC;
+		}
+
+		public String getDestN() {
+			return destN;
+		}
+
+		public void setDestN(String destN) {
+			this.destN = destN;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if(!(obj instanceof TempEdge)) return false;
+			TempEdge te = (TempEdge) obj;
+			if(!te.getSrcC().equals(srcC)) return false;
+			if(!te.getSrcN().equals(srcN)) return false;
+			if(!te.getDestC().equals(destC)) return false;
+			if(!te.getDestN().equals(destN)) return false;
+			return true;
+		}		
+	}
 }
