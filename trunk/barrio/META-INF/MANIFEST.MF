@@ -60,6 +60,7 @@ Export-Package: edu.uci.ics.jung.algorithms;
  nz.ac.massey.cs.barrio.inputReader;uses:="edu.uci.ics.jung.graph",
  nz.ac.massey.cs.barrio.motifFinder;uses:="edu.uci.ics.jung.graph",
  nz.ac.massey.cs.barrio.perspectives;uses:="org.eclipse.ui",
+ nz.ac.massey.cs.barrio.preferences,
  nz.ac.massey.cs.barrio.rules,
  nz.ac.massey.cs.barrio.srcReader;uses:="org.eclipse.core.runtime.jobs"
 Bundle-ClassPath: lib/jung-1.7.6.jar,
