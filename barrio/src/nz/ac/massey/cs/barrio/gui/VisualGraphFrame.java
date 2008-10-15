@@ -271,14 +271,33 @@ public class VisualGraphFrame extends JFrame {
 //                             }
 //        });
         
+        classRadioButton.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				if(graph==null) return;				
+				JungPrefuseBridge bridge = new JungPrefuseBridge();
+				updateVis(bridge.convert(graph));
+			}
+        	
+        });
+        
         namespaceRadioButton.addActionListener(new ActionListener(){
         	
 			public void actionPerformed(ActionEvent e) {
-				if(graph==null) return;
-				
+				if(graph==null) return;				
 				JungPrefuseBridge bridge = new JungPrefuseBridge();
 				updateVis(bridge.convert(buildNamespaceGraph(graph)));
 			}        	
+        });
+        
+        containerRadioButton.addActionListener(new ActionListener(){
+
+			public void actionPerformed(ActionEvent e) {
+				if(graph==null) return;				
+				JungPrefuseBridge bridge = new JungPrefuseBridge();
+				updateVis(bridge.convert(buildContainerGraph(graph)));
+			}
+        	
         });
 
 	}
@@ -395,6 +414,62 @@ public class VisualGraphFrame extends JFrame {
 		}
 		System.out.println("[VGF]: namespaceGraph = "+namespaceGraph.numVertices()+" "+namespaceGraph.numEdges());
 		return namespaceGraph;
+	}
+	
+	
+	private Graph buildContainerGraph(Graph graph)
+	{
+		Graph containerGraph = new DirectedSparseGraph();
+		GraphManager manager = KnownGraphManagers.all().get(0);
+		manager.setGraph(graph);
+		int vertexId = 0;
+		
+		for(String container:manager.getContainers())
+		{
+			Vertex v = new DirectedSparseVertex();
+			v.addUserDatum("class.id", String.valueOf(vertexId), UserData.SHARED);
+			v.addUserDatum("class.jar", container, UserData.SHARED);
+			containerGraph.addVertex(v);
+			vertexId++;			
+		}
+		
+		List<TempEdge> tempEdges = new ArrayList<TempEdge>();
+		Set<Edge> edges = graph.getEdges();
+		for(Edge edge:edges)
+		{
+			String srcC = ((Vertex)edge.getEndpoints().getFirst()).getUserDatum("class.jar").toString();
+			String destC = ((Vertex)edge.getEndpoints().getSecond()).getUserDatum("class.jar").toString();
+			if(srcC.equals(destC)) continue;
+			TempEdge te = new TempEdge();
+			te.setSrcC(srcC);
+			te.setSrcN("null");
+			te.setDestC(destC);
+			te.setDestN("null");
+			if(!tempEdges.contains(te)) tempEdges.add(te);
+		}
+		
+		for(TempEdge te:tempEdges)
+		{
+			Vertex src = null;
+			Vertex dest = null;
+			Set<Vertex> verts = containerGraph.getVertices();
+			for(Vertex v:verts)
+			{
+				if(te.getSrcC().equals(v.getUserDatum("class.jar"))) src = v;				
+				if(te.getDestC().equals(v.getUserDatum("class.jar"))) dest = v;
+				if(src!=null && dest!=null) break;
+			}
+			if(src!=null && dest!=null) 
+			{
+				Edge e = new DirectedSparseEdge(src, dest);
+				e.addUserDatum("sourceId", src.getUserDatum("class.id"), UserData.SHARED);
+				e.addUserDatum("targetId", dest.getUserDatum("class.id"), UserData.SHARED);
+				containerGraph.addEdge(e);
+			}
+		}
+		System.out.println("[VGF]: namespaceGraph = "+containerGraph.numVertices()+" "+containerGraph.numEdges());
+		return containerGraph;
+
 	}
 	
 	

@@ -37,6 +37,11 @@ public class BarrioPreferencePage
 	public void createFieldEditors() {
 		addField(new DirectoryFieldEditor(PreferenceConstants.FOLDER_NAME, 
 				"&Barrio directory", getFieldEditorParent()));
+		
+		addField(new RadioGroupFieldEditor(PreferenceConstants.P_CHOICE, 
+				"Graph clustering analysis:", 2,
+				new String[][] {{"&Directed","directed"},{"&Undirected","undirected"}},
+				getFieldEditorParent()));
 	}
 	
 	
