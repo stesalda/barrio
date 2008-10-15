@@ -17,6 +17,8 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import nz.ac.massey.cs.barrio.inputReader.InputReader;
 import nz.ac.massey.cs.barrio.inputReader.UnknownInputException;
+import nz.ac.massey.cs.barrio.preferences.PreferenceConstants;
+import nz.ac.massey.cs.barrio.preferences.PreferenceRetriver;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -67,7 +69,13 @@ public class OdemReader implements InputReader {
 			out.write(" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"");
 			out.write(" xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns/graphml\">");
 			out.write('\n');
-			out.write("<graph edgedefault=\"directed\" file=\"");
+			out.write("<graph edgedefault=\"");
+			out.write(PreferenceRetriver.getGraphChoice());
+			out.write("\" file=\"");
+			
+			String s = PreferenceRetriver.getGraphChoice();
+			System.out.println("[OdemReader]: choise = " + s);
+			
 			if(input instanceof File) 
 				out.write(((File)input).getAbsolutePath());
 			if(input instanceof byte[]) 
