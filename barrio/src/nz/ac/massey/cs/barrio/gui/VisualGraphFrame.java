@@ -47,6 +47,7 @@ import edu.uci.ics.jung.utils.UserData;
 public class VisualGraphFrame extends JFrame {
 	
 	private Graph graph = null;
+	List<Edge> removedEdges = new ArrayList<Edge>();
 	private Graph namespaceGraph = null;
 	private Graph containerGraph = null;
 	private JPanel graphPanel;
@@ -273,15 +274,15 @@ public class VisualGraphFrame extends JFrame {
 				updateVisualElements();
 			}        	
         });
-//        
-//        checkRemovedEdges.addSelectionListener(new SelectionListener(){
-//
-//                     public void widgetDefaultSelected(SelectionEvent e) {}
-//     
-//                             public void widgetSelected(SelectionEvent e) {
-//                                     visualControlCheck(checkRemovedEdges);
-//                             }
-//        });
+        
+        checkRemovedEdges.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e) {
+				if(checkRemovedEdges.isSelected()) visualSettings.add(VS_REMOVED_EDGES);
+				else visualSettings.remove(VS_REMOVED_EDGES);
+				updateVisualElements();
+			}
+        	
+        });
         
         classRadioButton.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e) {
