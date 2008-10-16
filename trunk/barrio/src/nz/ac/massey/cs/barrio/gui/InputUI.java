@@ -270,6 +270,7 @@ public class InputUI extends Composite{
 //					@Override
 					public void run() {
 						output.updateOutputs(filteredGraph);
+						if(vgf!=null) vgf.setGraph(filteredGraph);
 						doneFilters = new ArrayList<String>();
 						for(String filter:todoFilters) doneFilters.add(filter);
 						setClustered(false);
@@ -366,6 +367,7 @@ public class InputUI extends Composite{
 			System.out.println("[InputUI]: initG = null");
 			btnApplyFilters.setEnabled(false);
 			slider.setEnabled(false);
+			lblSeparation.setEnabled(false);
 			btnAnalyse.setEnabled(false);
 		}
 		else
@@ -376,11 +378,13 @@ public class InputUI extends Composite{
 				if(isClustered)
 				{
 					slider.setEnabled(true);
+					lblSeparation.setEnabled(true);
 					btnAnalyse.setEnabled(false);
 				}
 				else
 				{
 					slider.setEnabled(false);
+					lblSeparation.setEnabled(false);
 					btnAnalyse.setEnabled(true);
 				}
 			}
@@ -388,6 +392,7 @@ public class InputUI extends Composite{
 			{
 				btnApplyFilters.setEnabled(true);
 				slider.setEnabled(false);
+				lblSeparation.setEnabled(false);
 				btnAnalyse.setEnabled(false);
 			}
 		}
