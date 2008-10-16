@@ -47,8 +47,19 @@ import edu.uci.ics.jung.utils.UserData;
 public class VisualGraphFrame extends JFrame {
 	
 	private Graph graph = null;
+	private Graph namespaceGraph = null;
+	private Graph containerGraph = null;
 	private JPanel graphPanel;
 	private List<String> visualSettings = new ArrayList<String>();
+	private int level;
+	
+	private int CLASS_LEVEL = 1;
+	private int NAMESPACE_LEVEL = 2;
+	private int CONTAINER_LEVEL = 3;
+	private String VS_CONTAINERS = "View Containers";
+	private String VS_NAMESPACES = "View Namespaces";
+	private String VS_DEPENDENCY_CLUSTERS = "View Dependency Clusters";
+	private String VS_REMOVED_EDGES = "View Removed Edges";
 
 	public VisualGraphFrame()
 	{
@@ -119,17 +130,18 @@ public class VisualGraphFrame extends JFrame {
 		
 		JPanel checksPanel = new JPanel(new GridLayout(7,0));
 		final JCheckBox checkContainers = new JCheckBox();
-		checkContainers.setText("View Containers");
+		checkContainers.setText(VS_CONTAINERS);
 		checksPanel.add(checkContainers);
-		final JCheckBox checkNamespaces = new JCheckBox("View Namespaces");
+		final JCheckBox checkNamespaces = new JCheckBox(VS_NAMESPACES);
 		checksPanel.add(checkNamespaces);
-		final JCheckBox checkDependencyClusters = new JCheckBox("View Dependency Clusters");
+		final JCheckBox checkDependencyClusters = new JCheckBox(VS_DEPENDENCY_CLUSTERS);
 		checksPanel.add(checkDependencyClusters);
-		JCheckBox checkRemovedEdges = new JCheckBox("View Removed Edges");
+		final JCheckBox checkRemovedEdges = new JCheckBox(VS_REMOVED_EDGES);
 		checksPanel.add(checkRemovedEdges);
 		
 		JRadioButton classRadioButton = new JRadioButton("Class level");
 		classRadioButton.setSelected(true);
+		level = CLASS_LEVEL;
 		JRadioButton namespaceRadioButton = new JRadioButton("Namespace level");
 		JRadioButton containerRadioButton = new JRadioButton("Container level");
 		ButtonGroup levels = new ButtonGroup();
@@ -238,8 +250,8 @@ public class VisualGraphFrame extends JFrame {
         checkDependencyClusters.addActionListener(new ActionListener(){
 			//@Override
 			public void actionPerformed(ActionEvent e) {
-				if(checkDependencyClusters.isSelected()) visualSettings.add(checkDependencyClusters.getText());
-				else visualSettings.remove(checkDependencyClusters.getText());
+				if(checkDependencyClusters.isSelected()) visualSettings.add(VS_DEPENDENCY_CLUSTERS);
+				else visualSettings.remove(VS_DEPENDENCY_CLUSTERS);
 				updateVisualElements();
 			}        	
         });
@@ -247,8 +259,8 @@ public class VisualGraphFrame extends JFrame {
         checkNamespaces.addActionListener(new ActionListener(){
 			//@Override
 			public void actionPerformed(ActionEvent e) {
-				if(checkNamespaces.isSelected()) visualSettings.add(checkNamespaces.getText());
-				else visualSettings.remove(checkNamespaces.getText());
+				if(checkNamespaces.isSelected()) visualSettings.add(VS_NAMESPACES);
+				else visualSettings.remove(VS_NAMESPACES);
 				updateVisualElements();
 			}        	
         });
@@ -256,8 +268,8 @@ public class VisualGraphFrame extends JFrame {
         checkContainers.addActionListener(new ActionListener(){
 			//@Override
 			public void actionPerformed(ActionEvent e) {
-				if(checkContainers.isSelected()) visualSettings.add(checkContainers.getText());
-				else visualSettings.remove(checkContainers.getText());
+				if(checkContainers.isSelected()) visualSettings.add(VS_CONTAINERS);
+				else visualSettings.remove(VS_CONTAINERS);
 				updateVisualElements();
 			}        	
         });
@@ -272,36 +284,88 @@ public class VisualGraphFrame extends JFrame {
 //        });
         
         classRadioButton.addActionListener(new ActionListener(){
-
 			public void actionPerformed(ActionEvent e) {
-				if(graph==null) return;				
+				if(graph==null) return;	
+				checkContainers.setEnabled(true);
+				checkDependencyClusters.setEnabled(true);
+				checkNamespaces.setEnabled(true);
+				checkRemovedEdges.setEnabled(true);			
 				JungPrefuseBridge bridge = new JungPrefuseBridge();
 				updateVis(bridge.convert(graph));
+				level = CLASS_LEVEL;
+				setVisualSettings(checkContainers.isSelected(),
+						checkDependencyClusters.isSelected(),
+						checkNamespaces.isSelected(),
+						checkRemovedEdges.isSelected());
+				updateVisualElements();
 			}
         	
         });
         
-        namespaceRadioButton.addActionListener(new ActionListener(){
-        	
+        namespaceRadioButton.addActionListener(new ActionListener(){        	
 			public void actionPerformed(ActionEvent e) {
-				if(graph==null) return;				
+				if(graph==null) return;
+				checkContainers.setEnabled(true);
+				checkDependencyClusters.setEnabled(false);
+				checkNamespaces.setEnabled(false);
+				checkRemovedEdges.setEnabled(false);
 				JungPrefuseBridge bridge = new JungPrefuseBridge();
-				updateVis(bridge.convert(buildNamespaceGraph(graph)));
+				updateVis(bridge.convert(namespaceGraph));
+				level = NAMESPACE_LEVEL;
+				setVisualSettings(checkContainers.isSelected(),
+						false,false,false);
+				updateVisualElements();
 			}        	
         });
         
         containerRadioButton.addActionListener(new ActionListener(){
-
 			public void actionPerformed(ActionEvent e) {
-				if(graph==null) return;				
+				if(graph==null) return;	
+				checkContainers.setEnabled(false);
+				checkDependencyClusters.setEnabled(false);
+				checkNamespaces.setEnabled(false);
+				checkRemovedEdges.setEnabled(false);
 				JungPrefuseBridge bridge = new JungPrefuseBridge();
-				updateVis(bridge.convert(buildContainerGraph(graph)));
-			}
-        	
+				updateVis(bridge.convert(containerGraph));
+				level = CONTAINER_LEVEL;
+				setVisualSettings(false,false,false,false);
+				updateVisualElements();
+			}        	
         });
-
 	}
 	
+	private void setVisualSettings(boolean c, boolean dc, boolean n, boolean re) 
+	{
+		if(c){
+			if(!visualSettings.contains(VS_CONTAINERS)) visualSettings.add(VS_CONTAINERS);
+		}
+		else {
+			if(visualSettings.contains(VS_CONTAINERS)) visualSettings.remove(VS_CONTAINERS);
+		}
+		
+		if(dc) {
+			if(!visualSettings.contains(VS_DEPENDENCY_CLUSTERS)) visualSettings.add(VS_DEPENDENCY_CLUSTERS);
+		}
+		else {
+			if(visualSettings.contains(VS_DEPENDENCY_CLUSTERS)) visualSettings.remove(VS_DEPENDENCY_CLUSTERS);
+		}
+		
+		if(n) {
+			if(!visualSettings.contains(VS_NAMESPACES)) visualSettings.add(VS_NAMESPACES);
+		}
+		else {
+			if(visualSettings.contains(VS_NAMESPACES)) visualSettings.remove(VS_NAMESPACES);
+		}
+		
+		if(re) {
+			if(!visualSettings.contains(VS_REMOVED_EDGES)) visualSettings.add(VS_REMOVED_EDGES);
+		}
+		else {
+			if(visualSettings.contains(VS_REMOVED_EDGES)) visualSettings.remove(VS_REMOVED_EDGES);
+		}
+		
+	}
+
 	public Graph getGraph() {
 		return graph;
 	}
@@ -309,8 +373,12 @@ public class VisualGraphFrame extends JFrame {
 	public void setGraph(Graph graph) {
 		if(this.graph!=graph){
 			this.graph = graph;
+			namespaceGraph = buildNamespaceGraph(graph);
+			containerGraph = buildContainerGraph(graph);
 			JungPrefuseBridge bridge = new JungPrefuseBridge();
-			updateVis(bridge.convert(graph));
+        	if(level==CLASS_LEVEL) updateVis(bridge.convert(graph));
+        	if(level==NAMESPACE_LEVEL) updateVis(bridge.convert(namespaceGraph));
+        	if(level==CONTAINER_LEVEL) updateVis(bridge.convert(containerGraph));
 			updateVisualElements();
 		}		
 	}
@@ -329,7 +397,7 @@ public class VisualGraphFrame extends JFrame {
     {
         if(graphPanel.getComponentCount()>0)
         {
-            Visualization vis = ((Display)graphPanel.getComponent(0)).getVisualization();
+        	Visualization vis = ((Display)graphPanel.getComponent(0)).getVisualization();
             TupleSet aggregates = vis.getGroup("aggregates");
             Iterator<VisualItem> iter = aggregates.tuples();
             while(iter.hasNext())
