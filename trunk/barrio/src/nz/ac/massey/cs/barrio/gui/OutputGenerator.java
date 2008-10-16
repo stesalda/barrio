@@ -33,7 +33,7 @@ public class OutputGenerator {
 
             data[0] = e.getUserDatum("id").toString();
 //                      System.out.println("[OG]: "+data[0]);
-            data[1] = String.valueOf(i);
+            data[1] = String.valueOf(e.getUserDatum("relationship.separation"));
             
             StringBuffer sourceStr = new StringBuffer();
             sourceStr.append(src.getUserDatum("class.jar").toString());
