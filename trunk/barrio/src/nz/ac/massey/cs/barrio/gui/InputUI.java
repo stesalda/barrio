@@ -25,6 +25,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Scale;
@@ -148,6 +149,11 @@ public class InputUI extends Composite{
 		   Label separator3 = new Label(topComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		   separator3.setLayoutData(horizontalFillData);
 		   //--------------------------------------------------------------
+		   Combo combo = new Combo(topComposite,SWT.DROP_DOWN);
+		   for (int i = 1; i < 11; i++)combo.add(String.valueOf(i));
+		   combo.add("-All-");
+		   combo.select(0);
+		   combo.setEnabled(false);
 		   
 		   btnAnalyse = new Button(topComposite, SWT.PUSH | SWT.CENTER);
 		   btnAnalyse.setText("Analyse");
