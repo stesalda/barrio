@@ -14,7 +14,11 @@ import prefuse.action.ActionList;
 import prefuse.action.RepaintAction;
 import prefuse.action.assignment.ColorAction;
 import prefuse.action.assignment.DataColorAction;
+import prefuse.action.layout.graph.BalloonTreeLayout;
+import prefuse.action.layout.graph.FruchtermanReingoldLayout;
+import prefuse.action.layout.graph.NodeLinkTreeLayout;
 import prefuse.action.layout.graph.RadialTreeLayout;
+import prefuse.action.layout.graph.SquarifiedTreeMapLayout;
 import prefuse.activity.Activity;
 import prefuse.controls.PanControl;
 import prefuse.controls.WheelZoomControl;
@@ -192,27 +196,25 @@ public class DisplayBuilder {
 		
 		
 		
-		ActionList animate = new ActionList(10000);
+		ActionList animate = new ActionList();
 		//animate.add(new CustomFDL("graph"));
 		int edgeLength = 200;
-		if(prefuseGraph.getEdges().getTupleCount()>200) edgeLength = prefuseGraph.getEdges().getTupleCount();
+		//if(prefuseGraph.getEdges().getTupleCount()>200) edgeLength = prefuseGraph.getEdges().getTupleCount();
 		
 		
-        
-		
-		int nNodes = prefuseGraph.getNodeCount();
-		if(nNodes > 1200)
-		{
+//		int nNodes = prefuseGraph.getNodeCount();
+//		if(nNodes > 1200)
+//		{
 			RadialTreeLayout rtl = new RadialTreeLayout("graph",edgeLength);
 			rtl.setLayoutAnchor(new Point(0,0));
 			animate.add(rtl);
-		}
-		else
-		{
-			CustomFDL fdl =new CustomFDL("graph");
-			fdl.setLayoutAnchor(new Point(300,300));
-			animate.add(fdl);
-		}
+//		}		
+//		else
+//		{
+//			CustomFDL fdl =new CustomFDL("graph");
+//			fdl.setLayoutAnchor(new Point(300,300));
+//			animate.add(fdl);
+//		}
 		
 		animate.add(color);  
         animate.add(new AggregateLayout("aggregates"));
