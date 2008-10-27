@@ -73,6 +73,7 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 					public synchronized void done(IJobChangeEvent event) 
 					{
 						input.setFilteredGraph(filteringJob.getFilteredGraph());
+						input.setClusteredGraph(null);
 						input.setRemovedEdges(new ArrayList());
 						output.getDisplay().asyncExec(new Runnable()
 		                {
