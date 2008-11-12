@@ -72,13 +72,12 @@ public class ImportAction implements IWorkbenchWindowActionDelegate{
 					@SuppressWarnings("unchecked")
 					public synchronized void done(IJobChangeEvent event) 
 					{
-						input.setFilteredGraph(filteringJob.getFilteredGraph());
-						input.setClusteredGraph(null);
 						input.setRemovedEdges(new ArrayList());
 						output.getDisplay().asyncExec(new Runnable()
 		                {
 		                        public void run() 
 		                        {
+		                        	input.setFilteredGraph(filteringJob.getFilteredGraph());
 		                        	input.checkDisplayGraphClick();
 		                        	input.setClustered(false);
 		                        	input.setDoneFilters();
