@@ -3,6 +3,7 @@ package nz.ac.massey.cs.barrio.gui;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -39,14 +40,18 @@ public class InputUI extends Composite{
 	private List<String> doneFilters = new ArrayList<String>();
 	private List<String> todoFilters = new ArrayList<String>();
 	private List<Filter> knownFilters = new ArrayList<Filter>();
-	private int separationLevel = 0;
-	private Graph initGraph = null;
-	private Graph filteredGraph = null;
-	private Graph clusteredGraph = null;
-	private List<Edge> removedEdges = null;
 	private VisualGraphFrame vgf = null;
 	private boolean isClustered = false;
 	
+	private int separationLevel = 0;
+	private Graph initGraph = null;
+	private List<Edge> removedEdges = null;	
+	private Graph graph = null;	
+	private List<Integer> keyList = new ArrayList<Integer>();
+	private List<Graph> graphList = new ArrayList<Graph>();
+	private List<List<Edge>> edgeList = new ArrayList<List<Edge>>();
+	
+	private Combo combo;
 	private Button btnAnalyse;
 	private Button btnApplyFilters;
 	private final Scale slider;
@@ -149,17 +154,16 @@ public class InputUI extends Composite{
 		   Label separator3 = new Label(topComposite, SWT.HORIZONTAL | SWT.SEPARATOR);
 		   separator3.setLayoutData(horizontalFillData);
 		   //--------------------------------------------------------------
-		   Combo combo = new Combo(topComposite,SWT.DROP_DOWN);
+		   combo = new Combo(topComposite,SWT.DROP_DOWN);
 		   for (int i = 1; i < 11; i++)combo.add(String.valueOf(i));
 		   combo.add("-All-");
 		   combo.select(0);
-		   combo.setEnabled(false);
 		   
 		   btnAnalyse = new Button(topComposite, SWT.PUSH | SWT.CENTER);
 		   btnAnalyse.setText("Analyse");
 		   GridData refreshData = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
 		   btnAnalyse.setLayoutData(refreshData);
-		   btnAnalyse.setEnabled(false);
+		   //btnAnalyse.setEnabled(false);
 		   
 		    //----------------------------------------------------------------
 		   
@@ -247,7 +251,7 @@ public class InputUI extends Composite{
 	{
 		if(todoFilters.size()!=doneFilters.size()) return false;
 		if(initGraph==null) return false;
-		if(filteredGraph==null) return false;
+		if(graphList.get(0)==null) return false;
 		for(String filter:doneFilters)
 		{
 			if(!todoFilters.contains(filter)) return false;
@@ -270,13 +274,12 @@ public class InputUI extends Composite{
 			
 			public void done(IJobChangeEvent event) 
 			{
-				filteredGraph = filteringJob.getFilteredGraph();
 				output.getDisplay().syncExec(new Runnable(){
-
 //					@Override
 					public void run() {
-						output.updateOutputs(filteredGraph);
-						if(vgf!=null) vgf.setGraph(filteredGraph);
+						setFilteredGraph(filteringJob.getFilteredGraph());
+						output.updateOutputs(graph);
+						if(vgf!=null) vgf.setGraph(graph);
 						doneFilters = new ArrayList<String>();
 						for(String filter:todoFilters) doneFilters.add(filter);
 						setClustered(false);
@@ -293,12 +296,9 @@ public class InputUI extends Composite{
 	public void checkDisplayGraphClick() {
 		boolean selection = checkDisplayGraph.getSelection();
 		if(selection)
-		{
-			Graph g = null;
-			if(slider.getSelection()==0) g = filteredGraph;
-			if(slider.getSelection()==1) g = clusteredGraph;
-			
-			if(g!=null) vgf.setGraph(g);
+		{	
+			Graph g = (Graph) graph.copy();	
+			if(graph!=null) vgf.setGraph(graph);		
 			vgf.setVisible(true);
 		}
 		else
@@ -311,11 +311,13 @@ public class InputUI extends Composite{
 	
 	private void btnAnalyseClick(List<NodeFilter> nodeFilters, List<EdgeFilter> edgeFilters) 
 	{
-		if(initGraph!=null)
+		if(graphList.get(0)!=null)
 		{
-			System.out.println("[InputUI]: initGraph file = " +initGraph.getUserDatum("file"));
 			final OutputUI output = new GuiGetter().getOutputUI();
-			final GraphClusteringJob clusteringJob = new GraphClusteringJob(filteredGraph);
+			int stop;
+			if(combo.getItem(combo.getSelectionIndex()).equals("-All-")) stop = initGraph.numEdges();
+			else stop = Integer.valueOf(combo.getItem(combo.getSelectionIndex()));
+			final GraphClusteringJob clusteringJob = new GraphClusteringJob(graphList.get(0), stop);
 			clusteringJob.setUser(true);
 			clusteringJob.addJobChangeListener(new IJobChangeListener(){
 				
@@ -327,18 +329,14 @@ public class InputUI extends Composite{
 				
 				public void done(IJobChangeEvent event) 
 				{
-					clusteredGraph = clusteringJob.getClusteredGraph();
-					if(clusteredGraph==null) return;
-					removedEdges = clusteringJob.getRemovedEdges();
-					separationLevel = clusteringJob.getSeparationValue();
-					
+					keyList = clusteringJob.getKeyList();
+					graphList = clusteringJob.getGraphList();
+					edgeList = clusteringJob.getEdgeList();
 					output.getDisplay().syncExec(new Runnable(){
-
-//						@Override
 						public void run() {
+							slider.setMaximum(keyList.size()-1);
 							setClustered(true);
 							setInteractiveElements();
-							sliderMove();
 						}									
 					});
 					
@@ -352,16 +350,13 @@ public class InputUI extends Composite{
 	private void sliderMove()
 	{		
 		final OutputUI output = new GuiGetter().getOutputUI();
-		if(slider.getSelection()==0){
-			lblSeparation.setText("Separation level = 0");
-			output.updateOutputs(filteredGraph);
-			output.updateTableRemovedEdges(null);
-		}
-		if(slider.getSelection()==1){
-			lblSeparation.setText("Separation level = "+ separationLevel);
-			output.updateOutputs(clusteredGraph);
-			output.updateTableRemovedEdges(removedEdges);
-		}
+		graph = graphList.get(slider.getSelection());
+		removedEdges = edgeList.get(slider.getSelection());
+		separationLevel = keyList.get(slider.getSelection());
+		
+		lblSeparation.setText("Separation level = "+separationLevel);
+		output.updateOutputs(graph);
+		output.updateTableRemovedEdges(removedEdges);		
 		checkDisplayGraphClick();
 	}
 	//User Interface events end==============================================================
@@ -374,7 +369,7 @@ public class InputUI extends Composite{
 			btnApplyFilters.setEnabled(false);
 			slider.setEnabled(false);
 			lblSeparation.setEnabled(false);
-			btnAnalyse.setEnabled(false);
+			//btnAnalyse.setEnabled(false);
 		}
 		else
 		{
@@ -385,13 +380,13 @@ public class InputUI extends Composite{
 				{
 					slider.setEnabled(true);
 					lblSeparation.setEnabled(true);
-					btnAnalyse.setEnabled(false);
+					//btnAnalyse.setEnabled(false);
 				}
 				else
 				{
 					slider.setEnabled(false);
 					lblSeparation.setEnabled(false);
-					btnAnalyse.setEnabled(true);
+					//btnAnalyse.setEnabled(true);
 				}
 			}
 			else
@@ -399,7 +394,7 @@ public class InputUI extends Composite{
 				btnApplyFilters.setEnabled(true);
 				slider.setEnabled(false);
 				lblSeparation.setEnabled(false);
-				btnAnalyse.setEnabled(false);
+				//btnAnalyse.setEnabled(false);
 			}
 		}
 	}
@@ -418,14 +413,12 @@ public class InputUI extends Composite{
 		return initGraph;
 	}
 
-
-	public Graph getFilteredGraph() {
-		return filteredGraph;
+	public Graph getGraph() {
+		return graph;
 	}
-
-
-	public Graph getClusteredGraph() {
-		return clusteredGraph;
+	
+	public List<Edge> getRemovedEdges() {
+		return removedEdges;
 	}
 	
 	public void setRemovedEdges(List<Edge> removedEdges) {
@@ -433,11 +426,16 @@ public class InputUI extends Composite{
 	}
 
 	public void setFilteredGraph(Graph filteredGraph) {
-		this.filteredGraph = filteredGraph;
-	}
-
-	public void setClusteredGraph(Graph clusteredGraph) {
-		this.clusteredGraph = clusteredGraph;
+		keyList = new ArrayList<Integer>();
+		graphList = new ArrayList<Graph>();
+		edgeList = new ArrayList<List<Edge>>();
+		keyList.add(0);
+		graphList.add(filteredGraph);
+		edgeList.add(new ArrayList<Edge>());
+		slider.setSelection(0);
+		this.graph = graphList.get(0);
+		this.removedEdges = edgeList.get(0);
+		this.separationLevel = 0;
 	}
 	
 	public List<String> getActiveFilters() {

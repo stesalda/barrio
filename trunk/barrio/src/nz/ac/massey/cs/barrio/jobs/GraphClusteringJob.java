@@ -27,8 +27,12 @@ public class GraphClusteringJob extends Job {
 	private boolean canceled;
 	private int numClusters;
 	private int separationValue;
+	private int stop;
+	private List<Integer> keyList;
+	private List<Graph> graphList;
+	private List<List<Edge>> edgeList;
 	
-	public GraphClusteringJob(Graph filteredGraph) 
+	public GraphClusteringJob(Graph filteredGraph, int stop) 
 	{
 		super("Clustering graph");
 		this.clusteredGraph = (Graph) filteredGraph.copy();	
@@ -37,6 +41,14 @@ public class GraphClusteringJob extends Job {
 		canceled = false;
 		numClusters = 0;
 		separationValue = 0;
+		this.stop = stop;
+		
+		keyList = new ArrayList<Integer>();
+		graphList = new ArrayList<Graph>();
+		edgeList = new ArrayList<List<Edge>>();
+		keyList.add(0, 0);
+		graphList.add((Graph) clusteredGraph.copy());
+		edgeList.add(copyList(removedEdges));
 	}
 
 
@@ -73,7 +85,8 @@ public class GraphClusteringJob extends Job {
 		numClusters = clusts.size();
 		
 		int sep = 1;
-		while(clusteredGraph.numEdges()>0)
+		int separationsDone = 0;
+		while(clusteredGraph.numEdges()>0 && separationsDone<stop)
 		{
 			if(canceled) return;
 			monitor.subTask(message+sep);
@@ -85,29 +98,59 @@ public class GraphClusteringJob extends Job {
 			}
 			removedEdges.addAll(newRemovedEdges);
 			monitor.worked(clusterer.getEdgesRemoved().size());
-			if(numClusters!=clusterer.nameClusters(clusteredGraph).size())
+			int newNumClusters = clusterer.nameClusters(clusteredGraph).size();
+			if(numClusters!= newNumClusters)
 			{
 				separationValue = sep;
-				break;
+				keyList.add(sep);
+				
+				for(Edge e:removedEdges)
+				{
+					e.setUserDatum("relationship.state", "removed", UserData.SHARED);
+					clusteredGraph.addEdge(e);
+				}
+				
+				graphList.add((Graph) clusteredGraph.copy());
+				
+				for(Edge e:removedEdges)
+				{
+					clusteredGraph.removeEdge(e);
+				}
+				
+				edgeList.add(copyList(removedEdges));
+				numClusters = newNumClusters;
+				separationsDone++;
 			}			
 			sep++;
 		}
 		
 		clusterer.nameClusters(clusteredGraph);
 	}
-
-
-	public int getSeparationValue() {
-		return separationValue;
+	
+	private List<Edge> copyList(List<Edge> list)
+	{
+		List<Edge> result = new ArrayList<Edge>();
+		for(Edge e:list)
+		{
+			result.add(e);
+		}
+		return result;
 	}
 
 
-	public Graph getClusteredGraph() {
-		return clusteredGraph;
+	public List<Integer> getKeyList() {
+		return keyList;
 	}
 
 
-	public List<Edge> getRemovedEdges() {
-		return removedEdges;
+	public List<Graph> getGraphList() {
+		return graphList;
 	}
+
+
+	public List<List<Edge>> getEdgeList() {
+		return edgeList;
+	}
+	
+	
 }

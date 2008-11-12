@@ -451,6 +451,7 @@ public class VisualGraphFrame extends JFrame {
 			String destC = ((Vertex)edge.getEndpoints().getSecond()).getUserDatum("class.jar").toString();
 			String destN = ((Vertex)edge.getEndpoints().getSecond()).getUserDatum("class.packageName").toString();
 			if(srcC.equals(destC) && srcN.equals(destN)) continue;
+			if(edge.getUserDatum("relationship.state").equals("removed")) continue;
 			TempEdge te = new TempEdge();
 			te.setSrcC(srcC);
 			te.setSrcN(srcN);
@@ -509,6 +510,7 @@ public class VisualGraphFrame extends JFrame {
 			String srcC = ((Vertex)edge.getEndpoints().getFirst()).getUserDatum("class.jar").toString();
 			String destC = ((Vertex)edge.getEndpoints().getSecond()).getUserDatum("class.jar").toString();
 			if(srcC.equals(destC)) continue;
+			if(edge.getUserDatum("relationship.state").equals("removed")) continue;
 			TempEdge te = new TempEdge();
 			te.setSrcC(srcC);
 			te.setSrcN("null");

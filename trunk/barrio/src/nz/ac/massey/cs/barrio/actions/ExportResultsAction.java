@@ -39,8 +39,7 @@ public class ExportResultsAction implements IWorkbenchWindowActionDelegate {
 		dialog.setFilterNames(new String[]{"XML files"});
 		dialog.setFilterExtensions(new String[]{"*.xml"});
 		
-		e.export(input.getFilteredGraph(), input.getClusteredGraph(), 
-				input.getSeparationLevel(), input.getActiveFilters(), dialog.open());
+		e.export(input.getGraph(), input.getSeparationLevel(), input.getRemovedEdges(),input.getActiveFilters(), dialog.open());
 	}
 
 	public void selectionChanged(IAction action, ISelection selection) {
