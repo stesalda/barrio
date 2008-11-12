@@ -59,7 +59,7 @@ public class OdemReader implements InputReader {
 	        DocumentBuilder docBuilder;
 			docBuilder = docBuilderFactory.newDocumentBuilder();
 			Document doc = docBuilder.parse(stream);
-			
+
 			java.io.StringWriter buffer = new java.io.StringWriter();
 			BufferedWriter out = new BufferedWriter(buffer);
 	
@@ -70,10 +70,12 @@ public class OdemReader implements InputReader {
 			out.write(" xsi:schemaLocation=\"http://graphml.graphdrawing.org/xmlns/graphml\">");
 			out.write('\n');
 			out.write("<graph edgedefault=\"");
-			out.write(PreferenceRetriver.getGraphChoice());
-			out.write("\" file=\"");
 			
 			String s = PreferenceRetriver.getGraphChoice();
+			if(s==null||s.length()<1) s="directed";
+			out.write(s);
+			out.write("\" file=\"");
+			
 			System.out.println("[OdemReader]: choise = " + s);
 			
 			if(input instanceof File) 
@@ -93,6 +95,7 @@ public class OdemReader implements InputReader {
 			out.write("</graph>");
 			out.write('\n');
 			out.write("</graphml>");
+			
 			out.close();
 			
 			Reader reader = new java.io.StringReader(buffer.toString());
