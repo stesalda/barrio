@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: VertexClassifier Plug-in
 Bundle-SymbolicName: nz.ac.massey.cs.barrio.VertexClassifier;singleton:=true
-Bundle-Version: 1.0.38
+Bundle-Version: 1.0.40
 Bundle-Activator: nz.ac.massey.cs.barrio.vertexclassifier.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
