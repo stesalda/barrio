@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Barrio_graphManager Plug-in
 Bundle-SymbolicName: nz.ac.massey.cs.barrio.graphManager;singleton:=true
-Bundle-Version: 1.0.37
+Bundle-Version: 1.0.38
 Bundle-Activator: nz.ac.massey.cs.barrio.graphManager.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
