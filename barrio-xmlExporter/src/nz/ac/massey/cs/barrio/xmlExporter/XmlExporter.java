@@ -15,7 +15,7 @@ import edu.uci.ics.jung.graph.Vertex;
 
 public class XmlExporter implements Exporter {
 	
-	public void export(Graph filteredGraph, Graph clusteredGraph, int separation, List<String> filters, String filename) 
+	public void export(Graph graph, int separation, List<Edge> removedEdges, List<String> filters, String filename) 
 	{
 		PrintStream out = null;
 		try {
@@ -24,26 +24,16 @@ public class XmlExporter implements Exporter {
 			e.printStackTrace();
 		}		
 		if(out==null) return;
-		if(clusteredGraph==null) clusteredGraph = filteredGraph;	
+		if(graph==null) return;	
 		GraphManager gm = KnownGraphManagers.all().get(0);
-		gm.setGraph(clusteredGraph);
+		gm.setGraph(graph);
 		
 		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		out.print("<graph file=\"");
-		out.print(filteredGraph.getUserDatum("file"));
+		out.print(graph.getUserDatum("file"));
 		out.println("\">");
 		
-		List<Edge> edgesRemoved = new ArrayList<Edge>();
-		Set<Edge> edges = filteredGraph.getEdges();
-		if(clusteredGraph.numEdges()!=filteredGraph.numEdges())
-		{
-			for(Edge e:edges)
-			{
-				if(!clusteredGraph.getEdges().contains(e)) edgesRemoved.add(e);
-			}
-		}
-		
-		for(Edge e:edgesRemoved)
+		for(Edge e:removedEdges)
 		{
 			out.print("<removed-relationship source=\"");
 			out.print(((Vertex)e.getEndpoints().getFirst()).getUserDatum("class.packageName"));
