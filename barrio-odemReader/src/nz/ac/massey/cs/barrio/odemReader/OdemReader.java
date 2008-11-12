@@ -72,10 +72,10 @@ public class OdemReader implements InputReader {
 			out.write("<graph edgedefault=\"");
 			
 			String s = PreferenceRetriver.getGraphChoice();
-			if(s==null||s.length()<1) s="directed";
+			System.out.println("[OdemReader]: choise = " + s);
+			if(!s.equals("directed") && !s.equals("undirected")) s="directed";
 			out.write(s);
-			out.write("\" file=\"");
-			
+			out.write("\" file=\"");			
 			System.out.println("[OdemReader]: choise = " + s);
 			
 			if(input instanceof File) 
