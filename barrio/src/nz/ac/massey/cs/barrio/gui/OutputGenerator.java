@@ -59,7 +59,7 @@ public class OutputGenerator {
         }
 	}
 	
-	public void generateTableTree(Graph graph, Tree tree) 
+	public void generateTableTree(Graph graph, Tree tree, boolean showSingletons) 
 	{
 		TreeColumn[] columns1 = tree.getColumns();
         for (int i = 0, n = columns1.length; i < n; i++) {
@@ -109,6 +109,7 @@ public class OutputGenerator {
 			}
 		}
 		TreeColumn[] columns2 = tree.getColumns();
+		columns2[0].pack();
         for (int i = 1, n = columns2.length; i < n; i++) 
         {
         	int clusterSize = manager.getProjectClusterSize(columns2[i].getText());
@@ -122,7 +123,7 @@ public class OutputGenerator {
 	        	columns2[i].setText(builder.toString());
         	}        	
         	columns2[i].pack();
-        	if(clusterSize==1) columns2[i].setWidth(20);
+        	if(!showSingletons && clusterSize==1) columns2[i].setWidth(0);
         }
 	}
 	

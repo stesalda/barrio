@@ -140,5 +140,20 @@
             class="nz.ac.massey.cs.barrio.preferences.PreferenceInitializer">
       </initializer>
    </extension>
+   <extension
+         point="org.eclipse.ui.viewActions">
+      <viewContribution
+            id="nz.ac.massey.cs.barrio.viewActions"
+            targetID="nz.ac.massey.cs.barrio.views.OutputView">
+         <action
+               class="nz.ac.massey.cs.barrio.actions.SingletonAction"
+               id="nz.ac.massey.cs.barrio.singletonAction"
+               label="Hide/Show singletons"
+               style="toggle"
+               toolbarPath="Additions"
+               tooltip="Hide/show singleton clusters">
+         </action>
+      </viewContribution>
+   </extension>
 
 </plugin>
