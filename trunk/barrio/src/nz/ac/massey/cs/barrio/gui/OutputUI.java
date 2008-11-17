@@ -27,10 +27,12 @@ public class OutputUI extends Composite{
 	
 	private Tree matrixCluster;
 	private JTable table;
+	private boolean showSingletons;
 	
 	public OutputUI(Composite parent, int style) {
 		super(parent, style);
 		this.setLayout(new GridLayout());
+		this.showSingletons = true;
 		GridData tabData = new GridData(GridData.FILL_BOTH);
 		
 		final TabFolder tabFolder = new TabFolder(this, SWT.BORDER);
@@ -110,7 +112,7 @@ public class OutputUI extends Composite{
 	public void updateOutputs(Graph graph) 
 	{        
 		OutputGenerator og = new OutputGenerator();
-		og.generateTableTree(graph, matrixCluster);
+		og.generateTableTree(graph, matrixCluster, showSingletons);
 	}
 	
 	public void updateTableRemovedEdges(List<Edge> removedEdges)
@@ -121,5 +123,13 @@ public class OutputUI extends Composite{
 		DefaultTableModel dtm = (DefaultTableModel) table.getModel();
 		for(int i=dtm.getRowCount()-1; i>-1; i--) dtm.removeRow(i);
         for(Object[] edgeData:list) dtm.addRow(edgeData);
+	}
+
+	public Tree getMatrixCluster() {
+		return matrixCluster;
+	}
+
+	public void setShowSingletons(boolean showSingletons) {
+		this.showSingletons = showSingletons;
 	}
 }
