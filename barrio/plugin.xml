@@ -79,6 +79,12 @@
                menubarPath="barrio.topMenu/barrio.actionExportResults"
                tooltip="Export produced output to xml file">
          </action>
+         <action
+               class="nz.ac.massey.cs.barrio.actions.MainAction"
+               id="barrio.actionMain"
+               label="analyse folder"
+               menubarPath="barrio.topMenu/barrio.actionMain">
+         </action>
       </actionSet>
    </extension>
    <extension
