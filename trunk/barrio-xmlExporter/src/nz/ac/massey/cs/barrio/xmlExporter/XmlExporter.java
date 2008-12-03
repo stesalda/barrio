@@ -31,7 +31,17 @@ public class XmlExporter implements Exporter {
 		out.println("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
 		out.print("<graph file=\"");
 		out.print(graph.getUserDatum("file"));
+		out.print("\" separation-level=\"");
+		out.print(separation);
 		out.println("\">");
+		out.println("<initial-state>");
+		out.print("<nodes count=\"");
+		out.print(graph.numVertices());
+		out.println("\" />");
+		out.print("<edges count=\"");
+		out.print(graph.numEdges());
+		out.println("\" />");
+		out.println("</initial-state>");
 		
 		for(Edge e:removedEdges)
 		{
@@ -49,7 +59,7 @@ public class XmlExporter implements Exporter {
 		}
 		
 		int componentCount = 1;
-		for(String cluster:gm.getProjectClusters(false))
+		for(String cluster:gm.getProjectClusters(true))
 		{
 			out.print("<component-");
 			out.print(componentCount);
@@ -59,7 +69,7 @@ public class XmlExporter implements Exporter {
 			{
 				for(String namespace:gm.getNamespaces(containerName))
 				{
-					if(gm.getNamespaceClusters(containerName, namespace, false).contains(cluster))
+					if(gm.getNamespaceClusters(containerName, namespace, true).contains(cluster))
 					{
 						out.print("<package name=\"");
 						out.print(namespace);
