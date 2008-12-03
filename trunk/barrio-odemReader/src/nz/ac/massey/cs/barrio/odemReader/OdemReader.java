@@ -50,7 +50,7 @@ public class OdemReader implements InputReader {
 			stream = new ByteArrayInputStream(((byte[])input));
 		
 		
-		System.out.println("[OdemReader]: stream = "+stream.toString());
+//		System.out.println("[OdemReader]: stream = "+stream.toString());
 		
 		if(stream!=null) try 
 		{			
@@ -72,11 +72,10 @@ public class OdemReader implements InputReader {
 			out.write("<graph edgedefault=\"");
 			
 			String s = PreferenceRetriver.getGraphChoice();
-			System.out.println("[OdemReader]: choise = " + s);
 			if(!s.equals("directed") && !s.equals("undirected")) s="directed";
 			out.write(s);
 			out.write("\" file=\"");			
-			System.out.println("[OdemReader]: choise = " + s);
+//			System.out.println("[OdemReader]: choise = " + s);
 			
 			if(input instanceof File) 
 				out.write(((File)input).getAbsolutePath());
