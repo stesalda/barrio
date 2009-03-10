@@ -1,0 +1,8 @@
+nz.ac.massey.cs.barrio.classifier
+nz.ac.massey.cs.barrio.clusterer
+nz.ac.massey.cs.barrio.exporter
+nz.ac.massey.cs.barrio.filters
+nz.ac.massey.cs.barrio.graphManager
+nz.ac.massey.cs.barrio.inputReader
+nz.ac.massey.cs.barrio.motifFinder
+nz.ac.massey.cs.barrio.srcReader
