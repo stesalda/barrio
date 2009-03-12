@@ -13,7 +13,7 @@ public class NodeFilter implements Filter{
 
 	/**
 	 * Applies filter to the graph by removing vertices that contain filter property 
-	 * @param g - the graph
+	 * @param g the graph
 	 * @return UnasembeledGraph, can be assembled by calling assemble() method. 
 	 */
 	public UnassembledGraph filter(Graph g) 
@@ -24,7 +24,7 @@ public class NodeFilter implements Filter{
 	
 	/**
 	 * Iterates over a set of vertices and checks which ones will remain in new graph
-	 * @param verts - the set of vertices
+	 * @param verts the set of vertices
 	 * @return set of vertices that will remain in the new filtered graph
 	 */
 	public Set<Vertex> chooseGoodVertices(Set<Vertex> verts)
@@ -45,7 +45,7 @@ public class NodeFilter implements Filter{
 	
 	/**
 	 * Needs to be overridden in the subclass. Decides whether a vertex is to be kept in the graph or to be removed
-	 * @param v - the vertex
+	 * @param v the vertex
 	 * @return true if vertex remains or false if vertex is removed
 	 */	
 	public boolean acceptVertex(Vertex v)
