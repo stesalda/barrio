@@ -9,7 +9,7 @@ public interface Motif {
 
 	/**
 	 * Finds all motif instances that occur in the dependency graph
-	 * @param graph - the graph
+	 * @param graph the graph
 	 * @return iterator of the intances of the motif
 	 */
 	public Iterator<MotifInstance> findAll(Graph graph);

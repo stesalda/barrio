@@ -13,7 +13,7 @@ public class EdgeFilter implements Filter{
 
 	/**
 	 * Applies filter to the graph by removing edges that contain filter property 
-	 * @param g - the graph
+	 * @param g the graph
 	 * @return UnasembeledGraph, can be assembled by calling assemble() method. 
 	 */
 	public UnassembledGraph filter(Graph g) 
@@ -25,7 +25,7 @@ public class EdgeFilter implements Filter{
 	
 	/**
 	 * Iterates over a set of edges and checks which ones will remain in new graph
-	 * @param edges - the set of edges
+	 * @param edges the set of edges
 	 * @return set of edges that will remain in the new filtered graph
 	 */
 	public Set<Edge> chooseGoodEdges(Set<Edge> edges)
@@ -42,7 +42,7 @@ public class EdgeFilter implements Filter{
 	
 	/**
 	 * Needs to be overridden in the subclass. Decides whether an edge is to be kept in the graph or to be removed
-	 * @param e - the edge
+	 * @param e the edge
 	 * @return true if edge remains or false if edge is removed
 	 */
 	public boolean acceptEdge(Edge e)

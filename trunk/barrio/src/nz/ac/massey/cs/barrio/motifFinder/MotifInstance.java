@@ -10,7 +10,7 @@ public interface MotifInstance {
 
 	/**
 	 * Retrieves jung.graph.Vertex type that acts the specified rolename
-	 * @param roleName - the rolename
+	 * @param roleName the rolename
 	 * @return the jung.graph.Vertex
 	 */
 	public Vertex getInstance(String roleName);
